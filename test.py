@@ -226,3 +226,9 @@ if not determined:
 #    print(reduced_game)
 
 print('hallo test')
+
+
+def print_steps(xk, *kargs):
+    print(xk)
+    print(*kargs)
+
