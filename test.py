@@ -4,6 +4,20 @@ import numpy as np
 from sympy import nsimplify
 import matplotlib
 
+
+# Funktion für Zwischenschritte
+# TODO: Aufbereiten und nach verschiedenen Lösungswegen suchen.
+class Tableau(object):
+    def __call__(self, xk, **kwargs):
+        print('Aktuelle Lösung: ' + str(xk))
+        print(kwargs['tableau'])
+        print(kwargs['pivot'])
+        print(kwargs['basis'])
+#        for key in kwargs:
+#            print(key)
+#            print(kwargs[key])
+
+
 # Ermittlung Oberer + Unterer Spielwert in reinen Strategien
 
 # matrix = [[4, 5, 2],
@@ -201,7 +215,7 @@ if not determined:
         bounds_here.append((0, None))
 
     # Durchführen des Simplex, Ergebnis beinhaltet Lösungsvektor x
-    result = linprog(c, A, b, bounds=bounds_here, options={"disp": True})
+    result = linprog(c, A, b, bounds=bounds_here, options={"disp": True}, callback=Tableau())
     print(result)
     print(result.x)
 
@@ -228,7 +242,4 @@ if not determined:
 print('hallo test')
 
 
-def print_steps(xk, *kargs):
-    print(xk)
-    print(*kargs)
 
