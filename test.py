@@ -224,3 +224,5 @@ if not determined:
 #                    reduce.append([count+1, count_2+1])
 #                    print(reducable_line)
 #    print(reduced_game)
+
+print('hallo test')
