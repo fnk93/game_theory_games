@@ -2,6 +2,27 @@ import numpy as np
 from random import randrange
 from scipy import optimize
 
+
+class Generator:
+
+    def __init__(self, maximum_int, lin, col):
+        self.__maximum_int = maximum_int
+        self.__minimum_int = maximum_int * -1
+        self.__lin = randrange(2, lin)
+        self.__col = randrange(2, col)
+        self.__matrix = np.zeros((self.__lin, self.__col))
+
+        for count_lin in range(self.__lin):
+            for count_col in range(self.__col):
+                x = randrange(self.__minimum_int, self.__maximum_int + 1)
+                self.__matrix[count_lin][count_col] = x
+
+    def getMatrix(self):
+        return self.__matrix
+
+
+
+
 lines = randrange(2, 5)
 print('Zeilen: ' + str(lines))
 columns = randrange(2, 5)
@@ -20,7 +41,11 @@ for count_lin in range(lines):
         x = randrange(min_int, max_int+1)
 #        new_game[count_lin][count_col] = x - max_int
         new_game[count_lin][count_col] = x
-
+print('Vor der Klasse')
+print(new_game)
+gameGenerator = Generator()
+new_game = gameGenerator.getMatrix()
+print('Nach der Klasse')
 print(new_game)
 
 #test_game = [[0, -1, 2],
