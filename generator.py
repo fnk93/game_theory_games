@@ -43,10 +43,13 @@ for count_lin in range(lines):
         new_game[count_lin][count_col] = x
 print('Vor der Klasse')
 print(new_game)
-gameGenerator = Generator()
+gameGenerator = Generator(10, 5, 5)
 new_game = gameGenerator.getMatrix()
 print('Nach der Klasse')
 print(new_game)
+
+lines = new_game.shape[0]
+columns = new_game.shape[1]
 
 #test_game = [[0, -1, 2],
 #             [2, 0, -1],
