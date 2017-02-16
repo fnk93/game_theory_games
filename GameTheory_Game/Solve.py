@@ -2,7 +2,7 @@ import numpy as np
 from random import randrange
 from scipy import optimize
 
-# TODO: Determiniertheit, Maximin-Strategien, gemischte Strategien + Lösungswege
+# TODO: Gemischte Strategien + Lösungswege über Simplex und graphisches Verfahren
 
 
 class Solve(object):
@@ -121,7 +121,6 @@ class Solve(object):
                     reduced_matrix = np.delete(reduced_matrix, reduce[count]-i, 0)
                     i += 1
                     self.__reduced = True
-            print(reduce)
             dimensions = reduced_matrix.shape
             reduce = []
 
@@ -145,7 +144,6 @@ class Solve(object):
                     reduced_matrix = np.delete(reduced_matrix, reduce[count] - i, 1)
                     i += 1
                     self.__reduced = True
-            print(reduce)
         self.__reduced_matrix = reduced_matrix
 
 
