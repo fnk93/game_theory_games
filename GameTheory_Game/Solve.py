@@ -33,6 +33,12 @@ class Solve(object):
         self.__game_bounds1 = []
         self.__simplex1 = ''
         self.use_simplex1()
+        self.__c2 = []
+        self.__A2 = []
+        self.__b2 = []
+        self.__game_bounds2 = []
+        self.__simplex2 = ''
+        self.use_simplex2()
 
 
     # Determiniertheit des Spiels bestimmen
@@ -105,6 +111,9 @@ class Solve(object):
         print(self.__simplex1)
         for count in range(len(self.__simplex1.x)):
             print(nsimplify(self.__simplex1.x[count] * (1/self.__simplex1.fun)))
+        print(self.__simplex2)
+        for count in range(len(self.__simplex2.x)):
+            print(nsimplify(abs(self.__simplex2.x[count] * (1 / self.__simplex2.fun))))
 
     # Matrix reduzieren falls möglich
     def reduce_matrix(self):
@@ -192,3 +201,22 @@ class Solve(object):
             self.__game_bounds1.append((0, None))
 
         self.__simplex1 = optimize.linprog(self.__c1, self.__A1, self.__b1, bounds=self.__game_bounds1)
+
+    # Simplex Algorithmus nutzen
+    def use_simplex2(self):
+        for count_col in range(np.asarray(self.__simplex_game).shape[1]):
+            self.__c2.append(-1)
+
+        for count_lin in range(np.asarray(self.__simplex_game).shape[0]):
+            temp = []
+            for count_col in range(np.asarray(self.__simplex_game).shape[1]):
+                temp.append(self.__simplex_game[count_lin][count_col])
+            self.__A2.append(temp)
+
+        for count_lin in range(np.asarray(self.__simplex_game).shape[0]):
+            self.__b2.append(1)
+
+        for count_col in range(np.asarray(self.__simplex_game).shape[1]):
+            self.__game_bounds2.append((0, None))
+
+        self.__simplex2 = optimize.linprog(self.__c2, self.__A2, self.__b2, bounds=self.__game_bounds2)
