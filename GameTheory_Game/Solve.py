@@ -1,6 +1,7 @@
 import numpy as np
 from random import randrange
 from scipy import optimize
+from sympy import nsimplify
 
 # TODO: Gemischte Strategien + Lösungswege über Simplex und graphisches Verfahren
 
@@ -23,6 +24,15 @@ class Solve(object):
         self.__reduced = False
         if not self.__determined:
             self.reduce_matrix()
+        self.__simplex_game = []
+        self.__added_constant = 0
+        self.make_array_ready()
+        self.__c1 = []
+        self.__A1 = []
+        self.__b1 = []
+        self.__game_bounds1 = []
+        self.__simplex1 = ''
+        self.use_simplex1()
 
 
     # Determiniertheit des Spiels bestimmen
@@ -92,6 +102,9 @@ class Solve(object):
         print('Strategiekombinationen: ' + str(self.__solutions))
         if self.__reduced:
             print('Reduziertes Spiel: \n' + str(self.__reduced_matrix))
+        print(self.__simplex1)
+        for count in range(len(self.__simplex1.x)):
+            print(nsimplify(self.__simplex1.x[count] * (1/self.__simplex1.fun)))
 
     # Matrix reduzieren falls möglich
     def reduce_matrix(self):
@@ -153,3 +166,29 @@ class Solve(object):
             for count_2 in range(np.asarray(self.__maximin_strategies2).shape[0]):
                 self.__solutions.append([self.__maximin_strategies1[count], self.__maximin_strategies2[count_2]])
 
+    # Array für Simplex vorbereiten (keine negativen Auszahlungen)
+    def make_array_ready(self):
+        self.__added_constant = np.amin(self.__matrix)
+        if self.__added_constant < 1:
+            self.__simplex_game = self.__matrix - (self.__added_constant - 1)
+        else:
+            self.__simplex_game = self.__matrix
+
+    # Simplex Algorithmus nutzen
+    def use_simplex1(self):
+        for count_lin in range(np.asarray(self.__simplex_game).shape[0]):
+            self.__c1.append(1)
+
+        for count_col in range(np.asarray(self.__simplex_game).shape[1]):
+            temp = []
+            for count_lin in range(np.asarray(self.__simplex_game).shape[0]):
+                temp.append(self.__simplex_game[count_lin][count_col] * -1)
+            self.__A1.append(temp)
+
+        for count_col in range(np.asarray(self.__simplex_game).shape[1]):
+            self.__b1.append(-1)
+
+        for count_lin in range(np.asarray(self.__simplex_game).shape[0]):
+            self.__game_bounds1.append((0, None))
+
+        self.__simplex1 = optimize.linprog(self.__c1, self.__A1, self.__b1, bounds=self.__game_bounds1)
