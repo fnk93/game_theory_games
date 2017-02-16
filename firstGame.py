@@ -1,6 +1,10 @@
 import numpy as np
 from operator import add, neg
 
+# Wird nicht mehr gebraucht
+# TODO: Löschen
+
+
 game1 = [[1, 0],
          [2, 1],
          [0, -1]]

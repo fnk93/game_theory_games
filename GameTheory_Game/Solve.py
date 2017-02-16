@@ -17,6 +17,13 @@ class Solve(object):
         self.__maximin_strategies1 = []
         self.__maximin_strategies2 = []
         self.solve_strategies()
+        self.__reduced_matrix = []
+        self.__solutions = []
+        self.solving_array()
+        self.__reduced = False
+        if not self.__determined:
+            self.reduce_matrix()
+
 
     # Determiniertheit des Spiels bestimmen
     # Determiniertheitsintervall berechnen
@@ -76,7 +83,75 @@ class Solve(object):
     def output(self):
         if self.__determined:
             print('Spiel ist determiniert mit Spielwert: ' + str(self.__top_value1))
+            print('Auszahlung für Spieler 1: ' + str(self.__top_value1))
+            print('Auszahlung für Spieler 2: ' + str(-1 * self.__top_value2))
         else:
             print('Spiel ist nicht determiniert mit Indeterminiertheitsintervall: ' + str(self.__determinedIntervall))
         print('Maximin-Strategie(n) von Spieler 1: ' + str(self.__maximin_strategies1))
         print('Maximin-Strategie(n) von Spieler 2: ' + str(self.__maximin_strategies2))
+        print('Strategiekombinationen: ' + str(self.__solutions))
+        if self.__reduced:
+            print('Reduziertes Spiel: \n' + str(self.__reduced_matrix))
+
+    # Matrix reduzieren falls möglich
+    def reduce_matrix(self):
+        reduced_matrix = np.asarray(self.__matrix)
+        all_compared = False
+        while not all_compared and (reduced_matrix.shape[0] >= 2 and reduced_matrix.shape[1] >= 2):
+            all_compared = True
+            dimensions = reduced_matrix.shape
+            reduce = []
+            for count in range(dimensions[0]):
+                reducable_line = True
+                added = False
+                for count_2 in range(dimensions[0]):
+                    reducable_line = True
+                    if count != count_2:
+                        for count_3 in  range(dimensions[1]):
+                            if reduced_matrix[count][count_3] > reduced_matrix[count_2][count_3] and reducable_line:
+                                reducable_line = False
+                        if reducable_line:
+                            if not added:
+                                reduce.append(count)
+                                all_compared = False
+                                added = True
+            i = 0
+            for count in range(len(reduce)):
+                if reduced_matrix.shape[0] > 2:
+                    reduced_matrix = np.delete(reduced_matrix, reduce[count]-i, 0)
+                    i += 1
+                    self.__reduced = True
+            print(reduce)
+            dimensions = reduced_matrix.shape
+            reduce = []
+
+            for count in range(dimensions[1]):
+                reducable_column = True
+                added = False
+                for count_2 in range(dimensions[1]):
+                    reducable_column = True
+                    if count != count_2:
+                        for count_3 in range(dimensions[0]):
+                            if reduced_matrix[count_3][count] < reduced_matrix[count_3][count_2] and reducable_column:
+                                reducable_column = False
+                        if reducable_column:
+                            if not added:
+                                reduce.append(count)
+                                all_compared = False
+                                added = True
+            i = 0
+            for count in range(len(reduce)):
+                if reduced_matrix.shape[1] > 2:
+                    reduced_matrix = np.delete(reduced_matrix, reduce[count] - i, 1)
+                    i += 1
+                    self.__reduced = True
+            print(reduce)
+        self.__reduced_matrix = reduced_matrix
+
+
+    # Lösungsarray
+    def solving_array(self):
+        for count in range(np.asarray(self.__maximin_strategies1).shape[0]):
+            for count_2 in range(np.asarray(self.__maximin_strategies2).shape[0]):
+                self.__solutions.append([self.__maximin_strategies1[count], self.__maximin_strategies2[count_2]])
+
