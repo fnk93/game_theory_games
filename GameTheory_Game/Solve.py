@@ -264,3 +264,5 @@ class SolvingSteps():
 
     def getArrayXk(self):
         return self.__array_xk
+
+print(test)
