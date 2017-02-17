@@ -3,7 +3,10 @@ from random import randrange
 from scipy import optimize
 from sympy import nsimplify
 
-# TODO: Gemischte Strategien + Lösungswege über Simplex und graphisches Verfahren
+# TODO: Lösungstableaus auswerten und darstellen
+# TODO: Möglichkeit mehrere Lösungswege des Simplex abzubilden finden und abbilden
+# TODO: Daten für Lösungsweg sammeln lassen und an neue Klasse zur Darstellung
+# TODO: bzw. zum Export in LaTeX oder PDF übergeben
 
 
 class Solve(object):
@@ -32,12 +35,16 @@ class Solve(object):
         self.__b1 = []
         self.__game_bounds1 = []
         self.__simplex1 = ''
+        self.__simplex1_solving = []
+        self.__simplex1_solving_xk = []
         self.use_simplex1()
         self.__c2 = []
         self.__A2 = []
         self.__b2 = []
         self.__game_bounds2 = []
         self.__simplex2 = ''
+        self.__simplex2_solving = []
+        self.__simplex2_solving_xk = []
         self.use_simplex2()
 
 
@@ -99,21 +106,30 @@ class Solve(object):
     def output(self):
         if self.__determined:
             print('Spiel ist determiniert mit Spielwert: ' + str(self.__top_value1))
-            print('Auszahlung für Spieler 1: ' + str(self.__top_value1))
-            print('Auszahlung für Spieler 2: ' + str(-1 * self.__top_value2))
+            print('Auszahlung für Spieler 1 in reinen Strategien: ' + str(self.__top_value1))
+            print('Auszahlung für Spieler 2 in reinen Strategien: ' + str(-1 * self.__top_value2))
         else:
             print('Spiel ist nicht determiniert mit Indeterminiertheitsintervall: ' + str(self.__determinedIntervall))
+            for count in range(len(self.__solutions)):
+                print('Auszahlung für Spieler 1 in reinen Strategien: ' +
+                      str(self.__matrix[self.__solutions[count][0]-1][self.__solutions[count][1]-1]))
+                print('Auszahlung für Spieler 2 in reinen Strategien: ' +
+                      str(-1 * self.__matrix[self.__solutions[count][0]-1][self.__solutions[count][1]-1]))
         print('Maximin-Strategie(n) von Spieler 1: ' + str(self.__maximin_strategies1))
         print('Maximin-Strategie(n) von Spieler 2: ' + str(self.__maximin_strategies2))
         print('Strategiekombinationen: ' + str(self.__solutions))
         if self.__reduced:
             print('Reduziertes Spiel: \n' + str(self.__reduced_matrix))
-        print(self.__simplex1)
+        print('Spielwert für Spieler 1 in gemischten Strategien: ' +
+              str(nsimplify((1/(self.__simplex1.fun)) + (self.__added_constant - 1))))
         for count in range(len(self.__simplex1.x)):
-            print(nsimplify(self.__simplex1.x[count] * (1/self.__simplex1.fun)))
-        print(self.__simplex2)
+            print('Wahrscheinlichkeit Strategie ' + str(count+1) + ' für Spieler 1: ' +
+                  str(nsimplify(self.__simplex1.x[count] * (1/self.__simplex1.fun))))
+        # print(self.__simplex2)
         for count in range(len(self.__simplex2.x)):
-            print(nsimplify(abs(self.__simplex2.x[count] * (1 / self.__simplex2.fun))))
+            print('Wahrscheinlichkeit Strategie ' + str(count+1) + ' für Spieler 2: ' +
+                  str(nsimplify(abs(self.__simplex2.x[count] * (1 / self.__simplex2.fun)))))
+        print(self.__simplex2_solving)
 
     # Matrix reduzieren falls möglich
     def reduce_matrix(self):
@@ -169,7 +185,7 @@ class Solve(object):
         self.__reduced_matrix = reduced_matrix
 
 
-    # Lösungsarray
+    # Lösungsarray der Minimax-Strategien
     def solving_array(self):
         for count in range(np.asarray(self.__maximin_strategies1).shape[0]):
             for count_2 in range(np.asarray(self.__maximin_strategies2).shape[0]):
@@ -183,7 +199,8 @@ class Solve(object):
         else:
             self.__simplex_game = self.__matrix
 
-    # Simplex Algorithmus nutzen
+    # Simplex Algorithmus für Spieler 1 nutzen
+    # Zwischenergebnisse abfangen und speichern
     def use_simplex1(self):
         for count_lin in range(np.asarray(self.__simplex_game).shape[0]):
             self.__c1.append(1)
@@ -200,9 +217,14 @@ class Solve(object):
         for count_lin in range(np.asarray(self.__simplex_game).shape[0]):
             self.__game_bounds1.append((0, None))
 
-        self.__simplex1 = optimize.linprog(self.__c1, self.__A1, self.__b1, bounds=self.__game_bounds1)
+        temp_solver = SolvingSteps()
+        self.__simplex1 = optimize.linprog(self.__c1, self.__A1, self.__b1, bounds=self.__game_bounds1,
+                                           callback=temp_solver)
+        self.__simplex1_solving = temp_solver.getArrayKwargs()
+        self.__simplex1_solving_xk = temp_solver.getArrayXk()
 
-    # Simplex Algorithmus nutzen
+    # Simplex Algorithmus für Spieler 2 nutzen
+    # Zwischenergebnisse abfangen und speichern
     def use_simplex2(self):
         for count_col in range(np.asarray(self.__simplex_game).shape[1]):
             self.__c2.append(-1)
@@ -219,4 +241,26 @@ class Solve(object):
         for count_col in range(np.asarray(self.__simplex_game).shape[1]):
             self.__game_bounds2.append((0, None))
 
-        self.__simplex2 = optimize.linprog(self.__c2, self.__A2, self.__b2, bounds=self.__game_bounds2)
+        temp_solver = SolvingSteps()
+        self.__simplex2 = optimize.linprog(self.__c2, self.__A2, self.__b2, bounds=self.__game_bounds2,
+                                           callback=temp_solver)
+        self.__simplex2_solving = temp_solver.getArrayKwargs()
+        self.__simplex2_solving_xk = temp_solver.getArrayXk()
+
+
+# Callable Methode um Zwischenschritte des Simplex abzufangen
+class SolvingSteps():
+
+    def __init__(self):
+        self.__array_xk = []
+        self.__array_kwargs = []
+
+    def __call__(self, xk, **kwargs):
+        self.__array_xk.append(xk)
+        self.__array_kwargs.append(kwargs['tableau'])
+
+    def getArrayKwargs(self):
+        return self.__array_kwargs
+
+    def getArrayXk(self):
+        return self.__array_xk
