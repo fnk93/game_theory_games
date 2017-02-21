@@ -2,6 +2,8 @@ import numpy as np
 from random import randrange
 from scipy import optimize
 from sympy import nsimplify
+from sympy.solvers import solve
+from sympy import Matrix, symbols, S, linsolve, Eq, Ge
 
 # TODO: Lösungstableaus auswerten und darstellen
 # TODO: Möglichkeit mehrere Lösungswege des Simplex abzubilden finden und abbilden
@@ -130,6 +132,7 @@ class Solve(object):
             print('Wahrscheinlichkeit Strategie ' + str(count+1) + ' für Spieler 2: ' +
                   str(nsimplify(abs(self.__simplex2.x[count] * (1 / self.__simplex2.fun)))))
         print(self.__simplex2_solving)
+        self.nggw()
 
     # Matrix reduzieren falls möglich
     def reduce_matrix(self):
@@ -217,6 +220,7 @@ class Solve(object):
         for count_lin in range(np.asarray(self.__simplex_game).shape[0]):
             self.__game_bounds1.append((0, None))
 
+        # TODO: optimize.linprog_verbose_callback evtl. nutzen
         temp_solver = SolvingSteps()
         self.__simplex1 = optimize.linprog(self.__c1, self.__A1, self.__b1, bounds=self.__game_bounds1,
                                            callback=temp_solver)
@@ -241,11 +245,64 @@ class Solve(object):
         for count_col in range(np.asarray(self.__simplex_game).shape[1]):
             self.__game_bounds2.append((0, None))
 
+        # TODO: optimize.linprog_verbose_callback evtl. nutzen
         temp_solver = SolvingSteps()
         self.__simplex2 = optimize.linprog(self.__c2, self.__A2, self.__b2, bounds=self.__game_bounds2,
                                            callback=temp_solver)
         self.__simplex2_solving = temp_solver.getArrayKwargs()
         self.__simplex2_solving_xk = temp_solver.getArrayXk()
+
+    # Lösung mit Nash-GGW Bedingung
+    def nggw(self):
+        # Gemischte Strategien p für Spieler 1 und Spielwert für Spieler 2
+        p = []
+        u = []
+        for count in range(self.__matrix.shape[0]):
+            p.append(symbols('p' + str(count+1)))
+        p.append(symbols('w'))
+        for count in range(self.__matrix.shape[1]):
+            temp = 0
+            for count_2 in range(self.__matrix.shape[0]):
+                temp += (self.__matrix[count_2][count]*-1*p[count_2])
+            temp += (p[len(p)-1])*-1
+            u.append(temp)
+        temp2 = 0
+        for count in range(len(p)-1):
+            temp2 += 1*p[count]
+        temp2 -= 1
+        u.append(temp2)
+        print(p)
+        print(u)
+        print(linsolve(u, p))
+        ngg1 = linsolve(u, p)
+
+        # Gemischte Strategien q für Spieler 2 und Spielwert für Spieler 1
+        q = []
+        u2 = []
+        w2 = symbols('w2')
+        for count in range(self.__matrix.shape[1]):
+            q.append(symbols('q' + str(count+1)))
+        q.append(w2)
+        for count in range(self.__matrix.shape[0]):
+            temp = 0
+            for count_2 in range(self.__matrix.shape[1]):
+                temp += (self.__matrix[count][count_2]*q[count_2])
+            #temp += (q[len(q)-1])*-1
+            u2.append(Eq(temp, w2))
+        temp2 = 0
+        for count in range(len(q)-1):
+            temp2 += 1*q[count]
+        #temp2 -= 1
+        u2.append(Eq(temp2, 1))
+        for count in range(len(q)-1):
+            u2.append(Ge(q[count], 0))
+        print('Q:')
+        print(q)
+        print('U2:')
+        print(u2)
+        print(linsolve(u2, q))
+        ngg2 = linsolve(u2, q)
+
 
 
 # Callable Methode um Zwischenschritte des Simplex abzufangen
@@ -264,5 +321,3 @@ class SolvingSteps():
 
     def getArrayXk(self):
         return self.__array_xk
-
-print(test)
