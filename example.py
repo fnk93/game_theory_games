@@ -8,6 +8,7 @@ from sympy.core.relational import Relational
 from sympy import *
 from scipy import optimize
 import sympy as sy
+from sympy import Abs
 
 
 example = Game()
@@ -18,44 +19,26 @@ print(example.get_matrix())
 solver = Solve(example)
 solver.output()
 
-#Eqns = [x + y = 0, x >= 0, y >= 0]
-x= symbols('x')
-y = symbols('y')
-eq1 = Relational(x+y, 1, '==')
-eq1 = ((Poly(x+y), Poly(1, x, y)), '==')
-eq2 = Relational(x, 0, '>=')
-eq2 = ((Poly(x), Poly(0, x)), '>=')
-eq3 = Relational(y, 0, '>=')
-eq3 = ((Poly(y), Poly(0, y)), '>=')
-eq1 = ((Poly(x+y), Poly(1, x,y)), '>=')
-z = symbols('z')
-w2 = symbols('w2')
-print([Eq(5*x+-9*y + z, w2), Eq(-5*x - 5*z, w2).as_expr(), Eq(-10*x +8*y-5*z, w2).as_expr(), Eq(x+y+z,1).as_expr(), GreaterThan(x, 0), Ge(y, 0), Ge(z,0)], [x, y, z, w2])
-print(linsolve([Eq(5*x+-9*y + z, w2), Eq(-5*x - 5*z, w2), Eq(-10*x +8*y-5*z, w2), Eq(x+y+z,1), Ge(x, 0), Ge(y, 0), Ge(z,0)], [x, y, z, w2]))
-print(linsolve([Eq(x+y,1), Eq(2*x+y, 2), Ge(x, 0), Ge(y, 0)], [x,y]))
-print(linsolve([Eq(5*x+-9*y + z, w2), Eq(-5*x - 5*z, w2), Eq(-10*x +8*y-5*z, w2), Eq(x+y+z,1), GreaterThan(x, 0), GreaterThan(y, 0), GreaterThan(z,0)], [x, y, z, w2]))
-print(np.linalg.solve([[5, -9, 1, -1], [-5, 0, -5, -1], [-10, 8, -5, -1], [1, 1, 1, 0]], [0, 0, 0, 1]))
-x, y, z, w = sy.symbols("x y z w")
+x, y, z, w = sy.symbols("x y z w", real=True)
 equations = [
     sy.Eq(5*x - 9*y + z, w),
     sy.Eq(-5*x - 5*z, w),
     sy.Eq(-10*x + 8*y - 5*z, w),
     sy.Eq(x + y + z, 1),
+    sy.Eq(Abs(x) + Abs(y) + Abs(z), 1),
 ]
 
-print(reduce_inequalities([
-        sy.Ge(1*x, 0),
-        sy.Ge(1*y, 0),
-        sy.Ge(1*z, 0),
-        ]))
-print(sy.solve(equations))
-equations2 = [
-    sy.Eq(5*x - 9*y, w),
-    sy.Eq(-5*x, w),
-    sy.Eq(-10*x + 8*y, w),
-    sy.Eq(x + y, 1),
+equations = [
+    sy.Eq(0*x - 1*y + 2*z, w),
+    sy.Eq(2*x + 0*y - 1*z, w),
+    sy.Eq(-1*x + 2*y + 0*z, w),
+    sy.Eq(x + y + z, 1),
+    sy.Eq(Abs(x) + Abs(y) + Abs(z), 1),
 ]
-print(sy.solve(equations2))
+
+print(equations)
+print(sy.solve(equations))
+
 
 '''
 game1 = [[-10, -3, 10, 2],
