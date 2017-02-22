@@ -18,24 +18,22 @@ print(example.get_matrix())
 #                             [-1, 2, 0]]))
 solver = Solve(example)
 solver.output()
-
-x, y, z, w = sy.symbols("x y z w", real=True)
+x, y, z = sy.symbols("x y z", real=True, positive=True)
+w = sy.symbols("w", real=True)
 equations = [
     sy.Eq(5*x - 9*y + z, w),
     sy.Eq(-5*x - 5*z, w),
     sy.Eq(-10*x + 8*y - 5*z, w),
     sy.Eq(x + y + z, 1),
-    sy.Eq(Abs(x) + Abs(y) + Abs(z), 1),
 ]
-
+'''
 equations = [
     sy.Eq(0*x - 1*y + 2*z, w),
     sy.Eq(2*x + 0*y - 1*z, w),
     sy.Eq(-1*x + 2*y + 0*z, w),
     sy.Eq(x + y + z, 1),
-    sy.Eq(Abs(x) + Abs(y) + Abs(z), 1),
 ]
-
+'''
 print(equations)
 print(sy.solve(equations))
 

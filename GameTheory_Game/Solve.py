@@ -253,35 +253,39 @@ class Solve(object):
         self.__simplex2_solving_xk = temp_solver.getArrayXk()
 
     # Lösung mit Nash-GGW Bedingung
+    # TODO: mit reduzierter Matrix rechnen
     def nggw(self):
         # Gemischte Strategien p für Spieler 1 und Spielwert für Spieler 2
         p = []
         u = []
+        w = symbols('w', real=True)
         for count in range(self.__matrix.shape[0]):
-            p.append(symbols('p' + str(count+1)))
-        p.append(symbols('w'))
+            p.append(symbols('p' + str(count+1), real=True, positive=True))
+        p.append(w)
         for count in range(self.__matrix.shape[1]):
             temp = 0
             for count_2 in range(self.__matrix.shape[0]):
                 temp += (self.__matrix[count_2][count]*-1*p[count_2])
-            temp += (p[len(p)-1])*-1
-            u.append(temp)
+            #temp += (p[len(p)-1])*-1
+            u.append(Eq(temp, w))
         temp2 = 0
         for count in range(len(p)-1):
             temp2 += 1*p[count]
-        temp2 -= 1
-        u.append(temp2)
+        #temp2 -= 1
+        u.append(Eq(temp2, 1))
+        print('P:')
         print(p)
+        print('U1:')
         print(u)
-        print(linsolve(u, p))
+        print(solve(u))
         ngg1 = linsolve(u, p)
 
         # Gemischte Strategien q für Spieler 2 und Spielwert für Spieler 1
         q = []
         u2 = []
-        w2 = symbols('w2')
+        w2 = symbols('w2', real=True)
         for count in range(self.__matrix.shape[1]):
-            q.append(symbols('q' + str(count+1)))
+            q.append(symbols('q' + str(count+1), real=True, positive=True))
         q.append(w2)
         for count in range(self.__matrix.shape[0]):
             temp = 0
@@ -294,13 +298,11 @@ class Solve(object):
             temp2 += 1*q[count]
         #temp2 -= 1
         u2.append(Eq(temp2, 1))
-        for count in range(len(q)-1):
-            u2.append(Ge(q[count], 0))
         print('Q:')
         print(q)
         print('U2:')
         print(u2)
-        print(linsolve(u2, q))
+        print(solve(u2))
         ngg2 = linsolve(u2, q)
 
 
