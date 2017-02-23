@@ -17,17 +17,28 @@ print(example.get_matrix())
 #                             [-2, 7, 8, -9],
 #                             [3, -7, -9, 0],
 #                             [9, 8, 1, -2]]))
-#example.set_matrix(np.array([[10, 5],
-#                             [-7, -3],
-#                             [3, -7]]))
+#example.set_matrix(np.array([[0, -1, 2],
+#                             [2, 0, -1],
+#                             [-1, 2, 0]]))
 print(example.get_matrix())
 solver = Solve(example)
 solver.output()
 
-variablen = var('q:3, w')
+variablen = symbols('q:3, w')
 for count in range(len(variablen)):
     print(variablen[count])
+print(variablen)
 
+example2 = Game(mode=11)
+print(example2.get_matrix())
+print(example2.get_matrix2())
+print('Kampf der Geschlechter:')
+example3 = Game(mode=12)
+print(example3.get_matrix())
+print(example3.get_matrix2())
+print('Allgemein')
+example4 = Game(mode=1)
+print(example4.get_matrix())
 '''
 w = sy.symbols('w', real=True)
 w2 = symbols('w2', real=True)

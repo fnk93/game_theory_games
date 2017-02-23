@@ -262,14 +262,16 @@ class Solve(object):
     # Lösung mit Nash-GGW Bedingung
     def nggw(self):
         # Gemischte Strategien p für Spieler 1 und Spielwert für Spieler 2
-        p = []
+        p = symbols('p:'+str(self.__reduced_matrix.shape[0]), nonnegative=True)
+        w = symbols('w', real=True)
+        #p = []
         u = []
-        w = Symbol('w', real=True)
-        for count in range(self.__reduced_matrix.shape[0]):
-            tempo = Symbol("p" + str(count+1), nonnegative=True)
-            p.append(tempo)
-            print(tempo.assumptions0)
-        p.append(w)
+        #w = Symbol('w', real=True)
+        #for count in range(self.__reduced_matrix.shape[0]):
+        #    tempo = Symbol("p" + str(count+1), nonnegative=True)
+        #    p.append(tempo)
+        #    print(tempo.assumptions0)
+        #p.append(w)
         for count in range(self.__reduced_matrix.shape[1]):
             temp = 0
             for count_2 in range(self.__reduced_matrix.shape[0]):
@@ -277,7 +279,7 @@ class Solve(object):
             #temp += (p[len(p)-1])*-1
             u.append(Eq(temp, w))
         temp2 = 0
-        for count in range(len(p)-1):
+        for count in range(len(p)):
             temp2 += 1*p[count]
         #temp2 -= 1
         u.append(Eq(temp2, 1))
@@ -285,19 +287,19 @@ class Solve(object):
         print(p)
         print('U1:')
         print(u)
-        print(linsolve(u, p))
-        ngg1 = linsolve(u, p)
+        print(solve(u))
+        ngg1 = solve(u)
 
         # Gemischte Strategien q für Spieler 2 und Spielwert für Spieler 1
-        q = var('q:'+str(self.__reduced_matrix.shape[1])+', w2')
-        q = []
+        q = symbols('q:'+str(self.__reduced_matrix.shape[1]), nonnegative=True)
+        #q = []
         u2 = []
-        w2 = Symbol('w2', real=True)
-        for count in range(self.__reduced_matrix.shape[1]):
-            tempo = Symbol("q" + str(count+1), nonnegative=True)
-            q.append(tempo)
-            print(tempo.assumptions0)
-        q.append(w2)
+        w2 = symbols('w2', real=True)
+        #for count in range(self.__reduced_matrix.shape[1]):
+        #    tempo = Symbol("q" + str(count+1), nonnegative=True)
+        #    q.append(tempo)
+        #    print(tempo.assumptions0)
+        #q.append(w2)
         for count in range(self.__reduced_matrix.shape[0]):
             temp = 0
             for count_2 in range(self.__reduced_matrix.shape[1]):
@@ -305,7 +307,7 @@ class Solve(object):
             #temp += (q[len(q)-1])*-1
             u2.append(Eq(temp, w2))
         temp2 = 0
-        for count in range(len(q)-1):
+        for count in range(len(q)):
             temp2 += 1*q[count]
         #temp2 -= 1
         u2.append(Eq(temp2, 1))
@@ -313,8 +315,8 @@ class Solve(object):
         print(q)
         print('U2:')
         print(u2)
-        print(linsolve(u2, q))
-        ngg2 = linsolve(u2, q)
+        print(solve(u2))
+        ngg2 = solve(u2)
 
 
 
