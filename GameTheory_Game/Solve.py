@@ -3,7 +3,7 @@ from random import randrange
 from scipy import optimize
 from sympy import nsimplify
 from sympy.solvers import solve
-from sympy import Matrix, symbols, S, linsolve, Eq, Ge
+from sympy import Matrix, symbols, S, linsolve, Eq, Ge, Symbol, var
 
 # TODO: Lösungstableaus auswerten und darstellen
 # TODO: Möglichkeit mehrere Lösungswege des Simplex abzubilden finden und abbilden
@@ -27,8 +27,7 @@ class Solve(object):
         self.__solutions = []
         self.solving_array()
         self.__reduced = False
-        if not self.__determined:
-            self.reduce_matrix()
+        self.reduce_matrix()
         self.__simplex_game = []
         self.__added_constant = 0
         self.make_array_ready()
@@ -123,69 +122,78 @@ class Solve(object):
         if self.__reduced:
             print('Reduziertes Spiel: \n' + str(self.__reduced_matrix))
         print('Spielwert für Spieler 1 in gemischten Strategien: ' +
-              str(nsimplify((1/(self.__simplex1.fun)) + (self.__added_constant - 1))))
+              str(nsimplify((1/((self.__simplex1.fun))) + (self.__added_constant - 1), tolerance=0.0001, rational=True)))
         for count in range(len(self.__simplex1.x)):
             print('Wahrscheinlichkeit Strategie ' + str(count+1) + ' für Spieler 1: ' +
-                  str(nsimplify(self.__simplex1.x[count] * (1/self.__simplex1.fun))))
+                  str(nsimplify((self.__simplex1.x[count]) * ((1/(self.__simplex1.fun))), tolerance=0.0001, rational=True)))
         # print(self.__simplex2)
         for count in range(len(self.__simplex2.x)):
             print('Wahrscheinlichkeit Strategie ' + str(count+1) + ' für Spieler 2: ' +
-                  str(nsimplify(abs(self.__simplex2.x[count] * (1 / self.__simplex2.fun)))))
-        print(self.__simplex2_solving)
+                  str(nsimplify(abs((self.__simplex2.x[count]) * (1 / (self.__simplex2.fun))), tolerance=0.0001, rational=True)))
+        #print(self.__simplex1_solving)
         self.nggw()
+        print(self.__simplex1)
+        print(self.__simplex2)
 
     # Matrix reduzieren falls möglich
     def reduce_matrix(self):
         reduced_matrix = np.asarray(self.__matrix)
         all_compared = False
-        while not all_compared and (reduced_matrix.shape[0] >= 2 and reduced_matrix.shape[1] >= 2):
+        run = 0
+        while not all_compared:
+            run += 1
             all_compared = True
             dimensions = reduced_matrix.shape
             reduce = []
-            for count in range(dimensions[0]):
-                reducable_line = True
-                added = False
-                for count_2 in range(dimensions[0]):
+            if reduced_matrix.shape[0] > 2:
+                for count in range(dimensions[0]):
                     reducable_line = True
-                    if count != count_2:
-                        for count_3 in  range(dimensions[1]):
-                            if reduced_matrix[count][count_3] > reduced_matrix[count_2][count_3] and reducable_line:
-                                reducable_line = False
-                        if reducable_line:
-                            if not added:
-                                reduce.append(count)
-                                all_compared = False
-                                added = True
-            i = 0
-            for count in range(len(reduce)):
-                if reduced_matrix.shape[0] > 2:
-                    reduced_matrix = np.delete(reduced_matrix, reduce[count]-i, 0)
-                    i += 1
-                    self.__reduced = True
-            dimensions = reduced_matrix.shape
+                    added = False
+                    for count_2 in range(dimensions[0]):
+                        reducable_line = True
+                        if count != count_2:
+                            for count_3 in  range(dimensions[1]):
+                                if reduced_matrix[count][count_3] > reduced_matrix[count_2][count_3] and reducable_line:
+                                    reducable_line = False
+                            if reducable_line:
+                                if not added:
+                                    reduce.append(count)
+                                    all_compared = False
+                                    added = True
+                i = 0
+                for count in range(len(reduce)):
+                    if reduced_matrix.shape[0] > 2:
+                        reduced_matrix = np.delete(reduced_matrix, reduce[count]-i, 0)
+                        i += 1
+                        self.__reduced = True
+                dimensions = reduced_matrix.shape
             reduce = []
 
-            for count in range(dimensions[1]):
-                reducable_column = True
-                added = False
-                for count_2 in range(dimensions[1]):
+            if reduced_matrix.shape[1] > 2:
+                for count in range(dimensions[1]):
                     reducable_column = True
-                    if count != count_2:
-                        for count_3 in range(dimensions[0]):
-                            if reduced_matrix[count_3][count] < reduced_matrix[count_3][count_2] and reducable_column:
-                                reducable_column = False
-                        if reducable_column:
-                            if not added:
-                                reduce.append(count)
-                                all_compared = False
-                                added = True
-            i = 0
-            for count in range(len(reduce)):
-                if reduced_matrix.shape[1] > 2:
-                    reduced_matrix = np.delete(reduced_matrix, reduce[count] - i, 1)
-                    i += 1
-                    self.__reduced = True
+                    added = False
+                    for count_2 in range(dimensions[1]):
+                        reducable_column = True
+                        if count != count_2:
+                            for count_3 in range(dimensions[0]):
+                                if reduced_matrix[count_3][count] < reduced_matrix[count_3][count_2] and reducable_column:
+                                    reducable_column = False
+                            if reducable_column:
+                                if not added:
+                                    reduce.append(count)
+                                    all_compared = False
+                                    added = True
+                i = 0
+                for count in range(len(reduce)):
+                    if reduced_matrix.shape[1] > 2:
+                        reduced_matrix = np.delete(reduced_matrix, reduce[count] - i, 1)
+                        i += 1
+                        self.__reduced = True
+            if reduced_matrix.shape[0] <= 2 and reduced_matrix.shape[1] <= 2:
+                all_compared = True
         self.__reduced_matrix = reduced_matrix
+
 
 
     # Lösungsarray der Minimax-Strategien
@@ -222,7 +230,7 @@ class Solve(object):
 
         # TODO: optimize.linprog_verbose_callback evtl. nutzen
         temp_solver = SolvingSteps()
-        self.__simplex1 = optimize.linprog(self.__c1, self.__A1, self.__b1, bounds=self.__game_bounds1,
+        self.__simplex1 = optimize.linprog(self.__c1, self.__A1, self.__b1,
                                            callback=temp_solver)
         self.__simplex1_solving = temp_solver.getArrayKwargs()
         self.__simplex1_solving_xk = temp_solver.getArrayXk()
@@ -247,7 +255,7 @@ class Solve(object):
 
         # TODO: optimize.linprog_verbose_callback evtl. nutzen
         temp_solver = SolvingSteps()
-        self.__simplex2 = optimize.linprog(self.__c2, self.__A2, self.__b2, bounds=self.__game_bounds2,
+        self.__simplex2 = optimize.linprog(self.__c2, self.__A2, self.__b2,
                                            callback=temp_solver)
         self.__simplex2_solving = temp_solver.getArrayKwargs()
         self.__simplex2_solving_xk = temp_solver.getArrayXk()
@@ -257,36 +265,44 @@ class Solve(object):
         # Gemischte Strategien p für Spieler 1 und Spielwert für Spieler 2
         p = []
         u = []
-        for count in range(self.__matrix.shape[0]):
-            p.append(symbols('p' + str(count+1)))
-        p.append(symbols('w'))
-        for count in range(self.__matrix.shape[1]):
+        w = Symbol('w', real=True)
+        for count in range(self.__reduced_matrix.shape[0]):
+            tempo = Symbol("p" + str(count+1), nonnegative=True)
+            p.append(tempo)
+            print(tempo.assumptions0)
+        p.append(w)
+        for count in range(self.__reduced_matrix.shape[1]):
             temp = 0
-            for count_2 in range(self.__matrix.shape[0]):
-                temp += (self.__matrix[count_2][count]*-1*p[count_2])
-            temp += (p[len(p)-1])*-1
-            u.append(temp)
+            for count_2 in range(self.__reduced_matrix.shape[0]):
+                temp += (self.__reduced_matrix[count_2][count]*-1*p[count_2])
+            #temp += (p[len(p)-1])*-1
+            u.append(Eq(temp, w))
         temp2 = 0
         for count in range(len(p)-1):
             temp2 += 1*p[count]
-        temp2 -= 1
-        u.append(temp2)
+        #temp2 -= 1
+        u.append(Eq(temp2, 1))
+        print('P:')
         print(p)
+        print('U1:')
         print(u)
         print(linsolve(u, p))
         ngg1 = linsolve(u, p)
 
         # Gemischte Strategien q für Spieler 2 und Spielwert für Spieler 1
+        q = var('q:'+str(self.__reduced_matrix.shape[1])+', w2')
         q = []
         u2 = []
-        w2 = symbols('w2')
-        for count in range(self.__matrix.shape[1]):
-            q.append(symbols('q' + str(count+1)))
+        w2 = Symbol('w2', real=True)
+        for count in range(self.__reduced_matrix.shape[1]):
+            tempo = Symbol("q" + str(count+1), nonnegative=True)
+            q.append(tempo)
+            print(tempo.assumptions0)
         q.append(w2)
-        for count in range(self.__matrix.shape[0]):
+        for count in range(self.__reduced_matrix.shape[0]):
             temp = 0
-            for count_2 in range(self.__matrix.shape[1]):
-                temp += (self.__matrix[count][count_2]*q[count_2])
+            for count_2 in range(self.__reduced_matrix.shape[1]):
+                temp += (self.__reduced_matrix[count][count_2]*q[count_2])
             #temp += (q[len(q)-1])*-1
             u2.append(Eq(temp, w2))
         temp2 = 0
@@ -294,8 +310,6 @@ class Solve(object):
             temp2 += 1*q[count]
         #temp2 -= 1
         u2.append(Eq(temp2, 1))
-        for count in range(len(q)-1):
-            u2.append(Ge(q[count], 0))
         print('Q:')
         print(q)
         print('U2:')

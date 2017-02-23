@@ -12,51 +12,60 @@ import sympy as sy
 
 example = Game()
 print(example.get_matrix())
-#example.set_matrix(np.array([[0, -1, 2],
-#                             [2, 0, -1],
-#                             [-1, 2, 0]]))
+#example.set_matrix(np.array([[0, 4, -10, 9],
+#                             [-2, 7, 8, -9],
+#                             [3, -7, -9, 0],
+#                             [9, 8, 1, -2]]))
+#example.set_matrix(np.array([[10, 5],
+#                             [-7, -3],
+#                             [3, -7]]))
+print(example.get_matrix())
 solver = Solve(example)
 solver.output()
 
-#Eqns = [x + y = 0, x >= 0, y >= 0]
-x= symbols('x')
-y = symbols('y')
-eq1 = Relational(x+y, 1, '==')
-eq1 = ((Poly(x+y), Poly(1, x, y)), '==')
-eq2 = Relational(x, 0, '>=')
-eq2 = ((Poly(x), Poly(0, x)), '>=')
-eq3 = Relational(y, 0, '>=')
-eq3 = ((Poly(y), Poly(0, y)), '>=')
-eq1 = ((Poly(x+y), Poly(1, x,y)), '>=')
-z = symbols('z')
-w2 = symbols('w2')
-print([Eq(5*x+-9*y + z, w2), Eq(-5*x - 5*z, w2).as_expr(), Eq(-10*x +8*y-5*z, w2).as_expr(), Eq(x+y+z,1).as_expr(), GreaterThan(x, 0), Ge(y, 0), Ge(z,0)], [x, y, z, w2])
-print(linsolve([Eq(5*x+-9*y + z, w2), Eq(-5*x - 5*z, w2), Eq(-10*x +8*y-5*z, w2), Eq(x+y+z,1), Ge(x, 0), Ge(y, 0), Ge(z,0)], [x, y, z, w2]))
-print(linsolve([Eq(x+y,1), Eq(2*x+y, 2), Ge(x, 0), Ge(y, 0)], [x,y]))
-print(linsolve([Eq(5*x+-9*y + z, w2), Eq(-5*x - 5*z, w2), Eq(-10*x +8*y-5*z, w2), Eq(x+y+z,1), GreaterThan(x, 0), GreaterThan(y, 0), GreaterThan(z,0)], [x, y, z, w2]))
-print(np.linalg.solve([[5, -9, 1, -1], [-5, 0, -5, -1], [-10, 8, -5, -1], [1, 1, 1, 0]], [0, 0, 0, 1]))
-x, y, z, w = sy.symbols("x y z w")
+variablen = var('q:3, w')
+for count in range(len(variablen)):
+    print(variablen[count])
+
+'''
+w = sy.symbols('w', real=True)
+w2 = symbols('w2', real=True)
+v, x, y, z = sy.symbols("v x y z", real=True, positive=True)
 equations = [
-    sy.Eq(5*x - 9*y + z, w),
-    sy.Eq(-5*x - 5*z, w),
-    sy.Eq(-10*x + 8*y - 5*z, w),
+    sy.Eq(-10*x + 5*y - 5*z, w),
+    sy.Eq(9*x - 5*y + 6*z, w),
+    sy.Eq(-6*x - 2*y + 7*z, w),
     sy.Eq(x + y + z, 1),
 ]
-
-print(reduce_inequalities([
-        sy.Ge(1*x, 0),
-        sy.Ge(1*y, 0),
-        sy.Ge(1*z, 0),
-        ]))
+print('Reduziertes Spiel und Strategien Spieler 1')
 print(sy.solve(equations))
+print(23/40 + 43/320 + 93/320)
 equations2 = [
-    sy.Eq(5*x - 9*y, w),
-    sy.Eq(-5*x, w),
-    sy.Eq(-10*x + 8*y, w),
-    sy.Eq(x + y, 1),
+    sy.Eq(10*x - 9*y + 6*z, w),
+    sy.Eq(-5*x + 5*y + 2*z, w),
+    sy.Eq(5*x - 6*y - 7*z, w),
+    sy.Eq(x + y + z, 1),
 ]
+print('Reduziertes Spiel und Strategien Spieler 2')
 print(sy.solve(equations2))
-
+equations3 = [
+    sy.Eq(-10*x + 5*y - 5*z + 5*v, w),
+    sy.Eq(9*x - 5*y + 6*z - 5*v, w),
+    sy.Eq(-6*x - 2*y + 7*z + 6*v, w),
+    sy.Eq(x + y + z + v, 1),
+]
+print('Nicht Reduziertes Spiel und Strategien Spieler 1')
+print(sy.solve(equations3))
+equations4 = [
+    sy.Eq(10*x - 9*y + 6*z, w),
+    sy.Eq(-5*x + 5*y + 2*z, w),
+    sy.Eq(5*x - 6*y - 7*z, w),
+    sy.Eq(-5*x + 5*y - 6*z, w),
+    sy.Eq(x + y + z, 1),
+]
+print('Nicht Reduziertes Spiel und Strategien Spieler 2')
+print(sy.solve(equations4))
+'''
 '''
 game1 = [[-10, -3, 10, 2],
          [2, 0, 1, -2]]
