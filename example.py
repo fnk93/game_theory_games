@@ -8,6 +8,7 @@ from sympy.core.relational import Relational
 from sympy import *
 from scipy import optimize
 import sympy as sy
+from sympy import Abs
 
 
 example = Game()

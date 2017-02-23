@@ -195,7 +195,6 @@ class Solve(object):
         self.__reduced_matrix = reduced_matrix
 
 
-
     # Lösungsarray der Minimax-Strategien
     def solving_array(self):
         for count in range(np.asarray(self.__maximin_strategies1).shape[0]):
