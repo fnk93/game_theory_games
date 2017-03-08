@@ -61,7 +61,8 @@ class Game(object):
                 for count_col in range(self.__col):
                     x = randrange(self.__minimum_int, self.__maximum_int + 1)
                     y = randrange(self.__minimum_int, self.__maximum_int + 1)
-                    self.__matrix[count_lin][count_col] = (x, y)
+                    self.__matrix[count_lin][count_col] = x
+                    self.__matrix2[count_lin][count_col] = y
 
         # Gefangenendilemma
         # 2 Strategien pro Person: Cooperate, Defect
@@ -78,13 +79,13 @@ class Game(object):
             b = randrange(a - self.__maximum_int, a)
             c = randrange(b - self.__maximum_int, 2*b - a + 1)
             d = randrange(c - self.__maximum_int, 2*b - a)
-            self.__matrix[0][0] = (b, b)
+            self.__matrix[0][0] = b
             self.__matrix2[0][0] = b
-            self.__matrix[0][1] = (d, a)
+            self.__matrix[0][1] = d
             self.__matrix2[0][1] = a
-            self.__matrix[1][0] = (a, d)
+            self.__matrix[1][0] = a
             self.__matrix2[1][0] = d
-            self.__matrix[1][1] = (c, c)
+            self.__matrix[1][1] = c
             self.__matrix2[1][1] = c
 
         # Kampf der Geschlechter
@@ -100,13 +101,13 @@ class Game(object):
             a = randrange(0, 3 + self.__maximum_int + 1)
             b = randrange(a - self.__maximum_int, a)
             c = randrange(b - self.__maximum_int, b)
-            self.__matrix[0][0] = (a, b)
+            self.__matrix[0][0] = a
             self.__matrix2[0][0] = b
-            self.__matrix[0][1] = (c, c)
+            self.__matrix[0][1] = c
             self.__matrix2[0][1] = c
-            self.__matrix[1][0] = (c, c)
+            self.__matrix[1][0] = c
             self.__matrix2[1][0] = c
-            self.__matrix[1][1] = (b, a)
+            self.__matrix[1][1] = b
             self.__matrix2[1][1] = a
 
         # Kooperative 2-Personenspiele (Modus: 2)
@@ -125,6 +126,9 @@ class Game(object):
 
     def get_maximum_int(self):
         return self.__maximum_int
+
+    def get_minimum_int(self):
+        return self.__minimum_int
 
     def get_lines(self):
         return self.__lin

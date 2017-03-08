@@ -15,10 +15,13 @@ class Solve(object):
 
     def __init__(self, game):
         self.__matrix = game.get_matrix()
+        self.__matrix2 = game.get_matrix2()
         self.__determined = False
         self.__determinedIntervall = []
-        self.__top_value2 = 0
-        self.__top_value1 = 0
+        self.__max_value_player1 = 0
+        self.__min_value_player1 = 0
+        self.__max_value_player2 = 0
+        self.__min_value_player2 = 0
         self.is_determined()
         self.__maximin_strategies1 = []
         self.__maximin_strategies2 = []
@@ -51,32 +54,43 @@ class Solve(object):
 
     # Determiniertheit des Spiels bestimmen
     # Determiniertheitsintervall berechnen
+    # In reinen Strategien
     def is_determined(self):
-        max_player2 = []
-        for count in range(self.__matrix.transpose().shape[0]):
-            max_player2.append(max(self.__matrix.transpose()[count]))
-        self.__top_value2 = min(max_player2)
-
+        # Oberer Spielwert für Spieler 1 und 2
         max_player1 = []
-        for count in range(self.__matrix.shape[0]):
-            max_player1.append(min(self.__matrix[count]))
-        self.__top_value1 = max(max_player1)
+        for count in range(self.__matrix.transpose().shape[0]):
+            max_player1.append(max(self.__matrix.transpose()[count]))
+        self.__max_value_player1 = min(max_player1)
+        max_player2 = []
+        for count in range(self.__matrix2.shape[0]):
+            max_player2.append(max(self.__matrix2[count]))
+        self.__max_value_player2 = min(max_player2)
 
-        if self.__top_value1 == self.__top_value2:
+        # Unterer Spielwert für Spieler 1 und 2
+        min_player1 = []
+        for count in range(self.__matrix.shape[0]):
+            min_player1.append(min(self.__matrix[count]))
+        self.__min_value_player1 = max(min_player1)
+        min_player2 = []
+        for count in range(self.__matrix2.transpose().shape[0]):
+            min_player2.append(min(self.__matrix2.transpose()[count]))
+        self.__min_value_player2 = max(min_player2)
+
+        if self.__min_value_player1 == self.__max_value_player1:
             self.__determined = True
         else:
             self.__determined = False
-        self.__determinedIntervall.append(self.__top_value1)
-        self.__determinedIntervall.append(self.__top_value2)
+        self.__determinedIntervall.append(self.__min_value_player1)
+        self.__determinedIntervall.append(self.__max_value_player1)
 
     # Ermittlung der Maximin-Strategien beider Spieler
     def solve_strategies(self):
         for count in range(self.__matrix.shape[0]):
-            if min(self.__matrix[count]) == self.__top_value1:
+            if min(self.__matrix[count]) == self.__min_value_player1:
                 self.__maximin_strategies1.append(count+1)
 
         for count in range(self.__matrix.transpose().shape[0]):
-            if max(self.__matrix.transpose()[count]) == self.__top_value2:
+            if max(self.__matrix.transpose()[count]) == self.__max_value_player1:
                 self.__maximin_strategies2.append(count+1)
 
     # Maximin-Strategien-Array für Spieler 1
@@ -97,18 +111,18 @@ class Solve(object):
 
     # Unterer Spielwert
     def get_low_value(self):
-        return self.__top_value1
+        return self.__min_value_player1
 
     # Oberer Spielwert
     def get_high_value(self):
-        return self.__top_value2
+        return self.__max_value_player1
 
     # Funktion um Ergebnisse in Textform zu präsentieren
     def output(self):
         if self.__determined:
-            print('Spiel ist determiniert mit Spielwert: ' + str(self.__top_value1))
-            print('Auszahlung für Spieler 1 in reinen Strategien: ' + str(self.__top_value1))
-            print('Auszahlung für Spieler 2 in reinen Strategien: ' + str(-1 * self.__top_value2))
+            print('Spiel ist determiniert mit Spielwert: ' + str(self.__min_value_player1))
+            print('Auszahlung für Spieler 1 in reinen Strategien: ' + str(self.__min_value_player1))
+            print('Auszahlung für Spieler 2 in reinen Strategien: ' + str(-1 * self.__max_value_player1))
         else:
             print('Spiel ist nicht determiniert mit Indeterminiertheitsintervall: ' + str(self.__determinedIntervall))
             for count in range(len(self.__solutions)):
