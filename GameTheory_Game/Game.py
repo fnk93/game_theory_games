@@ -1,6 +1,5 @@
 import numpy as np
 from random import randrange
-from scipy import optimize
 
 # TODO: Schwierigkeitsgrad + unterschiedliche Arten der Spiele selektierbar machen
 

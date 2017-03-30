@@ -1,9 +1,7 @@
 import numpy as np
-from random import randrange
 from scipy import optimize
-from sympy import nsimplify
 from sympy.solvers import solve
-from sympy import Matrix, symbols, S, linsolve, Eq, Ge, Symbol, var
+from sympy import nsimplify, symbols, Eq
 
 # TODO: Lösungstableaus auswerten und darstellen
 # TODO: Möglichkeit mehrere Lösungswege des Simplex abzubilden finden und abbilden
