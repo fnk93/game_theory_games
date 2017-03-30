@@ -5,9 +5,8 @@ from sympy import nsimplify, symbols, Eq
 
 # TODO: Lösungstableaus auswerten und darstellen
 # TODO: Möglichkeit mehrere Lösungswege des Simplex abzubilden finden und abbilden
-# TODO: Daten für Lösungsweg sammeln lassen und an neue Klasse zur Darstellung
-# TODO: bzw. zum Export in LaTeX oder PDF übergeben
-
+# TODO: Daten für Lösungsweg sammeln lassen und an neue Klasse zur Darstellung bzw. zum Export in LaTeX oder PDF übergeben
+# TODO: Klassenstruktur entfernen, stattdessen relevante Funktionen anbieten und über Game-Objekt aufrufen
 
 class Solve(object):
 
