@@ -4,7 +4,6 @@
     <list default="true" id="a4169e96-57d3-41d9-b61a-12c5bd2a0918" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/GameTheory_Game/Game.py" afterPath="$PROJECT_DIR$/GameTheory_Game/Game.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/GameTheory_Game/Solving_Methods.py" afterPath="$PROJECT_DIR$/GameTheory_Game/Solving_Methods.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -31,14 +30,14 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Game.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="Game.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/GameTheory_Game/Game.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="624">
-              <caret line="43" column="36" lean-forward="true" selection-start-line="43" selection-start-column="36" selection-end-line="43" selection-end-column="36" />
+            <state relative-caret-position="-345">
+              <caret line="81" column="29" lean-forward="false" selection-start-line="81" selection-start-column="29" selection-end-line="81" selection-end-column="29" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
-                <marker date="1490912277739" expanded="true" signature="153:189" ph="..." />
+                <marker date="1490913132397" expanded="true" signature="153:189" ph="..." />
               </folding>
             </state>
           </provider>
@@ -54,11 +53,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Solving_Methods.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Solving_Methods.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/GameTheory_Game/Solving_Methods.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="148">
-              <caret line="129" column="8" lean-forward="true" selection-start-line="129" selection-start-column="8" selection-end-line="129" selection-end-column="8" />
+            <state relative-caret-position="284">
+              <caret line="137" column="29" lean-forward="true" selection-start-line="137" selection-start-column="29" selection-end-line="137" selection-end-column="29" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
@@ -95,8 +94,8 @@
         <option value="$PROJECT_DIR$/test.py" />
         <option value="$PROJECT_DIR$/example.py" />
         <option value="$PROJECT_DIR$/GameTheory_Game/Solve.py" />
-        <option value="$PROJECT_DIR$/GameTheory_Game/Game.py" />
         <option value="$PROJECT_DIR$/GameTheory_Game/Solving_Methods.py" />
+        <option value="$PROJECT_DIR$/GameTheory_Game/Game.py" />
       </list>
     </option>
   </component>
@@ -569,7 +568,14 @@
       <option name="project" value="LOCAL" />
       <updated>1490910784817</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="Anzahl der Code-Zeilen reduziert, Speicherung aller key-value-Paare vorbereitet.">
+      <created>1490912839099</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1490912839099</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TodoView" selected-index="4">
@@ -611,7 +617,8 @@
     <MESSAGE value="test" />
     <MESSAGE value="Spiel als eigene Klasse und Solver als Klasse" />
     <MESSAGE value="Umsetzung der ersten Methoden der neuen Klasse für die Lösungsfunktionen." />
-    <option name="LAST_COMMIT_MESSAGE" value="Umsetzung der ersten Methoden der neuen Klasse für die Lösungsfunktionen." />
+    <MESSAGE value="Anzahl der Code-Zeilen reduziert, Speicherung aller key-value-Paare vorbereitet." />
+    <option name="LAST_COMMIT_MESSAGE" value="Anzahl der Code-Zeilen reduziert, Speicherung aller key-value-Paare vorbereitet." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -634,7 +641,7 @@
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
-            <marker date="1490912277739" expanded="true" signature="153:189" ph="..." />
+            <marker date="1490913132397" expanded="true" signature="153:189" ph="..." />
           </folding>
         </state>
       </provider>
@@ -673,7 +680,7 @@
           <caret line="4" column="0" lean-forward="false" selection-start-line="4" selection-start-column="0" selection-end-line="4" selection-end-column="0" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
-            <marker date="1490912277739" expanded="true" signature="153:189" ph="..." />
+            <marker date="1490913132397" expanded="true" signature="153:189" ph="..." />
           </folding>
         </state>
       </provider>
@@ -712,7 +719,7 @@
           <caret line="4" column="0" lean-forward="false" selection-start-line="4" selection-start-column="0" selection-end-line="4" selection-end-column="0" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
-            <marker date="1490912277739" expanded="true" signature="153:189" ph="..." />
+            <marker date="1490913132397" expanded="true" signature="153:189" ph="..." />
           </folding>
         </state>
       </provider>
@@ -751,7 +758,7 @@
           <caret line="4" column="0" lean-forward="false" selection-start-line="4" selection-start-column="0" selection-end-line="4" selection-end-column="0" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
-            <marker date="1490912277739" expanded="true" signature="153:189" ph="..." />
+            <marker date="1490913132397" expanded="true" signature="153:189" ph="..." />
           </folding>
         </state>
       </provider>
@@ -790,7 +797,7 @@
           <caret line="4" column="0" lean-forward="false" selection-start-line="4" selection-start-column="0" selection-end-line="4" selection-end-column="0" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
-            <marker date="1490912277739" expanded="true" signature="153:189" ph="..." />
+            <marker date="1490913132397" expanded="true" signature="153:189" ph="..." />
           </folding>
         </state>
       </provider>
@@ -829,7 +836,7 @@
           <caret line="4" column="0" lean-forward="false" selection-start-line="4" selection-start-column="0" selection-end-line="4" selection-end-column="0" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
-            <marker date="1490912277739" expanded="true" signature="153:189" ph="..." />
+            <marker date="1490913132397" expanded="true" signature="153:189" ph="..." />
           </folding>
         </state>
       </provider>
@@ -868,7 +875,7 @@
           <caret line="4" column="0" lean-forward="false" selection-start-line="4" selection-start-column="0" selection-end-line="4" selection-end-column="0" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
-            <marker date="1490912277739" expanded="true" signature="153:189" ph="..." />
+            <marker date="1490913132397" expanded="true" signature="153:189" ph="..." />
           </folding>
         </state>
       </provider>
@@ -907,7 +914,7 @@
           <caret line="4" column="0" lean-forward="false" selection-start-line="4" selection-start-column="0" selection-end-line="4" selection-end-column="0" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
-            <marker date="1490912277739" expanded="true" signature="153:189" ph="..." />
+            <marker date="1490913132397" expanded="true" signature="153:189" ph="..." />
           </folding>
         </state>
       </provider>
@@ -1001,13 +1008,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/GameTheory_Game/Game.py">
+    <entry file="file://$PROJECT_DIR$/GameTheory_Game/Solving_Methods.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="624">
-          <caret line="43" column="36" lean-forward="true" selection-start-line="43" selection-start-column="36" selection-end-line="43" selection-end-column="36" />
+        <state relative-caret-position="284">
+          <caret line="137" column="29" lean-forward="true" selection-start-line="137" selection-start-column="29" selection-end-line="137" selection-end-column="29" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
-            <marker date="1490912277739" expanded="true" signature="153:189" ph="..." />
           </folding>
         </state>
       </provider>
@@ -1020,12 +1026,13 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/GameTheory_Game/Solving_Methods.py">
+    <entry file="file://$PROJECT_DIR$/GameTheory_Game/Game.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="148">
-          <caret line="129" column="8" lean-forward="true" selection-start-line="129" selection-start-column="8" selection-end-line="129" selection-end-column="8" />
+        <state relative-caret-position="-345">
+          <caret line="81" column="29" lean-forward="false" selection-start-line="81" selection-start-column="29" selection-end-line="81" selection-end-column="29" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
+            <marker date="1490913132397" expanded="true" signature="153:189" ph="..." />
           </folding>
         </state>
       </provider>

@@ -51,11 +51,10 @@ class Game(object):
                 for count_col in range(self.__col):
                     x = randrange(self.__minimum_int, self.__maximum_int + 1)
                     self.__matrix[count_lin][count_col] = x
-            self.__matrix2 = self.__matrix * -1
+            self.__matrix2 = np.asarray(self.__matrix * -1)
 
         # Nicht kooperative 2-Personenspiele (Modus: 1)
         elif mode == 1:
-            self.__matrix = np.zeros((self.__lin, self.__col, 2))
             for count_lin in range(self.__lin):
                 for count_col in range(self.__col):
                     x = randrange(self.__minimum_int, self.__maximum_int + 1)
