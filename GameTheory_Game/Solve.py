@@ -8,6 +8,7 @@ from sympy import nsimplify, symbols, Eq
 # TODO: Daten für Lösungsweg sammeln lassen und an neue Klasse zur Darstellung bzw. zum Export in LaTeX oder PDF übergeben
 # TODO: Klassenstruktur entfernen, stattdessen relevante Funktionen anbieten und über Game-Objekt aufrufen
 
+
 class Solve(object):
 
     def __init__(self, game):
@@ -47,7 +48,6 @@ class Solve(object):
         self.__simplex2_solving = []
         self.__simplex2_solving_xk = []
         self.use_simplex2()
-
 
     # Determiniertheit des Spiels bestimmen
     # Determiniertheitsintervall berechnen
