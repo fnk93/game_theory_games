@@ -59,16 +59,16 @@ def get_lower_values(payoff_matrix_1, payoff_matrix_2):
 # Maximin-Strategien der Spieler
 # Sollte nur bei determinierten Spielen angewendet werden
 def solve_maximin_strategies(payoff_matrix_1, payoff_matrix_2):
-    det_int = determination_intervall(payoff_matrix_1, payoff_matrix_2)
+    det_intervalls = determination_intervall(payoff_matrix_1, payoff_matrix_2)
     temp_strategies = list()
     for i in range(payoff_matrix_1.shape[0]):
-        if min(det_int[0]) == min(payoff_matrix_1[i]):
+        if min(det_intervalls[0]) == min(payoff_matrix_1[i]):
             temp_strategies.append(i)
     maximin_strategies = [temp_strategies]
     temp_strategies.clear()
 
     for i in range(payoff_matrix_2.transpose().shape[0]):
-        if min(det_int[1]) == min(payoff_matrix_2.transpose()[i]):
+        if min(det_intervalls[1]) == min(payoff_matrix_2.transpose()[i]):
             temp_strategies.append(i)
     maximin_strategies.append(temp_strategies)
     return maximin_strategies
@@ -121,10 +121,12 @@ class SolvingSteps:
         self.__array_xk = []
         self.__array_kwargs = []
 
-    # TODO: für jedes Key - Value Paar aus kwargs Ergebnisse speichern
     def __call__(self, xk, **kwargs):
         self.__array_xk.append(xk)
-        self.__array_kwargs.append(kwargs['tableau'])
+        temp_values = {}
+        for key, value in kwargs.items():
+            temp_values[key] = value
+        self.__array_kwargs.append(temp_values)
 
     def get_array_kwargs(self):
         return self.__array_kwargs
@@ -140,3 +142,10 @@ B = np.asarray([[-1, -2, -3],
                 [0, -1, -2]])
 print(is_determined(A, B))
 print(solve_maximin_strategies(A, B))
+
+C = np.asarray([[1, 5],
+                [5, 3]])
+print(C)
+print(np.rot90(C, 2))
+print(np.fliplr(np.flipud(C)))
+print(C*-1)

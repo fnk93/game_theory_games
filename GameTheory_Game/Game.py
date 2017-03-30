@@ -51,7 +51,7 @@ class Game(object):
                 for count_col in range(self.__col):
                     x = randrange(self.__minimum_int, self.__maximum_int + 1)
                     self.__matrix[count_lin][count_col] = x
-                    self.__matrix2[count_lin][count_col] = x * -1
+            self.__matrix2 = self.__matrix * -1
 
         # Nicht kooperative 2-Personenspiele (Modus: 1)
         elif mode == 1:
@@ -72,20 +72,16 @@ class Game(object):
         # a > b > c > d
         # 2 * b > a + d
         elif mode == 11:
-            self.__matrix = np.zeros((2, 2, 2))
+            self.__matrix = np.zeros((2, 2))
             self.__matrix2 = np.zeros((2, 2))
             a = randrange(0, 3 + self.__maximum_int + 1)
             b = randrange(a - self.__maximum_int, a)
             c = randrange(b - self.__maximum_int, 2*b - a + 1)
             d = randrange(c - self.__maximum_int, 2*b - a)
-            self.__matrix[0][0] = b
-            self.__matrix2[0][0] = b
-            self.__matrix[0][1] = d
-            self.__matrix2[0][1] = a
-            self.__matrix[1][0] = a
-            self.__matrix2[1][0] = d
-            self.__matrix[1][1] = c
-            self.__matrix2[1][1] = c
+            self.__matrix = np.asarray([[b, d],
+                                        [a, c]])
+            self.__matrix2 = self.__matrix.transpose()
+
 
         # Kampf der Geschlechter
         # 2 Strategien pro Person: Alternative 1, Alternative 2
@@ -95,19 +91,15 @@ class Game(object):
         # Auszahlung Alt 2 x Alt 2 = (b, a)
         # a > b > c
         elif mode == 12:
-            self.__matrix = np.zeros((2, 2, 2))
+            self.__matrix = np.zeros((2, 2))
             self.__matrix2 = np.zeros((2, 2))
             a = randrange(0, 3 + self.__maximum_int + 1)
             b = randrange(a - self.__maximum_int, a)
             c = randrange(b - self.__maximum_int, b)
-            self.__matrix[0][0] = a
-            self.__matrix2[0][0] = b
-            self.__matrix[0][1] = c
-            self.__matrix2[0][1] = c
-            self.__matrix[1][0] = c
-            self.__matrix2[1][0] = c
-            self.__matrix[1][1] = b
-            self.__matrix2[1][1] = a
+            self.__matrix = np.asarray([[a, c],
+                                        [c, b]])
+            self.__matrix2 = np.rot90(self.__matrix, 2)
+
 
         # Kooperative 2-Personenspiele (Modus: 2)
         # TODO: Kompensation durch Seitenzahlung als Untermodus
