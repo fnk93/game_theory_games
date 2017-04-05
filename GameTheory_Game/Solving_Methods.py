@@ -184,15 +184,33 @@ def make_matrix_ready(payoff_matrix_1, payoff_matrix_2):
     return [simplex_game_1, simplex_game_2]
 
 
+def use_simplex(payoff_matrix_1, payoff_matrix_2):
+    simplex_games = make_matrix_ready(payoff_matrix_1, payoff_matrix_2)
+    simplex_1_solution = use_simplex_player1(simplex_games[0])
+    simplex_2_solution = use_simplex_player2(simplex_games[1])
+
+    return [simplex_1_solution, simplex_2_solution]
+
+
 # Simplex-Verfahren für Spieler 1 anwenden
 # TODO: Formatierung des Lösungswegs direkt hier machen
-def use_simplex_player1(game):
-    pass
+def use_simplex_player1(simplex_game_1):
+    c = list()
+    for lines in range(np.asarray(simplex_game_1).shape[0]):
+        c.append(1)
+
+    for columns in range(np.asarray(simplex_game_1.shape[1])):
+        temp = list()
+        for lines in range(np.asarray(simplex_game_1.shape[0])):
+            temp.append(simplex_game_1[lines][columns] * -1)
+
+    return None
 
 
 # Simplex-Verfahren für Spieler 2 anwenden
 # TODO: Formatierung des Lösungswegs direkt hier machen
-def use_simplex_player2(game):
+def use_simplex_player2(simplex_game_2):
+
     pass
 
 
