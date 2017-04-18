@@ -2,6 +2,8 @@ import numpy as np
 from scipy import optimize
 from sympy.solvers import solve
 from sympy import nsimplify, symbols, Eq
+import time
+from copy import deepcopy
 
 
 # Prüft ob für jeden Spieler unterer Spielwert dem oberen entspricht
@@ -211,10 +213,12 @@ def use_simplex_player2(simplex_game_1):
         c.append(-1)
         game_bounds.append((0, None))
 
-    solve_report = SolvingSteps()
-    simplex_sol = optimize.linprog(c, A, b, callback=solve_report)
-    simplex_steps = solve_report.get_array_kwargs()
-    simplex_steps_2 = solve_report.get_array_xk()
+    xk_arr1 = list()
+    kwargs_arr1 = list()
+    solve_report_1 = SolvingSteps()
+    simplex_sol = optimize.linprog(c, A, b, callback=solve_report_1.save_values)
+    simplex_steps = solve_report_1.get_array_kwargs()
+    simplex_steps_2 = format_solution(solve_report_1.get_array_xk())
 
     #print('Player 2: ', c, A, b)
 
@@ -239,15 +243,16 @@ def use_simplex_player1(simplex_game_2):
             temp.append(simplex_game_2[lines][columns])
         A.append(temp)
 
-    solve_report = SolvingSteps()
-    simplex_sol = optimize.linprog(c, A, b, callback=solve_report)
-    simplex_steps = solve_report.get_array_kwargs()
-    simplex_steps_2 = solve_report.get_array_xk()
+    xk_arr2 = list()
+    kwargs_arr2 = list()
+    solve_report2 = SolvingSteps()
+    simplex_sol = optimize.linprog(c, A, b, callback=solve_report2.save_values)
+    simplex_steps = solve_report2.get_array_kwargs()
+    simplex_steps_2 = format_solution(solve_report2.get_array_xk())
 
     #print('Player 1: ', c, A, b)
 
     return simplex_sol, simplex_steps, simplex_steps_2
-
 
 
 # Lösung mit Bedingungen für NGGW
@@ -309,19 +314,60 @@ def solve_using_nggw(payoff_matrix_1, payoff_matrix_2):
     return solution
 
 
+def format_solution(solution_array):
+    #print('Formatting: ')
+    solution = list()
+    #print(np.asarray(solution_array))
+    #print('Formatting:')
+    #print(np.asarray(solution_array))
+    for line in range(np.asarray(solution_array).shape[0]):
+        temp = list()
+        for column in range(np.asarray(solution_array).shape[1]):
+            temp.append(nsimplify(solution_array[line][column], tolerance=0.0001, rational=True))
+            #print(nsimplify(solution_array[line][column], tolerance=0.0001, rational=True))
+        if np.amin(temp) != 0 or np.amax(temp) != 0:
+            solution.append(temp)
+    #print(solution)
+    return solution
+
 # Callable Methode um Zwischenschritte des Simplex abzufangen
 class SolvingSteps:
 
     def __init__(self):
         self.__array_xk = []
         self.__array_kwargs = []
+        #print('Initialisiert mit:')
+        #print('xk:')
+        #print(self.__array_xk)
+        #print('kwargs:')
+        #print(self.__array_kwargs)
 
-    def __call__(self, xk, **kwargs):
-        self.__array_xk.append(xk)
+    def save_values(self, xk, **kwargs):
+        #print('Speichern:')
+        #print(xk)
+        #print(self.__array_xk)
+        #for i in range(len(self.__array_xk)):
+        #    print(self.__array_xk[i])
+        #self.array_xk = xk
+        #print('xk:')
+        #print(np.asarray(xk))
+        #print('array xk:')
+        #print(self.get_array_xk())
         temp_values = {}
         for key, value in kwargs.items():
-            temp_values[key] = value
-        self.__array_kwargs.append(temp_values)
+            temp_values[key] = deepcopy(value)
+            #print('Key-Value-Paar:')
+            #print(key, value)
+        #print(temp_values['tableau'])
+        self.__array_kwargs.append(deepcopy(temp_values))
+        #print('nach kwargs:')
+        #print(self.__array_xk)
+        #print(xk)
+        self.__array_xk.append(deepcopy(xk))
+        #print('added:')
+        #print(xk)
+        #print(self.__array_xk)
+
 
     # Funktion um Dictionaries auszugeben
     def get_array_kwargs(self):
@@ -330,6 +376,7 @@ class SolvingSteps:
     # Funktion um Parameter des Simplex abzufragen
     def get_array_xk(self):
         return self.__array_xk
+
 
 
 # Kleine Tests der Funktionen
@@ -379,41 +426,14 @@ print(simplex[1][0]["fun"])
 print('X: ')
 print(simplex[1][0]['x'])
 print()
-print('Pivot:')
-print(simplex[1][1][0]['pivot'])
-print('Matrix:')
-print(simplex[1][1][0]['tableau'])
-print('Basis:')
-print(simplex[1][1][0]['basis'])
-print()
-print('Pivot:')
-print(simplex[1][1][1]['pivot'])
-print('Matrix:')
-print(simplex[1][1][1]['tableau'])
-table = list()
-for lines in range(simplex[1][1][1]['tableau'].shape[0]):
-    line = list()
-    for columns in range(simplex[1][1][1]['tableau'].shape[1]):
-        line.append(nsimplify(simplex[1][1][1]['tableau'][lines][columns], tolerance=0.0001, rational=True))
-    table.append(line)
-print('Test:')
-print(table)
-print('Basis:')
-print(simplex[1][1][1]['basis'])
-print()
-print('Pivot:')
-print(simplex[1][1][2]['pivot'])
-print('Matrix:')
-print(simplex[1][1][2]['tableau'])
-table = list()
-for lines in range(simplex[1][1][2]['tableau'].shape[0]):
-    line = list()
-    for columns in range(simplex[1][1][2]['tableau'].shape[1]):
-        line.append(nsimplify(simplex[1][1][2]['tableau'][lines][columns], tolerance=0.0001, rational=True))
-    table.append(line)
-print('Test:')
-print(table)
-print('Basis:')
-print(simplex[1][1][2]['basis'])
-print()
-print(simplex[1][1])
+for table in range(len(simplex[1][1])):
+    print('Tableau ', table)
+    print(np.asarray(format_solution(simplex[1][1][table]["tableau"])))
+
+print(simplex[1][0])
+
+for table in range(len(simplex[0][1])):
+    print('Tableau ', table)
+    print(np.asarray(format_solution(simplex[0][1][table]["tableau"])))
+
+print(simplex[0][0])
