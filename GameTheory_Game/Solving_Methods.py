@@ -2,8 +2,12 @@ import numpy as np
 from scipy import optimize
 from sympy.solvers import solve
 from sympy import nsimplify, symbols, Eq
-import time
 from copy import deepcopy
+
+# Lösbar nach Nash:
+# Alle Gleichgewichtspunkte sind vertauschbar
+# Dominierte Gleichgewichtspunkte möglich
+
 
 
 # Prüft ob für jeden Spieler unterer Spielwert dem oberen entspricht
@@ -44,6 +48,8 @@ def get_upper_values(payoff_matrix_1, payoff_matrix_2):
 
 
 # Untere Spielwerte für beide Spieler in reinen Strategien ermitteln
+# Spieler 1: Minimum der einzelnen Zeilen, davon das Maximum
+# Spieler 2: Minimum der einzelnen Spalten, davon das Maximum
 def get_lower_values(payoff_matrix_1, payoff_matrix_2):
     temp_values = list()
     for i in range(payoff_matrix_1.shape[0]):
@@ -162,6 +168,12 @@ def get_strategy_pairs(game):
     pass
 
 
+# Punkt aus unteren Spielwerten heißt Garantiepunkt
+# Undominiert, wenn kein anderer Auszahlungspunkt existiert bei dem u1 und u2 >= u1* und u2*
+def get_guaranteed_payoff(game):
+    pass
+
+
 # Matrizen für Simplex vorbereiten
 # Konstante hinzurechnen, sodass Spieler1-Matrix absolut positiv und Spieler2-Matrix absolut negativ ist
 def make_matrix_ready(payoff_matrix_1, payoff_matrix_2):
@@ -256,6 +268,7 @@ def use_simplex_player1(simplex_game_2):
 
 
 # Lösung mit Bedingungen für NGGW
+# Gemischte Maximin-Strategien der Spieler
 def solve_using_nggw(payoff_matrix_1, payoff_matrix_2):
     # Gemischte Strategien p für Spieler 1 und Spielwert w für Spieler 2
 
@@ -437,3 +450,13 @@ for table in range(len(simplex[0][1])):
     print(np.asarray(format_solution(simplex[0][1][table]["tableau"])))
 
 print(simplex[0][0])
+
+F = np.asarray([[2, -1],
+                [-1, 1]])
+
+G = np.asarray([[1, -1],
+                [-1, 2]])
+
+print(solve_using_nggw(F, G)[0][1])
+for val in solve_using_nggw(F, G)[0][1]:
+    print(val, solve_using_nggw(F, G)[0][0][val])
