@@ -26,7 +26,7 @@ def determination_intervall(payoff_matrix_1, payoff_matrix_2):
     return determination_intervalls
 
 
-# Obere Spielwerte für beide Spieler ermitteln
+# Obere Spielwerte für beide Spieler in reinen Strategien ermitteln
 def get_upper_values(payoff_matrix_1, payoff_matrix_2):
     temp_values = list()
     for i in range(payoff_matrix_1.transpose().shape[0]):
@@ -41,7 +41,7 @@ def get_upper_values(payoff_matrix_1, payoff_matrix_2):
     return upper_values
 
 
-# Untere Spielwerte für beide Spieler ermitteln
+# Untere Spielwerte für beide Spieler in reinen Strategien ermitteln
 def get_lower_values(payoff_matrix_1, payoff_matrix_2):
     temp_values = list()
     for i in range(payoff_matrix_1.shape[0]):
@@ -177,7 +177,7 @@ def make_matrix_ready(payoff_matrix_1, payoff_matrix_2):
 
     # Matrix von Spieler 2 wird in absolut negative Matrix überführt
     if added_constant_2 > -1:
-        simplex_game_2 = payoff_matrix_2 - (added_constant_1 + 1)
+        simplex_game_2 = payoff_matrix_2 - (added_constant_2 + 1)
     else:
         simplex_game_2 = payoff_matrix_2
 
@@ -186,32 +186,68 @@ def make_matrix_ready(payoff_matrix_1, payoff_matrix_2):
 
 def use_simplex(payoff_matrix_1, payoff_matrix_2):
     simplex_games = make_matrix_ready(payoff_matrix_1, payoff_matrix_2)
-    simplex_1_solution = use_simplex_player1(simplex_games[0])
-    simplex_2_solution = use_simplex_player2(simplex_games[1])
+    #print('Matrizen: ', simplex_games)
+    simplex_1_solution = use_simplex_player1(simplex_games[1])
+    simplex_2_solution = use_simplex_player2(simplex_games[0])
 
     return [simplex_1_solution, simplex_2_solution]
 
 
 # Simplex-Verfahren für Spieler 1 anwenden
 # TODO: Formatierung des Lösungswegs direkt hier machen
-def use_simplex_player1(simplex_game_1):
+def use_simplex_player2(simplex_game_1):
     c = list()
+    game_bounds = list()
+    A = list()
+    b = list()
     for lines in range(np.asarray(simplex_game_1).shape[0]):
-        c.append(1)
+        temp = list()
+        for columns in range(np.asarray(simplex_game_1.shape[1])):
+            temp.append(simplex_game_1[lines][columns])
+        A.append(temp)
+        b.append(1)
 
     for columns in range(np.asarray(simplex_game_1.shape[1])):
-        temp = list()
-        for lines in range(np.asarray(simplex_game_1.shape[0])):
-            temp.append(simplex_game_1[lines][columns] * -1)
+        c.append(-1)
+        game_bounds.append((0, None))
 
-    return None
+    solve_report = SolvingSteps()
+    simplex_sol = optimize.linprog(c, A, b, callback=solve_report)
+    simplex_steps = solve_report.get_array_kwargs()
+    simplex_steps_2 = solve_report.get_array_xk()
+
+    #print('Player 2: ', c, A, b)
+
+    return simplex_sol, simplex_steps, simplex_steps_2
 
 
 # Simplex-Verfahren für Spieler 2 anwenden
 # TODO: Formatierung des Lösungswegs direkt hier machen
-def use_simplex_player2(simplex_game_2):
+def use_simplex_player1(simplex_game_2):
+    c = list()
+    game_bounds = list()
+    A = list()
+    b = list()
+    for lines in range(np.asarray(simplex_game_2).shape[0]):
+        c.append(1)
+        game_bounds.append((0, None))
 
-    pass
+    for columns in range(np.asarray(simplex_game_2.shape[1])):
+        b.append(-1)
+        temp = list()
+        for lines in range(np.asarray(simplex_game_2).shape[0]):
+            temp.append(simplex_game_2[lines][columns])
+        A.append(temp)
+
+    solve_report = SolvingSteps()
+    simplex_sol = optimize.linprog(c, A, b, callback=solve_report)
+    simplex_steps = solve_report.get_array_kwargs()
+    simplex_steps_2 = solve_report.get_array_xk()
+
+    #print('Player 1: ', c, A, b)
+
+    return simplex_sol, simplex_steps, simplex_steps_2
+
 
 
 # Lösung mit Bedingungen für NGGW
@@ -324,5 +360,60 @@ D = np.asarray([[4, 1, 8, 0],
 
 # Matrix reduzieren
 sol = (reduce_matrix(D, D*-1))
+print(D[0])
 print(sol[0])
 print(sol[1])
+
+E = np.asarray([[0, -1, 2],
+                [2, 0, -1],
+                [-1, 2, 0]])
+simplex = (use_simplex(E, E*-1))
+print()
+print('Fun: ')
+print(simplex[0][0]["fun"])
+print('X: ')
+print(simplex[0][0]['x'])
+print()
+print('Fun: ')
+print(simplex[1][0]["fun"])
+print('X: ')
+print(simplex[1][0]['x'])
+print()
+print('Pivot:')
+print(simplex[1][1][0]['pivot'])
+print('Matrix:')
+print(simplex[1][1][0]['tableau'])
+print('Basis:')
+print(simplex[1][1][0]['basis'])
+print()
+print('Pivot:')
+print(simplex[1][1][1]['pivot'])
+print('Matrix:')
+print(simplex[1][1][1]['tableau'])
+table = list()
+for lines in range(simplex[1][1][1]['tableau'].shape[0]):
+    line = list()
+    for columns in range(simplex[1][1][1]['tableau'].shape[1]):
+        line.append(nsimplify(simplex[1][1][1]['tableau'][lines][columns], tolerance=0.0001, rational=True))
+    table.append(line)
+print('Test:')
+print(table)
+print('Basis:')
+print(simplex[1][1][1]['basis'])
+print()
+print('Pivot:')
+print(simplex[1][1][2]['pivot'])
+print('Matrix:')
+print(simplex[1][1][2]['tableau'])
+table = list()
+for lines in range(simplex[1][1][2]['tableau'].shape[0]):
+    line = list()
+    for columns in range(simplex[1][1][2]['tableau'].shape[1]):
+        line.append(nsimplify(simplex[1][1][2]['tableau'][lines][columns], tolerance=0.0001, rational=True))
+    table.append(line)
+print('Test:')
+print(table)
+print('Basis:')
+print(simplex[1][1][2]['basis'])
+print()
+print(simplex[1][1])
