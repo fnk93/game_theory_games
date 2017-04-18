@@ -8,6 +8,16 @@ from copy import deepcopy
 # Alle Gleichgewichtspunkte sind vertauschbar
 # Dominierte Gleichgewichtspunkte möglich
 
+# TODO: Auszahlungsdiagramme erstellen
+# TODO: Garantiepunkt errechnen + Aussage ob dominiert
+# TODO: Gleichgewichtspunkt zurückgeben mit zugehörigem Strategiepaar und Aussage ob stabil
+# TODO: Nash-GGW + Wahrscheinlichkeiten + Payoff zusammenführen
+# TODO: Spielwert-Berechnung bei unterschiedlichen Strategien (Gemischt, rein, Maximin)
+# TODO: Maximin bei gemischten Strategien (=Nash-GGW?)
+# TODO: Formulierung Lineares Programm ausgliedern aus Simplex
+# TODO: Strategie- und Spielwert-Berechnung in Simplex
+# TODO: Gleichgewichtspunkte bei Seitenzahlung / keiner Seitenzahlung
+# TODO: Graphische Lösung gemischter Strategien
 
 
 # Prüft ob für jeden Spieler unterer Spielwert dem oberen entspricht
@@ -37,12 +47,12 @@ def get_upper_values(payoff_matrix_1, payoff_matrix_2):
     temp_values = list()
     for i in range(payoff_matrix_1.transpose().shape[0]):
         temp_values.append(max(payoff_matrix_1.transpose()[i]))
-    upper_values = [min(temp_values)]
+    upper_values = [deepcopy(min(temp_values))]
     temp_values.clear()
 
     for i in range(payoff_matrix_2.shape[0]):
         temp_values.append(max(payoff_matrix_2[i]))
-    upper_values.append(min(temp_values))
+    upper_values.append(deepcopy(min(temp_values)))
     temp_values.clear()
     return upper_values
 
@@ -54,12 +64,12 @@ def get_lower_values(payoff_matrix_1, payoff_matrix_2):
     temp_values = list()
     for i in range(payoff_matrix_1.shape[0]):
         temp_values.append(min(payoff_matrix_1[i]))
-    lower_values = [max(temp_values)]
+    lower_values = [deepcopy(max(temp_values))]
     temp_values.clear()
 
     for i in range(payoff_matrix_2.transpose().shape[0]):
         temp_values.append(min(payoff_matrix_2.transpose()[i]))
-    lower_values.append(max(temp_values))
+    lower_values.append(deepcopy(max(temp_values)))
     temp_values.clear()
     return lower_values
 
@@ -72,14 +82,23 @@ def solve_maximin_strategies(payoff_matrix_1, payoff_matrix_2):
     for i in range(payoff_matrix_1.shape[0]):
         if min(det_intervalls[0]) == min(payoff_matrix_1[i]):
             temp_strategies.append(i)
-    maximin_strategies = [temp_strategies]
+    maximin_strategies = [deepcopy(temp_strategies)]
     temp_strategies.clear()
 
     for i in range(payoff_matrix_2.transpose().shape[0]):
         if min(det_intervalls[1]) == min(payoff_matrix_2.transpose()[i]):
             temp_strategies.append(i)
-    maximin_strategies.append(temp_strategies)
+    maximin_strategies.append(deepcopy(temp_strategies))
     return maximin_strategies
+
+
+# Bayes Strategie von player, wenn der andere Spieler strategy wählt
+def bayes_strategy(payoff_matrix_1, payoff_matrix_2, player, strategy):
+    payoff_matrices = [payoff_matrix_1.transpose(), payoff_matrix_2]
+    #print(payoff_matrices[player][strategy])
+    bayes = (np.argmax(payoff_matrices[player][strategy], 0))
+
+    return bayes
 
 
 # Ergebnisse und Lösungswege als PDF formatieren
@@ -102,6 +121,7 @@ def reduce_matrix(payoff_matrix_1, payoff_matrix_2):
     reduced_matrix_2 = np.asarray(payoff_matrix_2)
     all_compared = False
     run = 0
+    reduced = False
     while not all_compared:
         run += 1
         all_compared = True
@@ -109,7 +129,7 @@ def reduce_matrix(payoff_matrix_1, payoff_matrix_2):
         reduce = []
         if dimensions[0] > 2:
             for count in range(dimensions[0]):
-                reducable_line = True
+                #reducable_line = True
                 added = False
                 for count_2 in range(dimensions[0]):
                     reducable_line = True
@@ -135,7 +155,7 @@ def reduce_matrix(payoff_matrix_1, payoff_matrix_2):
 
         if dimensions[1] > 2:
             for count in range(dimensions[1]):
-                reducable_column = True
+                #reducable_column = True
                 added = False
                 for count_2 in range(dimensions[1]):
                     reducable_column = True
@@ -164,8 +184,13 @@ def reduce_matrix(payoff_matrix_1, payoff_matrix_2):
 
 # Matrix aller MinMax-Strategie-Paare ausgeben
 # TODO: evtl. in Game-Klasse übernehmen
-def get_strategy_pairs(game):
-    pass
+def get_strategy_pairs(payoff_matrix_1, payoff_matrix_2):
+    strategies = solve_maximin_strategies(payoff_matrix_1, payoff_matrix_2)
+    strategy_pairs = list()
+    for strategies_player_1 in range(len(strategies[0])):
+        for strategies_player_2 in range(len(strategies[1])):
+            strategy_pairs.append([strategies[0][strategies_player_1], strategies[1][strategies_player_2]])
+    return strategy_pairs
 
 
 # Punkt aus unteren Spielwerten heißt Garantiepunkt
@@ -460,3 +485,24 @@ G = np.asarray([[1, -1],
 print(solve_using_nggw(F, G)[0][1])
 for val in solve_using_nggw(F, G)[0][1]:
     print(val, solve_using_nggw(F, G)[0][0][val])
+
+H = np.asarray([[1, -2],
+               [-1, 1]])
+
+
+player = 1
+other_strategy = 0
+print('Bayes Strategie für Spieler ', player+1, ' gegenüber Strategie ', other_strategy+1, ' von Spieler 1:')
+print(bayes_strategy(H, H*-1, player, other_strategy) + 1)
+
+U = np.asarray([[10, 1],
+                [0, 1000],
+                [2000, 0]])
+
+print(bayes_strategy(U, U*-1, 0, 1) + 1)
+
+R = np.asarray([[4, 5, 2],
+                [6, 3, 2]])
+
+print(get_strategy_pairs(R, R*-1))
+print(is_determined(R, R*-1))

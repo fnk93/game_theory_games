@@ -4,7 +4,7 @@ from random import randrange
 # TODO: Schwierigkeitsgrad + unterschiedliche Arten der Spiele selektierbar machen
 
 
-class Game(object):
+class Game:
 
     def __init__(self, maximum_int=10, lin=5, col=5, mode=0):
         self.__mode = mode
