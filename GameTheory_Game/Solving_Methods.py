@@ -3,12 +3,37 @@ from scipy import optimize
 from sympy.solvers import solve
 from sympy import nsimplify, symbols, Eq
 from copy import deepcopy
+import matplotlib as mlp
+import matplotlib.pyplot as plt
+import matplotlib.path as mpath
+from matplotlib.patches import Circle, Wedge, Polygon, RegularPolygon
+from scipy.spatial import ConvexHull
 
 # Lösbar nach Nash:
 # Alle Gleichgewichtspunkte sind vertauschbar
 # Dominierte Gleichgewichtspunkte möglich
 
 # TODO: Auszahlungsdiagramme erstellen
+# mode = 0 -> reine Strategien
+# mode = 1 -> gemischte Strategien
+def get_payoff_diagramm(payoff_matrix_1, payoff_matrix_2, mode=0):
+    payoff_player_1 = list()
+    payoff_player_2 = list()
+    functions = list()
+    for lines in range(payoff_matrix_1.shape[0]):
+        for columns in range(payoff_matrix_1.shape[1]):
+            if payoff_matrix_1[lines][columns] not in payoff_player_1 and payoff_matrix_2[lines][columns] not in payoff_player_2:
+                payoff_player_1.append(payoff_matrix_1[lines][columns])
+                payoff_player_2.append(payoff_matrix_2[lines][columns])
+
+    #if mode == 1:
+    #    for coords in player_payoffs:
+    #        for coords_2 in player_payoffs:
+    #            if coords_2 != coords and ([coords, coords_2] not in functions and [coords_2, coords] not in functions):
+    #                functions.append([coords, coords_2])
+
+    return payoff_player_1, payoff_player_2
+
 # TODO: Garantiepunkt errechnen + Aussage ob dominiert
 # TODO: Gleichgewichtspunkt zurückgeben mit zugehörigem Strategiepaar und Aussage ob stabil
 # TODO: Nash-GGW + Wahrscheinlichkeiten + Payoff zusammenführen
@@ -506,3 +531,55 @@ R = np.asarray([[4, 5, 2],
 
 print(get_strategy_pairs(R, R*-1))
 print(is_determined(R, R*-1))
+
+S = np.asarray([[0, -1, 2],
+                [2, 0, -1],
+                [-1, 2, 0]])
+
+coords = get_payoff_diagramm(S, S*-1)
+
+T = np.asarray([[6, 0],
+                [10, 2]])
+U = np.asarray([[6, 10],
+                [0, 2]])
+
+fig = plt.figure()
+ax = fig.add_subplot(111)
+coords = get_payoff_diagramm(T, U, 1)
+print(coords)
+plt.ylabel('Auszahlung Spieler 2')
+plt.xlabel('Auszahlung Spieler 1')
+
+coords_2 = list()
+for x in range(len(coords[0])):
+    coords_2.append([coords[0][x], coords[1][x]])
+
+coords_2 = np.asarray(coords_2)
+print(coords_2)
+#points = np.random.rand(30, 2)
+#print(points)
+hull = ConvexHull(coords_2)
+print(hull)
+
+for simplex in hull.simplices:
+    plt.plot(coords_2[simplex, 0], coords_2[simplex, 1], 'k-')
+
+#plt.plot(coords_2[hull.vertices,0], coords_2[hull.vertices,1], 'r--', lw=2)
+#plt.plot(coords_2[hull.vertices[0],0], coords_2[hull.vertices[0],1], 'ro')
+plt.axis([-15, 15, -15, 15])
+plt.show()
+
+#polygon = Polygon(coords_2, True, joinstyle='bevel')
+
+#ax.add_patch(polygon)
+
+#ax.set_xlim(-15,15)
+#ax.set_ylim(-15,15)
+
+#plt.show()
+
+
+#plt.plot(polygon)
+#plt.axis([-15, 15, -15, 15])
+#plt.grid(True)
+#plt.show()
