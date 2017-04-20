@@ -8,31 +8,39 @@ import matplotlib.pyplot as plt
 import matplotlib.path as mpath
 from matplotlib.patches import Circle, Wedge, Polygon, RegularPolygon
 from scipy.spatial import ConvexHull
+from pylab import meshgrid
 
 # Lösbar nach Nash:
 # Alle Gleichgewichtspunkte sind vertauschbar
 # Dominierte Gleichgewichtspunkte möglich
 
-# TODO: Auszahlungsdiagramme erstellen
+
 # mode = 0 -> reine Strategien
 # mode = 1 -> gemischte Strategien
+# TODO: Garantiepunkt in Punktewolke aufnehmen
 def get_payoff_diagramm(payoff_matrix_1, payoff_matrix_2, mode=0):
-    payoff_player_1 = list()
-    payoff_player_2 = list()
+
+    #payoff_player_1 = list()
+    #payoff_player_2 = list()
+    payoff_points = list()
     functions = list()
     for lines in range(payoff_matrix_1.shape[0]):
         for columns in range(payoff_matrix_1.shape[1]):
-            if payoff_matrix_1[lines][columns] not in payoff_player_1 and payoff_matrix_2[lines][columns] not in payoff_player_2:
-                payoff_player_1.append(payoff_matrix_1[lines][columns])
-                payoff_player_2.append(payoff_matrix_2[lines][columns])
+            #if payoff_matrix_1[lines][columns] not in payoff_player_1 and payoff_matrix_2[lines][columns] not in payoff_player_2:
+            #    payoff_player_1.append(payoff_matrix_1[lines][columns])
+            #    payoff_player_2.append(payoff_matrix_2[lines][columns])
+            if [payoff_matrix_1[lines][columns], payoff_matrix_2[lines][columns]] not in payoff_points:
+                payoff_points.append([payoff_matrix_1[lines][columns], payoff_matrix_2[lines][columns]])
+                print(payoff_matrix_1[lines][columns], payoff_matrix_2[lines][columns])
 
-    #if mode == 1:
-    #    for coords in player_payoffs:
-    #        for coords_2 in player_payoffs:
-    #            if coords_2 != coords and ([coords, coords_2] not in functions and [coords_2, coords] not in functions):
-    #                functions.append([coords, coords_2])
+    payoff_points = np.asarray(payoff_points)
+    print(payoff_points)
+    if mode == 1:
+        outline = ConvexHull(payoff_points)
+        return payoff_points, outline
 
-    return payoff_player_1, payoff_player_2
+    return payoff_points
+    #return payoff_player_1, payoff_player_2, payoff_points
 
 # TODO: Garantiepunkt errechnen + Aussage ob dominiert
 # TODO: Gleichgewichtspunkt zurückgeben mit zugehörigem Strategiepaar und Aussage ob stabil
@@ -47,38 +55,43 @@ def get_payoff_diagramm(payoff_matrix_1, payoff_matrix_2, mode=0):
 
 # Prüft ob für jeden Spieler unterer Spielwert dem oberen entspricht
 def is_determined(payoff_matrix_1, payoff_matrix_2):
+
     det_intervalls = determination_intervall(payoff_matrix_1, payoff_matrix_2)
 
     for i in range(len(det_intervalls)):
         if min(det_intervalls[i]) != max(det_intervalls[i]):
             return False
+
     return True
 
 
 # Determiniertheitsintervall für beide Spieler berechnen
 def determination_intervall(payoff_matrix_1, payoff_matrix_2):
+
     upper_values = get_upper_values(payoff_matrix_1, payoff_matrix_2)
     lower_values = get_lower_values(payoff_matrix_1, payoff_matrix_2)
     determination_intervalls = list()
 
-    for i in range(len(upper_values)):
-        determination_intervalls.append([upper_values[i], lower_values[i]])
+    for player in range(len(upper_values)):
+        determination_intervalls.append([upper_values[player], lower_values[player]])
 
     return determination_intervalls
 
 
 # Obere Spielwerte für beide Spieler in reinen Strategien ermitteln
 def get_upper_values(payoff_matrix_1, payoff_matrix_2):
+
     temp_values = list()
-    for i in range(payoff_matrix_1.transpose().shape[0]):
-        temp_values.append(max(payoff_matrix_1.transpose()[i]))
+    for column in range(payoff_matrix_1.shape[1]):
+        temp_values.append(max(payoff_matrix_1[:, column]))
     upper_values = [deepcopy(min(temp_values))]
     temp_values.clear()
 
-    for i in range(payoff_matrix_2.shape[0]):
-        temp_values.append(max(payoff_matrix_2[i]))
+    for line in range(payoff_matrix_2.shape[0]):
+        temp_values.append(max(payoff_matrix_2[line]))
     upper_values.append(deepcopy(min(temp_values)))
     temp_values.clear()
+
     return upper_values
 
 
@@ -86,39 +99,50 @@ def get_upper_values(payoff_matrix_1, payoff_matrix_2):
 # Spieler 1: Minimum der einzelnen Zeilen, davon das Maximum
 # Spieler 2: Minimum der einzelnen Spalten, davon das Maximum
 def get_lower_values(payoff_matrix_1, payoff_matrix_2):
+
     temp_values = list()
-    for i in range(payoff_matrix_1.shape[0]):
-        temp_values.append(min(payoff_matrix_1[i]))
+    for line in range(payoff_matrix_1.shape[0]):
+        temp_values.append(min(payoff_matrix_1[line]))
     lower_values = [deepcopy(max(temp_values))]
     temp_values.clear()
 
-    for i in range(payoff_matrix_2.transpose().shape[0]):
-        temp_values.append(min(payoff_matrix_2.transpose()[i]))
+    for columns in range(payoff_matrix_2.shape[1]):
+        temp_values.append(min(payoff_matrix_2[:, columns]))
     lower_values.append(deepcopy(max(temp_values)))
     temp_values.clear()
+
     return lower_values
 
 
 # Maximin-Strategien der Spieler
 # Sollte nur bei determinierten Spielen angewendet werden
 def solve_maximin_strategies(payoff_matrix_1, payoff_matrix_2):
-    det_intervalls = determination_intervall(payoff_matrix_1, payoff_matrix_2)
-    temp_strategies = list()
-    for i in range(payoff_matrix_1.shape[0]):
-        if min(det_intervalls[0]) == min(payoff_matrix_1[i]):
-            temp_strategies.append(i)
-    maximin_strategies = [deepcopy(temp_strategies)]
-    temp_strategies.clear()
 
-    for i in range(payoff_matrix_2.transpose().shape[0]):
-        if min(det_intervalls[1]) == min(payoff_matrix_2.transpose()[i]):
-            temp_strategies.append(i)
-    maximin_strategies.append(deepcopy(temp_strategies))
-    return maximin_strategies
+    minima_player_1 = list()
+    for line in range(payoff_matrix_1.shape[0]):
+        minima_player_1.append(np.amin(payoff_matrix_1[line][:]))
+    minima_player_2 = list()
+    for column in range(payoff_matrix_2.shape[1]):
+        minima_player_2.append(np.amin(payoff_matrix_2[:, column]))
+
+    player_1_maximin = list()
+    player_2_maximin = list()
+    lower_values = get_lower_values(payoff_matrix_1, payoff_matrix_2)
+    for strategy in range(len(minima_player_1)):
+        if minima_player_1[strategy] == (lower_values[0]):
+            player_1_maximin.append(strategy)
+    for strategy_2 in range(len(minima_player_2)):
+        if minima_player_2[strategy_2] == (lower_values[1]):
+            player_2_maximin.append(strategy_2)
+
+    # print('Minmax-Strategien: ', player_1_maximin, player_2_maximin)
+
+    return [player_1_maximin, player_2_maximin]
 
 
 # Bayes Strategie von player, wenn der andere Spieler strategy wählt
 def bayes_strategy(payoff_matrix_1, payoff_matrix_2, player, strategy):
+
     payoff_matrices = [payoff_matrix_1.transpose(), payoff_matrix_2]
     #print(payoff_matrices[player][strategy])
     bayes = (np.argmax(payoff_matrices[player][strategy], 0))
@@ -128,13 +152,19 @@ def bayes_strategy(payoff_matrix_1, payoff_matrix_2, player, strategy):
 
 # Ergebnisse und Lösungswege als PDF formatieren
 # TODO: evtl. in Game-Klasse übernehmen
+# TODO: Auszahlungsdiagramme graphisch aufbereiten
+# TODO: Simplex-Tableaus graphisch aufbereiten
 def get_calculations_pdf(game):
+
     pass
 
 
 # Ergebnisse und Lösungswege als LaTeX formatieren
 # TODO: evtl. in Game-Klasse übernehmen
+# TODO: Auszahlungsdiagramme graphisch aufbereiten
+# TODO: Simplex-Tableaus graphisch aufbereiten
 def get_calculations_latex(game):
+
     pass
 
 
@@ -210,17 +240,20 @@ def reduce_matrix(payoff_matrix_1, payoff_matrix_2):
 # Matrix aller MinMax-Strategie-Paare ausgeben
 # TODO: evtl. in Game-Klasse übernehmen
 def get_strategy_pairs(payoff_matrix_1, payoff_matrix_2):
+
     strategies = solve_maximin_strategies(payoff_matrix_1, payoff_matrix_2)
     strategy_pairs = list()
     for strategies_player_1 in range(len(strategies[0])):
         for strategies_player_2 in range(len(strategies[1])):
             strategy_pairs.append([strategies[0][strategies_player_1], strategies[1][strategies_player_2]])
+
     return strategy_pairs
 
 
 # Punkt aus unteren Spielwerten heißt Garantiepunkt
 # Undominiert, wenn kein anderer Auszahlungspunkt existiert bei dem u1 und u2 >= u1* und u2*
 def get_guaranteed_payoff(game):
+
     pass
 
 
@@ -249,6 +282,7 @@ def make_matrix_ready(payoff_matrix_1, payoff_matrix_2):
 
 
 def use_simplex(payoff_matrix_1, payoff_matrix_2):
+
     simplex_games = make_matrix_ready(payoff_matrix_1, payoff_matrix_2)
     #print('Matrizen: ', simplex_games)
     simplex_1_solution = use_simplex_player1(simplex_games[1])
@@ -260,6 +294,7 @@ def use_simplex(payoff_matrix_1, payoff_matrix_2):
 # Simplex-Verfahren für Spieler 1 anwenden
 # TODO: Formatierung des Lösungswegs direkt hier machen
 def use_simplex_player2(simplex_game_1):
+
     c = list()
     game_bounds = list()
     A = list()
@@ -290,6 +325,7 @@ def use_simplex_player2(simplex_game_1):
 # Simplex-Verfahren für Spieler 2 anwenden
 # TODO: Formatierung des Lösungswegs direkt hier machen
 def use_simplex_player1(simplex_game_2):
+
     c = list()
     game_bounds = list()
     A = list()
@@ -320,6 +356,7 @@ def use_simplex_player1(simplex_game_2):
 # Lösung mit Bedingungen für NGGW
 # Gemischte Maximin-Strategien der Spieler
 def solve_using_nggw(payoff_matrix_1, payoff_matrix_2):
+
     # Gemischte Strategien p für Spieler 1 und Spielwert w für Spieler 2
 
     # Variablen des LGS deklarieren
@@ -374,10 +411,12 @@ def solve_using_nggw(payoff_matrix_1, payoff_matrix_2):
     # solution[0] enthält Spielwert für Spieler 2 und Strategien für Spieler 1 und die zugehörigen Variablen
     # solution[1] enthält Spielwert für Spieler 1 und Strategien für Spieler 2 und die zugehörigen Variablen
     print(solution)
+
     return solution
 
 
 def format_solution(solution_array):
+
     #print('Formatting: ')
     solution = list()
     #print(np.asarray(solution_array))
@@ -391,10 +430,12 @@ def format_solution(solution_array):
         if np.amin(temp) != 0 or np.amax(temp) != 0:
             solution.append(temp)
     #print(solution)
+
     return solution
 
 # Callable Methode um Zwischenschritte des Simplex abzufangen
 class SolvingSteps:
+
 
     def __init__(self):
         self.__array_xk = []
@@ -431,7 +472,6 @@ class SolvingSteps:
         #print(xk)
         #print(self.__array_xk)
 
-
     # Funktion um Dictionaries auszugeben
     def get_array_kwargs(self):
         return self.__array_kwargs
@@ -441,12 +481,13 @@ class SolvingSteps:
         return self.__array_xk
 
 
-
 # Kleine Tests der Funktionen
 A = np.asarray([[1, 2, 3],
                 [0, 1, 2]])
 B = np.asarray([[-1, -2, -3],
                 [0, -1, -2]])
+
+print(B[:,1])
 
 # Determiniertheit und Maximin testen
 print(is_determined(A, B))
@@ -538,10 +579,10 @@ S = np.asarray([[0, -1, 2],
 
 coords = get_payoff_diagramm(S, S*-1)
 
-T = np.asarray([[6, 0],
-                [10, 2]])
-U = np.asarray([[6, 10],
-                [0, 2]])
+T = np.asarray([[2, -1],
+                [-1, 1]])
+U = np.asarray([[1, -1],
+                [-1, 2]])
 
 fig = plt.figure()
 ax = fig.add_subplot(111)
@@ -550,23 +591,47 @@ print(coords)
 plt.ylabel('Auszahlung Spieler 2')
 plt.xlabel('Auszahlung Spieler 1')
 
-coords_2 = list()
-for x in range(len(coords[0])):
-    coords_2.append([coords[0][x], coords[1][x]])
+#coords_2 = list()
+#for x in range(len(coords[0])):
+#    coords_2.append([coords[0][x], coords[1][x]])
 
-coords_2 = np.asarray(coords_2)
-print(coords_2)
+#coords_2 = np.asarray(coords_2)
+#print(coords_2)
+print(coords)
 #points = np.random.rand(30, 2)
 #print(points)
-hull = ConvexHull(coords_2)
-print(hull)
+#hull = ConvexHull(coords)
+#print(hull)
 
-for simplex in hull.simplices:
-    plt.plot(coords_2[simplex, 0], coords_2[simplex, 1], 'k-')
+for simplex in coords[1].simplices:
+    plt.plot(coords[0][simplex, 0], coords[0][simplex, 1], 'k-')
 
+p1 = np.linspace(0, 1)
+p2 = np.linspace(0, 1)
+q1 = np.linspace(0, 1)
+q2 = np.linspace(0, 1)
+
+def func(p1, p2, q1, q2):
+    return 2*p1*q1 - 1*p1*q2 - 1*p2*q1 + 1*p2*q2
+
+def func_2(p1, p2, q1, q2):
+    return 1*p1*q1 - 1*p1*q2 - 1*p2*q1 + 2*p2*q2
+
+# x-Werte
+F1 = 2*p1*q1 - 1*p1*q2 - 1*p2*q1 + 1*p2*q2
+F2 = 1*p1*q1 - 1*p1*q2 - 1*p2*q1 + 2*p2*q2
+
+P1, P2, Q1, Q2 = meshgrid(p1, p2, q1, q2)
+
+FF1 = func(P1, P2, Q1, Q2)
+FF2 = func_2(P1, P2, Q1, Q2)
+
+print(FF1)
+
+plt.plot(FF1, FF2)
 #plt.plot(coords_2[hull.vertices,0], coords_2[hull.vertices,1], 'r--', lw=2)
 #plt.plot(coords_2[hull.vertices[0],0], coords_2[hull.vertices[0],1], 'ro')
-plt.axis([-15, 15, -15, 15])
+plt.axis([-5, 5, -5, 5])
 plt.show()
 
 #polygon = Polygon(coords_2, True, joinstyle='bevel')
@@ -583,3 +648,9 @@ plt.show()
 #plt.axis([-15, 15, -15, 15])
 #plt.grid(True)
 #plt.show()
+
+Z = np.asarray([[5, 4, 3],
+                [3, 2, 1],
+                [2, 1, 0]])
+
+solve_maximin_strategies(Z, Z*-1)
