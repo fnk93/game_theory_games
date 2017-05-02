@@ -15,8 +15,8 @@ from pylab import meshgrid
 # Dominierte Gleichgewichtspunkte möglich
 
 
-# mode = 0 -> reine Strategien
-# mode = 1 -> gemischte Strategien
+# mode = 0 -> normale Spiele
+# mode = 1 -> Kampf der Geschlechter
 # TODO: Garantiepunkt in Punktewolke aufnehmen
 def get_payoff_diagramm(payoff_matrix_1, payoff_matrix_2, mode=0):
 
@@ -33,13 +33,42 @@ def get_payoff_diagramm(payoff_matrix_1, payoff_matrix_2, mode=0):
                 payoff_points.append([payoff_matrix_1[lines][columns], payoff_matrix_2[lines][columns]])
                 print(payoff_matrix_1[lines][columns], payoff_matrix_2[lines][columns])
 
-    payoff_points = np.asarray(payoff_points)
     print(payoff_points)
     if mode == 1:
-        outline = ConvexHull(payoff_points)
-        return payoff_points, outline
+        #outline = ConvexHull(payoff_points, incremental=True)
+        payoff_points = np.asarray(payoff_points)
 
-    return payoff_points
+        p = list()
+        q = list()
+        for lines in range(payoff_matrix_1.shape[0]):
+            p.append(np.linspace(0, 1))
+        for columns in range(payoff_matrix_2.shape[1]):
+            q.append(np.linspace(0,1))
+
+        F3 = 0
+        F4 = 0
+        for lines in range(payoff_matrix_1.shape[0]):
+            for columns in range(payoff_matrix_1.shape[1]):
+                print(lines, columns)
+                print(payoff_matrix_1[lines][columns])
+                if lines > 0 and columns > 0:
+                    F3 += payoff_matrix_1[lines][columns] * (1-p[0]) * (1-q[0])
+                    F4 += payoff_matrix_2[lines][columns] * (1-p[0]) * (1-q[0])
+                elif lines > 0 and columns == 0:
+                    F3 += payoff_matrix_1[lines][columns] * (1-p[0]) * q[columns]
+                    F4 += payoff_matrix_2[lines][columns] * (1-p[0]) * q[columns]
+                elif columns > 0 and lines == 0:
+                    F3 += payoff_matrix_1[lines][columns] * p[lines] * (1-q[0])
+                    F4 += payoff_matrix_2[lines][columns] * p[lines] * (1-q[0])
+                else:
+                    F3 += payoff_matrix_1[lines][columns] * p[lines] * q[columns]
+                    F4 += payoff_matrix_2[lines][columns] * p[lines] * q[columns]
+
+        return payoff_points, [F3, F4]
+    payoff_points.append(payoff_points[0])
+    payoff_points = np.asarray(payoff_points)
+    print('test', payoff_points)
+    return [payoff_points]
     #return payoff_player_1, payoff_player_2, payoff_points
 
 # TODO: Garantiepunkt errechnen + Aussage ob dominiert
@@ -154,6 +183,7 @@ def bayes_strategy(payoff_matrix_1, payoff_matrix_2, player, strategy):
 # TODO: evtl. in Game-Klasse übernehmen
 # TODO: Auszahlungsdiagramme graphisch aufbereiten
 # TODO: Simplex-Tableaus graphisch aufbereiten
+# TODO: Parametrisierung welche Aufgaben gestellt wurden
 def get_calculations_pdf(game):
 
     pass
@@ -163,6 +193,7 @@ def get_calculations_pdf(game):
 # TODO: evtl. in Game-Klasse übernehmen
 # TODO: Auszahlungsdiagramme graphisch aufbereiten
 # TODO: Simplex-Tableaus graphisch aufbereiten
+# TODO: Parametrisierung welche Aufgaben gestellt wurden
 def get_calculations_latex(game):
 
     pass
@@ -252,6 +283,7 @@ def get_strategy_pairs(payoff_matrix_1, payoff_matrix_2):
 
 # Punkt aus unteren Spielwerten heißt Garantiepunkt
 # Undominiert, wenn kein anderer Auszahlungspunkt existiert bei dem u1 und u2 >= u1* und u2*
+# TODO: Funktion schreiben
 def get_guaranteed_payoff(game):
 
     pass
@@ -603,9 +635,6 @@ print(coords)
 #hull = ConvexHull(coords)
 #print(hull)
 
-for simplex in coords[1].simplices:
-    plt.plot(coords[0][simplex, 0], coords[0][simplex, 1], 'k-')
-
 p1 = np.linspace(0, 1)
 p2 = np.linspace(0, 1)
 q1 = np.linspace(0, 1)
@@ -619,16 +648,63 @@ def func_2(p1, p2, q1, q2):
 
 # x-Werte
 F1 = 2*p1*q1 - 1*p1*q2 - 1*p2*q1 + 1*p2*q2
+#F3 = 2*p1*q1 - 1*p1*(1-q1) - 1*(1-p1)*q1 + 1*(1-p1)*(1-q1)
+# y-Werte
 F2 = 1*p1*q1 - 1*p1*q2 - 1*p2*q1 + 2*p2*q2
+#F4 = 1*p1*q1 - 1*p1*(1-q1) - 1*(1-p1)*q1 + 2*(1-p1)*(1-q1)
+
+#print(len(F3))
+#print(F3)
+#print(len(F4))
+#print(F4)
+#plt.plot(F1, F2, 'k-')
+
+#print(coords[1][0])
+#print(coords[1][1])
+
+new_points = list()
+#for points in range(len(F3)):
+#    new_points.append((np.asarray([F3[points], F4[points]])))
+
+new_points = np.asarray(new_points)
+print(new_points)
+
+#coords[1].add_points(new_points)
+#print(coords[1].points)
+#for simplex in coords[1].simplices:
+#    plt.plot(coords[0][simplex, 0], coords[0][simplex, 1], 'k-')
+
+
+
+#plt.plot(coords[0][coords[1].vertices[0],0], coords[0][coords[1].vertices[0],1], 'ro')
+
+
 
 P1, P2, Q1, Q2 = meshgrid(p1, p2, q1, q2)
 
 FF1 = func(P1, P2, Q1, Q2)
 FF2 = func_2(P1, P2, Q1, Q2)
 
-print(FF1)
+#print(FF1)
+print(coords[0])
+#plt.plot(F3, F4, 'k-')
+plt.plot(coords[1][0], coords[1][1], 'k-')
+print('test')
+x = list()
+y = list()
+for points in range(len(coords[0])):
+    print(coords[0][points])
+    print(points)
+    x.append(coords[0][points][0])
+    y.append(coords[0][points][1])
+    #plt.plot(points[0], points[1], 'k-')
+    #print(points)
+    #print(coords[points])
+    #print(coords[points][:, 0], coords[0][points][:, 1])
 
-plt.plot(FF1, FF2)
+#x.append(coords[0][0])
+#y.append(coords[0][1])
+plt.plot(x, y, 'k-')
 #plt.plot(coords_2[hull.vertices,0], coords_2[hull.vertices,1], 'r--', lw=2)
 #plt.plot(coords_2[hull.vertices[0],0], coords_2[hull.vertices[0],1], 'ro')
 plt.axis([-5, 5, -5, 5])
