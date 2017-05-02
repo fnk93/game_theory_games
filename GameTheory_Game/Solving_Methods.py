@@ -17,7 +17,7 @@ from pylab import meshgrid
 
 # mode = 0 -> normale Spiele
 # mode = 1 -> Kampf der Geschlechter
-# TODO: Garantiepunkt in Punktewolke aufnehmen
+# TODO: Auszahlungsdiagramm gemischte Strategien für mehr als 2 Stragien nutzbar machen.
 def get_payoff_diagramm(payoff_matrix_1, payoff_matrix_2, mode=0):
 
     #payoff_player_1 = list()
@@ -71,15 +71,49 @@ def get_payoff_diagramm(payoff_matrix_1, payoff_matrix_2, mode=0):
     return [payoff_points]
     #return payoff_player_1, payoff_player_2, payoff_points
 
-# TODO: Garantiepunkt errechnen + Aussage ob dominiert
-# TODO: Gleichgewichtspunkt zurückgeben mit zugehörigem Strategiepaar und Aussage ob stabil
-# TODO: Nash-GGW + Wahrscheinlichkeiten + Payoff zusammenführen
+# TODO: Garantiepunkt dominiert in gemischten Strategien
+# TODO: Gleichgewichtspunkt zurückgeben mit zugehörigem Strategiepaar(nash und Maximin)
+# TODO: Nash-GGW + Wahrscheinlichkeiten + Payoff zusammenführen - done
 # TODO: Spielwert-Berechnung bei unterschiedlichen Strategien (Gemischt, rein, Maximin)
 # TODO: Maximin bei gemischten Strategien (=Nash-GGW?)
 # TODO: Formulierung Lineares Programm ausgliedern aus Simplex
 # TODO: Strategie- und Spielwert-Berechnung in Simplex
 # TODO: Gleichgewichtspunkte bei Seitenzahlung / keiner Seitenzahlung
 # TODO: Graphische Lösung gemischter Strategien
+
+
+# Leerer Return bedeutet kein Nash-GGW
+# Nash-GGW in reinen Strategien
+def ggw(payoff_matrix_1, payoff_matrix_2, mode=0):
+    optimal = np.zeros((payoff_matrix_1.shape[0], payoff_matrix_1.shape[1]))
+    result = list()
+    if mode == 0:
+        for column in range(payoff_matrix_1.shape[1]):
+            max_val_1 = (np.argmax(payoff_matrix_1[:, column]))
+            optimal[max_val_1][column] += 1
+            for line in range(payoff_matrix_1.shape[0]):
+                if line != max_val_1 and payoff_matrix_1[line][column] == payoff_matrix_1[max_val_1][column]:
+                    optimal[line][column] += 1
+            print(max_val_1)
+
+        for line in range(payoff_matrix_2.shape[0]):
+            max_val_2 = (np.argmax(payoff_matrix_2[line]))
+            optimal[line][max_val_2] += 1
+            for column in range(payoff_matrix_2.shape[1]):
+                if column != max_val_2 and payoff_matrix_2[line][column] == payoff_matrix_2[line][max_val_2]:
+                    optimal[line][column] += 1
+            print(max_val_2)
+        print(optimal)
+        prep = np.where(optimal == 2)
+        for index in range(prep[0].shape[0]):
+            result.append([prep[0][index], prep[1][index]])
+    return result
+
+O = np.asarray([[3, 2],
+                [1, 4]])
+F = np.asarray([[2, 3],
+                [3, 1]])
+
 
 
 # Prüft ob für jeden Spieler unterer Spielwert dem oberen entspricht
@@ -283,10 +317,26 @@ def get_strategy_pairs(payoff_matrix_1, payoff_matrix_2):
 
 # Punkt aus unteren Spielwerten heißt Garantiepunkt
 # Undominiert, wenn kein anderer Auszahlungspunkt existiert bei dem u1 und u2 >= u1* und u2*
-# TODO: Funktion schreiben
-def get_guaranteed_payoff(game):
+# mode = 0 reine Strategien, mode = 1 gemischte Strategien
+# TODO: Dominiertheit bei gemischten Strategien erarbeiten
+def get_guaranteed_payoff(payoff_matrix_1, payoff_matrix_2, mode=0):
+    payoff = list()
+    dominated = False
+    if mode == 0:
+        payoff = get_lower_values(payoff_matrix_1, payoff_matrix_2)
+        for lines in range(np.asarray(payoff_matrix_1).shape[0]):
+            for columns in range(np.asarray(payoff_matrix_1).shape[1]):
+                if payoff_matrix_1[lines][columns] >= payoff[0] and payoff_matrix_2[lines][columns] >= payoff[1]:
+                    if payoff_matrix_1[lines][columns] != payoff[0] and payoff_matrix_2[lines][columns] != payoff[1]:
+                        dominated = True
+    elif mode == 1:
+        result = solve_using_nggw(payoff_matrix_1, payoff_matrix_2)
+        #print(result)
+        for players in range(len(result)):
+            #print(result[players][1][-1])
+            payoff.append(result[players][0][result[players][1][-1]])
 
-    pass
+    return payoff, dominated
 
 
 # Matrizen für Simplex vorbereiten
@@ -419,7 +469,7 @@ def solve_using_nggw(payoff_matrix_1, payoff_matrix_2):
 
     # Variablen des LGS deklarieren
     q = symbols('q:' + str(payoff_matrix_1.shape[1]), nonnegative=True)
-    w2 = symbols('w2', real=True)
+    w2 = symbols('w', real=True)
     # Lösungssystem erstellen und mit Gleichungen füllen
     # Variablensystem erstellen und füllen
     u2 = list()
@@ -442,7 +492,7 @@ def solve_using_nggw(payoff_matrix_1, payoff_matrix_2):
 
     # solution[0] enthält Spielwert für Spieler 2 und Strategien für Spieler 1 und die zugehörigen Variablen
     # solution[1] enthält Spielwert für Spieler 1 und Strategien für Spieler 2 und die zugehörigen Variablen
-    print(solution)
+    #print(solution)
 
     return solution
 
@@ -730,3 +780,11 @@ Z = np.asarray([[5, 4, 3],
                 [2, 1, 0]])
 
 solve_maximin_strategies(Z, Z*-1)
+
+print(get_guaranteed_payoff(T, U, 0))
+print(solve_using_nggw(T, U))
+
+TT = np.asarray([[1, -1],
+                 [-1, 1]])
+
+print(get_guaranteed_payoff(TT, TT*-1, 0))
