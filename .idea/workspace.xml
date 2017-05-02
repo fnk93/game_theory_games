@@ -56,8 +56,8 @@
       <file leaf-file-name="Solving_Methods.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/GameTheory_Game/Solving_Methods.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="9809">
-              <caret line="587" column="25" lean-forward="true" selection-start-line="587" selection-start-column="25" selection-end-line="587" selection-end-column="25" />
+            <state relative-caret-position="134">
+              <caret line="689" column="22" lean-forward="false" selection-start-line="689" selection-start-column="22" selection-end-line="689" selection-end-column="22" />
               <folding />
             </state>
           </provider>
@@ -585,7 +585,14 @@
       <option name="project" value="LOCAL" />
       <updated>1492552095384</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="Nash-GGW für reine Strategien.">
+      <created>1493757675589</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1493757675589</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TodoView" selected-index="4">
@@ -630,7 +637,8 @@
     <MESSAGE value="Anzahl der Code-Zeilen reduziert, Speicherung aller key-value-Paare vorbereitet." />
     <MESSAGE value="Letzte Code-Reste bei Spielerzeugung hinsichtlich 3-dimensionalem Spiel-Array entfernt." />
     <MESSAGE value="Next steps defined. Finished a few methods for solving. Function cleanup needed: preparations for using algorithms outside of these methods." />
-    <option name="LAST_COMMIT_MESSAGE" value="Next steps defined. Finished a few methods for solving. Function cleanup needed: preparations for using algorithms outside of these methods." />
+    <MESSAGE value="Nash-GGW für reine Strategien." />
+    <option name="LAST_COMMIT_MESSAGE" value="Nash-GGW für reine Strategien." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -1088,8 +1096,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/GameTheory_Game/Solving_Methods.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="9809">
-          <caret line="587" column="25" lean-forward="true" selection-start-line="587" selection-start-column="25" selection-end-line="587" selection-end-column="25" />
+        <state relative-caret-position="134">
+          <caret line="689" column="22" lean-forward="false" selection-start-line="689" selection-start-column="22" selection-end-line="689" selection-end-column="22" />
           <folding />
         </state>
       </provider>

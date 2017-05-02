@@ -115,7 +115,6 @@ F = np.asarray([[2, 3],
                 [3, 1]])
 
 
-
 # Prüft ob für jeden Spieler unterer Spielwert dem oberen entspricht
 def is_determined(payoff_matrix_1, payoff_matrix_2):
 
@@ -689,12 +688,6 @@ p1 = np.linspace(0, 1)
 p2 = np.linspace(0, 1)
 q1 = np.linspace(0, 1)
 q2 = np.linspace(0, 1)
-
-def func(p1, p2, q1, q2):
-    return 2*p1*q1 - 1*p1*q2 - 1*p2*q1 + 1*p2*q2
-
-def func_2(p1, p2, q1, q2):
-    return 1*p1*q1 - 1*p1*q2 - 1*p2*q1 + 2*p2*q2
 
 # x-Werte
 F1 = 2*p1*q1 - 1*p1*q2 - 1*p2*q1 + 1*p2*q2
