@@ -56,8 +56,8 @@
       <file leaf-file-name="Solving_Methods.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/GameTheory_Game/Solving_Methods.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="134">
-              <caret line="689" column="22" lean-forward="false" selection-start-line="689" selection-start-column="22" selection-end-line="689" selection-end-column="22" />
+            <state relative-caret-position="233">
+              <caret line="883" column="35" lean-forward="true" selection-start-line="883" selection-start-column="35" selection-end-line="883" selection-end-column="35" />
               <folding />
             </state>
           </provider>
@@ -137,9 +137,23 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scratches" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="game_theory_games_2" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="External Libraries" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="&lt; Python 3.6.0 (F:\ProgramData\Anaconda3\python.exe) &gt;" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode" />
+            </PATH_ELEMENT>
+          </PATH>
           <PATH>
             <PATH_ELEMENT>
               <option name="myItemId" value="game_theory_games_2" />
@@ -166,7 +180,7 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="RestoreUpdateTree" date="Moments ago" ActionInfo="_Update">
@@ -191,6 +205,7 @@
           <option name="mySupportsDeletion" value="false" />
           <option name="myCanBeAbsent" value="false" />
           <option name="myId" value="CREATED" />
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/GameTheory_Game/tests.py</PATH>
         </FILE-GROUP>
         <FILE-GROUP>
           <option name="myUpdateName" value="Deleted" />
@@ -592,7 +607,14 @@
       <option name="project" value="LOCAL" />
       <updated>1493757675589</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="Nash-GGW für reine Strategien.">
+      <created>1493757786178</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1493757786178</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TodoView" selected-index="4">
@@ -641,7 +663,9 @@
     <option name="LAST_COMMIT_MESSAGE" value="Nash-GGW für reine Strategien." />
   </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager />
+    <breakpoint-manager>
+      <option name="time" value="1" />
+    </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
@@ -1096,8 +1120,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/GameTheory_Game/Solving_Methods.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="134">
-          <caret line="689" column="22" lean-forward="false" selection-start-line="689" selection-start-column="22" selection-end-line="689" selection-end-column="22" />
+        <state relative-caret-position="233">
+          <caret line="883" column="35" lean-forward="true" selection-start-line="883" selection-start-column="35" selection-end-line="883" selection-end-column="35" />
           <folding />
         </state>
       </provider>

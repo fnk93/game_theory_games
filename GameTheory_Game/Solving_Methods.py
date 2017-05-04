@@ -481,7 +481,6 @@ def solve_using_nggw(payoff_matrix_1, payoff_matrix_2):
     # LGS lösen und speichern für Rückgabe
     solution_1 = solve(u, force=True, check=False)
     solution = list()
-    solution.append([solution_1, symbol])
 
     # Gemischte Strategien q für Spieler 2 und Spielwert w für Spieler 1
 
@@ -497,19 +496,24 @@ def solve_using_nggw(payoff_matrix_1, payoff_matrix_2):
             temp += payoff_matrix_1[line][column] * q[column]
         u2.append(Eq(temp, w2))
     temp_2 = 0
-    symbol = list()
+    symbol2 = list()
     for decisions in range(len(q)):
         temp_2 += 1 * q[decisions]
-        symbol.append(q[decisions])
+        symbol2.append(q[decisions])
     u2.append(Eq(temp_2, 1))
-    symbol.append(w2)
+    symbol2.append(w2)
     print(u2)
     # LGS lösen und speichern für Rückgabe
     solution_2 = solve(u2, force=True, check=False)
-    solution.append([solution_2, symbol])
 
-    # solution[0] enthält Spielwert für Spieler 2 und Strategien für Spieler 1 und die zugehörigen Variablen
-    # solution[1] enthält Spielwert für Spieler 1 und Strategien für Spieler 2 und die zugehörigen Variablen
+    # print(solution_1[symbol[-1]], solution_2[symbol2[-1]])
+    # print(solution_1[symbol[-1]].copy())
+    solution_1[symbol[-1]], solution_2[symbol2[-1]] = solution_2[symbol2[-1]], solution_1[symbol[-1]]
+    symbol[-1], symbol2[-1] = symbol2[-1], symbol[-1]
+
+    solution.append([solution_1, symbol])
+    solution.append([solution_2, symbol2])
+
     # print(solution)
 
     return solution
@@ -744,6 +748,48 @@ print('maximin: ', solve_maximin_strategies(NR6, NR6*-1))
 print('det: ', determination_intervall(NR6, NR6*-1))
 print('simplex: ', use_simplex(NR6, NR6*-1))
 
+# Klausurensammlung Nr7
+NR7 = np.asarray([
+    [0, 3, -2],
+    [-2, 0, 2],
+    [5, -2, 0]
+])
+print('bayes: ', bayes_strategy(NR7, NR7*-1, 0, 1))
+print('maximin: ', solve_maximin_strategies(NR7, NR7*-1))
+print('det: ', determination_intervall(NR7, NR7*-1))
+print('maximin gemischt: ', solve_using_nggw(NR7, NR7*-1))
+
+# Klausurensammlung Nr9
+NR8 = np.asarray([
+    [3, -1, -2],
+    [-3, 4, -1],
+    [-5, -3, 3]
+])
+print('maximin-wert: ', get_guaranteed_payoff(NR8, NR8*-1))
+print('simplex spieler 2: ', use_simplex_player1(NR8))
+
+# Klausurensammlung Nr11
+NR11 = np.asarray([
+    [10, 1, -1],
+    [11, 8, -2],
+    [6, 6, 8]
+])
+
+print('garantie punkt: ', get_guaranteed_payoff(NR11, NR11*-1))
+print('simplex spieler 1: ', use_simplex_player2(NR11))
+
+# Klausurensammlung Nr12
+NR12 = np.asarray([
+    [7, 2, -4],
+    [9, 9, -1],
+    [8, 6, 8]
+])
+
+print('')
+
+# Klausurensammlung Nr13
+
+
 # coords_2 = list()
 # for x in range(len(coords[0])):
 #     coords_2.append([coords[0][x], coords[1][x]])
@@ -837,8 +883,8 @@ Z = np.asarray([[5, 4, 3],
 
 solve_maximin_strategies(Z, Z * -1)
 
-print(get_guaranteed_payoff(T, U, 0))
-print(solve_using_nggw(T, U))
+# print(get_guaranteed_payoff(T, U, 0))
+# print(solve_using_nggw(T, U))
 
 TT = np.asarray([[1, -1],
                  [-1, 1]])
