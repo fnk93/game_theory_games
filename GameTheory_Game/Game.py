@@ -6,52 +6,116 @@ from random import randrange
 
 class Game:
 
-    def __init__(self, maximum_int=10, lin=5, col=5, mode=0):
+    def __init__(self, maximum_int=10, lin=5, col=5, mode=0, c=0):
         self.__mode = mode
         self.__maximum_int = maximum_int
         self.__minimum_int = maximum_int * -1
+        self.__c = c
         self.__lin = randrange(2, lin)
         self.__col = randrange(2, col)
         self.__matrix = np.zeros((self.__lin, self.__col))
         self.__matrix2 = np.zeros((self.__lin, self.__col))
-        self.fill_matrix(self.__mode)
+        self.fill_matrix(self.__mode, self.__c)
 
-    def get_matrix(self):
+    def getc(self):
+        return self.__c
+
+    def setc(self, c):
+        self.__c = c
+
+    def delc(self):
+        del self.__c
+
+    c = property(getc, setc, delc, "Konstante c für Konstantsummenspiele")
+
+    def getmatrix(self):
         return self.__matrix
 
-    def get_matrix2(self):
-        return self.__matrix2
-
-    def set_matrix(self, matrix):
+    def setmatrix(self, matrix):
         self.__matrix = matrix
 
-    def set_matrix2(self, matrix):
+    def delmatrix(self):
+        del self.__matrix
+
+    matrix = property(getmatrix, setmatrix, delmatrix, "Matrix Spieler 1")
+
+    def getmatrix2(self):
+        return self.__matrix2
+
+    def setmatrix2(self, matrix):
         self.__matrix2 = matrix
 
-    def set_lines(self, lin):
+    def delmatrix2(self):
+        del self.__matrix2
+
+    matrix2 = property(getmatrix2, setmatrix2, delmatrix2, "Matrix Spieler 2")
+
+    def getlines(self):
+        return self.__lin
+
+    def setlines(self, lin):
         self.__lin = lin
         self.fill_matrix(self.__mode)
 
-    def set_columns(self, col):
+    def dellines(self):
+        del self.__lin
+
+    lines = property(getlines, setlines, dellines, "Anzahl Zeilen")
+
+    def getcolumns(self):
+        return self.__col
+
+    def setcolumns(self, col):
         self.__col = col
         self.fill_matrix(self.__mode)
 
-    def set_mode(self, mode):
+    def delcolumns(self):
+        del self.__col
+
+    cols = property(getcolumns, setcolumns, delcolumns, "Anzahl Spalten")
+
+    def getmode(self):
+        return self.__mode
+
+    def setmode(self, mode):
         self.__mode = mode
         self.fill_matrix(mode)
 
-    def set_max_int(self, max_int):
-        self.__maximum_int = max_int
-        self.__minimum_int = max_int * -1
+    def delmode(self):
+        del self.__mode
 
-    def fill_matrix(self, mode=0):
+    mode = property(getmode, setmode, delmode, "Modus")
+
+    def getmaxint(self):
+        return self.__maximum_int
+
+    def setmaxint(self, max_int):
+        self.__maximum_int = max_int
+
+    def delmaxint(self):
+        del self.__maximum_int
+
+    maxint = property(getmaxint, setmaxint, delmaxint, "Maximal-Wert")
+
+    def getminint(self):
+        return self.__minimum_int
+
+    def setminint(self, min_int):
+        self.__minimum_int = min_int
+
+    def delminint(self):
+        del self.__minimum_int
+
+    minint = property(getminint, setminint, delminint, "Minimal-Wert")
+
+    def fill_matrix(self, mode=0, c=0):
         # Zwei Personen Nullsummenspiele (Modus: 0)
         if mode == 0:
             for count_lin in range(self.__lin):
                 for count_col in range(self.__col):
                     x = randrange(self.__minimum_int, self.__maximum_int + 1)
                     self.__matrix[count_lin][count_col] = x
-            self.__matrix2 = np.asarray(self.__matrix * -1)
+            self.__matrix2 = c - np.asarray(self.__matrix)
 
         # Nicht kooperative 2-Personenspiele (Modus: 1)
         elif mode == 1:
@@ -101,8 +165,6 @@ class Game:
 
 
         # Kooperative 2-Personenspiele (Modus: 2)
-        # TODO: Kompensation durch Seitenzahlung als Untermodus
-        # TODO: Nur verbindliche Absprachen über Strategie möglich
         elif mode == 2:
             for count_lin in range(self.__lin):
                 for count_col in range(self.__col):
@@ -111,22 +173,7 @@ class Game:
                     self.__matrix[count_lin][count_col] = x
                     self.__matrix2[count_lin][count_col] = y
 
-    def get_mode(self):
-        return self.__mode
 
-    def get_maximum_int(self):
-        return self.__maximum_int
-
-    def get_minimum_int(self):
-        return self.__minimum_int
-
-    def get_lines(self):
-        return self.__lin
-
-    def get_columns(self):
-        return self.__col
-
-    # TODO: Modi einbauen.
-    # TODO: kooperative und nicht-kooperativte Spiele
-    # TODO: Determinierte Spiele
-    # TODO: Indeterminierte Spiele
+b = Game()
+print(b.matrix)
+print(b.matrix2)
