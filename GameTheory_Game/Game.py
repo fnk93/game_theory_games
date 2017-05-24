@@ -1,8 +1,6 @@
 import numpy as np
 from random import randrange
 
-# TODO: Schwierigkeitsgrad + unterschiedliche Arten der Spiele selektierbar machen
-
 
 class Game:
 
@@ -173,7 +171,3 @@ class Game:
                     self.__matrix[count_lin][count_col] = x
                     self.__matrix2[count_lin][count_col] = y
 
-
-b = Game()
-print(b.matrix)
-print(b.matrix2)

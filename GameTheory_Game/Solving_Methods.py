@@ -197,7 +197,9 @@ def get_lower_values(payoff_matrix_1, payoff_matrix_2):
     temp_values.clear()
 
     return lower_values
-
+DD = np.asarray([[1, -1],
+                 [-1, 1]])
+print(determination_intervall(DD, DD*-1))
 
 # Maximin-Strategien der Spieler
 # Sollte nur bei determinierten Spielen angewendet werden
@@ -337,10 +339,8 @@ def get_strategy_pairs(payoff_matrix_1, payoff_matrix_2):
 # Undominiert, wenn kein anderer Auszahlungspunkt existiert bei dem u1 und u2 >= u1* und u2*
 # mode = 0 reine Strategien, mode = 1 gemischte Strategien
 # TODO: Dominiertheit bei gemischten Strategien erarbeiten
-""":rtype tuple"""
 
-
-def get_guaranteed_payoff(payoff_matrix_1: np.ndarray, payoff_matrix_2: np.ndarray, mode=0) -> tuple:
+def get_guaranteed_payoff(payoff_matrix_1, payoff_matrix_2, mode=0):
     payoff = list()
     dominated = False
     # inner_copy_1 = np.asarray(payoff_matrix_1)  # type: np.ndarray
