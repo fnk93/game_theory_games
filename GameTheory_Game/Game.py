@@ -1,16 +1,21 @@
 import numpy as np
 from random import randrange
+from GameTheory_Game.Solving_Methods import get_calculations_latex
+from sympy import Symbol, refine, Q, var
+from GameTheory_Game.Solving_Methods import solve_using_nggw
+from sympy.solvers import solve
+from scipy.optimize import fsolve
 
 
 class Game:
 
-    def __init__(self, maximum_int=10, lin=5, col=5, mode=0, c=0):
+    def __init__(self, maximum_int=10, lin=5, mode=0, c=0):
         self.__mode = mode
         self.__maximum_int = maximum_int
         self.__minimum_int = maximum_int * -1
         self.__c = c
         self.__lin = randrange(2, lin)
-        self.__col = randrange(2, col)
+        self.__col = self.__lin
         self.__matrix = np.zeros((self.__lin, self.__col))
         self.__matrix2 = np.zeros((self.__lin, self.__col))
         self.fill_matrix(self.__mode, self.__c)
@@ -171,3 +176,12 @@ class Game:
                     self.__matrix[count_lin][count_col] = x
                     self.__matrix2[count_lin][count_col] = y
 
+
+new_game = Game()
+new_game.matrix = np.asarray([[3, 0, 2],
+                                [4,5, 1],
+                              [2,2,-1],])
+new_game.matrix2 = new_game.matrix*-1
+
+print('solutions')
+print(get_calculations_latex(new_game, True))

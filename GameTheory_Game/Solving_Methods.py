@@ -1,8 +1,11 @@
 import numpy as np
 from scipy import optimize
 from sympy.solvers import solve
-from sympy import nsimplify, symbols, Eq
+from sympy import nsimplify, symbols, Eq, Symbol
 from copy import deepcopy
+from random import randrange
+from sympy.abc import u, v, x
+import collections
 import matplotlib.pyplot as plt
 
 
@@ -98,26 +101,28 @@ def get_payoff_diagramm(payoff_matrix_1, payoff_matrix_2, mode=0):
 # Leerer Return bedeutet kein Nash-GGW
 # Nash-GGW in reinen Strategien
 def ggw(payoff_matrix_1, payoff_matrix_2, mode=0):
-    optimal = np.zeros((payoff_matrix_1.shape[0], payoff_matrix_1.shape[1]))
+    optimal1 = np.zeros((payoff_matrix_1.shape[0], payoff_matrix_1.shape[1]))
+    optimal2 = np.zeros((payoff_matrix_1.shape[0], payoff_matrix_1.shape[1]))
     dominated = list()
     result = list()
     if mode == 0:
         for column in range(payoff_matrix_1.shape[1]):
             max_val_1 = (np.argmax(payoff_matrix_1[:, column]))
-            optimal[max_val_1][column] += 1
+            optimal1[max_val_1][column] += 1
             for line in range(payoff_matrix_1.shape[0]):
                 if line != max_val_1 and payoff_matrix_1[line][column] == payoff_matrix_1[max_val_1][column]:
-                    optimal[line][column] += 1
+                    optimal1[line][column] += 1
             # print(max_val_1)
 
         for line in range(payoff_matrix_2.shape[0]):
             max_val_2 = (np.argmax(payoff_matrix_2[line]))
-            optimal[line][max_val_2] += 1
+            optimal2[line][max_val_2] += 1
             for column in range(payoff_matrix_2.shape[1]):
                 if column != max_val_2 and payoff_matrix_2[line][column] == payoff_matrix_2[line][max_val_2]:
-                    optimal[line][column] += 1
+                    optimal2[line][column] += 1
             # print(max_val_2)
         # print(optimal)
+        optimal = optimal1 + optimal2
         prep = np.where(optimal == 2)
         for index in range(prep[0].shape[0]):
             result.append([prep[0][index], prep[1][index]])
@@ -131,7 +136,7 @@ def ggw(payoff_matrix_1, payoff_matrix_2, mode=0):
                                         payoff_matrix_2[lines][columns] != result[ggws][1]:
                             dominated_temp = True
             dominated.append(dominated_temp)
-    return result, dominated
+    return result, dominated, optimal, optimal1, optimal2
 
 
 O = np.asarray([[-5, -1],
@@ -231,8 +236,8 @@ def bayes_strategy(payoff_matrix_1, payoff_matrix_2, ind, strategy):
     payoff_matrices = [payoff_matrix_1.transpose(), payoff_matrix_2]
     # print(payoff_matrices[player][strategy])
     bayes = (np.argmax(payoff_matrices[ind][strategy], 0))
-
-    return bayes
+    watched_strategy = payoff_matrices[ind][strategy]
+    return bayes, watched_strategy
 
 
 # Ergebnisse und Lösungswege als PDF formatieren
@@ -240,7 +245,7 @@ def bayes_strategy(payoff_matrix_1, payoff_matrix_2, ind, strategy):
 # TODO: Auszahlungsdiagramme graphisch aufbereiten
 # TODO: Simplex-Tableaus graphisch aufbereiten
 # TODO: Parametrisierung welche Aufgaben gestellt wurden
-def get_calculations_pdf(game):
+def get_calculations_pdf(game, mode=0):
     matrix = game
     return matrix
 
@@ -250,9 +255,179 @@ def get_calculations_pdf(game):
 # TODO: Auszahlungsdiagramme graphisch aufbereiten
 # TODO: Simplex-Tableaus graphisch aufbereiten
 # TODO: Parametrisierung welche Aufgaben gestellt wurden
-def get_calculations_latex(game):
-    matrix = game
-    return matrix
+def get_calculations_latex(game, zerosum=False):
+    matrix1 = game.matrix
+    matrix2 = game.matrix2
+    solution = ''
+    maximins = solve_maximin_strategies(matrix1, matrix2)
+    maximins_1 = []
+    maximins_2 = []
+    for element in maximins[0]:
+        maximins_1.append(element+1)
+    for element in maximins[1]:
+        maximins_2.append(element+1)
+    dets = determination_intervall(matrix1, matrix2)
+    guarantee = get_guaranteed_payoff(matrix1, matrix2)
+    played_strategy_1 = randrange(0, matrix1.shape[0])
+    played_strategy_2 = randrange(0, matrix1.shape[1])
+    bs_1 = bayes_strategy(matrix1, matrix2, 0, played_strategy_2)
+    bayes_1 = bs_1[0]
+    watch_1 = bs_1[1]
+    bs_2 = bayes_strategy(matrix1, matrix2, 1, played_strategy_1)
+    bayes_2 = bs_2[0]
+    watch_2 = bs_2[1]
+    equi = ggw(matrix1, matrix2, 0)
+    low_values = get_lower_values(matrix1, matrix2)
+    equi_points = []
+    optimals = equi[2]
+    optimals1 = equi[3]
+    optimals2 = equi[4]
+    determined = is_determined(matrix1, matrix2)
+    for equis in equi[0]:
+        equi_points.append([equis[0]+1,equis[1]+1])
+    #equi_point = [equi[0][0][0]+1,equi[0][0][1]+1]
+    solution += 'Bei der gegebenen Spielmatrix eines 2-Personen-Nullsummenspiels' + '\n'
+    solution += str(matrix1) + '\n'
+    solution += 'ergeben sich folgende Kennzahlen: '+ '\n'
+    solution += 'Maximin-Strategie(n) für Spieler 1: ' + str(maximins_1) + '\n'
+    solution += 'Maximin-Strategie(n) für Spieler 2: ' + str(maximins_2) + '\n'
+    solution += 'Indeterminiertheitsintervall: ' + str(dets[0]) + '\n'
+    if determined:
+        solution += 'Das Spiel ist somit determiniert.' + '\n'
+    else:
+        solution += 'Das Spiel ist somit indeterminiert.' + '\n'
+    solution += 'Aus dem unteren Spielwert für Spieler 1: ' + str(low_values[0]) + '\n'
+    solution += 'und dem unteren Spielwert für Spieler 2: ' + str(low_values[1]) + '\n'
+    solution += 'ergibt sich der Garantiepunkt des Spiels in reinen Strategien: ' + str(guarantee[0]) + '\n'
+    solution += 'Um die Bayes-Strategie zu ermitteln muss die maximale Auszahlung bei gegebener Gegnerstrategie betrachtet werden.' + '\n'
+    solution += 'Für Spieler 1 müssen deshalb bei gegebener Strategie ' + str(played_strategy_2+1) + ' von Spieler 2 die Auszahlungen ' + str(watch_1) + ' betrachtet werden.' + '\n'
+    solution += 'Hieraus ergibt sich die Bayes-Strategie : ' + str(bayes_1+1) + '\n'
+    solution += 'Für Spieler 2 müssen deshalb bei gegebener Strategie ' + str(
+        played_strategy_1 + 1) + ' von Spieler 1 die Auszahlungen ' + str(watch_2) + ' betrachtet werden.' + '\n'
+    solution += 'Hieraus ergibt sich die Bayes-Strategie : ' + str(bayes_2+1) + '\n'
+    solution += 'Das Erfüllen der Optimalitätsbedingung der Strategiekombinationen über beide Spieler aufsummiert sieht wie folgt aus:'+ '\n'
+    solution += str(optimals) + '\n'
+    solution += 'Wobei sich für Spieler 1 folgende Verteilung der Erfüllung der Optimalitätsbedingung' + '\n'
+    solution += str(optimals1) + '\n'
+    solution += 'und sich für Spieler 2 folgende Verteilung der Erfüllung der Optimalitätsbedingung ergab' + '\n'
+    solution += str(optimals2) + '\n'
+    if len(equi_points) > 0:
+        solution += 'Jede Strategiekombination, die sowohl für Spieler 1, als auch für Spieler 2 die Optimalitätsbedingung erfüllt ist Gleichgewichtspunkt des Spiels in reinen Strategien' + '\n'
+        solution += 'Gleichgewichtspunkt(e): '+ str(equi_points) + ' mit zugehöriger Auszahlung für Spieler 1: ' + str(matrix1[equi[0][0][0]][equi[0][0][1]]) + '\n' + 'und Auszahlung für Spieler 2: ' + str(matrix2[equi[0][0][0]][equi[0][0][1]])
+    else:
+        solution += 'Da keine Strategiekombination sowohl für Spieler 1, als auch für Spieler 2 die Optimalitätsbedingung erfüllt existiert kein Gleichgewichtspunkt in reinen Strategien'
+    if not determined:
+        if zerosum:
+            simplex = use_simplex(matrix1, matrix2)
+            if simplex[2][0].all() != matrix1.all():
+                solution += 'Aufgrund der Beschränkungen des Simplex-Algorithmus muss zunächst die Auszahlungsmatrix des betrachteten Zwei-Personen-Nullsummenspiels absolut positiv werden.' + '\n'
+                solution += 'Die zu lösende Matrix sieht nun folgendermaßen aus: ' + '\n'
+                solution += str(simplex[2][0]) + '\n'
+            else:
+                solution += 'Das folgende Spiel soll nun mithilfe des Simplex-Algorithmus gelöst werden:' + '\n'
+                solution += str(matrix1)
+            solution += 'Die Lösungsschritte des Simplexalgorithmus für Spieler 2 sehen nun wie folgt aus: ' + '\n'
+
+            for step in simplex[1][1:][0]:
+                solution += str(format_solution(step['tableau'])) + '\n'
+                if str(step['pivot']) != '(nan, nan)':
+                    solution += 'Pivot: ' + str(step['pivot']) + '\n'
+            added_value = np.amax(simplex[2][0]-matrix1)
+            solution += 'Da nicht der Spielwert maximiert wurde, sondern 1/G minimiert wurde und eine Konstante ' + str(added_value) + ' zur Matrix addiert wurde, muss man die Konstante wieder vom Ergebnis subtrahieren und den Kehrbruch verwenden.' + '\n'
+            game_value_1 = nsimplify((1/simplex[1][0]['fun']) + added_value, tolerance=0.0001, rational=True)
+            strategies = []
+            for strategy in simplex[1][0]['x']:
+                strategies.append(nsimplify(abs(((1/simplex[1][0]['fun'])*strategy)), tolerance=0.0001, rational=True))
+            solution += 'Hieraus ergibt sich der tatsächliche Spielwert für Spieler 2: ' + str(game_value_1) + '\n'
+            solution += 'Und die optimale Strategienkombination für Spieler 2: ' + str(strategies) + '\n'
+            solution += 'Da ein Zwei-Personen-Nullsummenspiel betrachtet wurde ergibt sich der Spielwert für Spieler 1: ' + str(game_value_1*-1) + '\n'
+            strategies_1 = []
+            possible_choices = -1 - matrix1.shape[0]
+            for elements in simplex[1][1][-1]['tableau'][-1][possible_choices:-1]:
+                strategies_1.append(nsimplify(elements*(1/simplex[1][1][-1]['tableau'][-1][-1]), tolerance=0.0001, rational=True))
+            solution += 'Die Dualität des Problems erlaubt es, die optimale Strategienkombination für Spieler 1 direkt aus der Zielfunktionszeile abzulesen: ' + str(strategies_1) + '\n'
+            solution += '\n\n\n'
+            reduced = reduce_matrix(matrix1, matrix2)
+            boole = reduced[2]
+            #if boole:
+            #    solution += 'Zunächst müssen die überflüssigen Zeilen und Spalten der Ausgangsmatrix entfernt werden.' + '\n'
+            #    solution += 'Hierdurch ergibt sich folgende Matrix für Spieler 1:' + '\n'
+            #    solution += str(reduced[0]) + '\n'
+
+            try:
+                nggw = solve_using_nggw(matrix1, matrix2)
+                solution_1 = nggw[0]
+                lgs1 = solution_1[2]
+                solution_2 = nggw[1]
+                lgs2 = solution_2[2]
+                correct_solution = True
+                for key in solution_1[1]:
+                    if solution_1[0][key] < 0 and key != solution_1[1][-1]:
+                        correct_solution = False
+                        solution += 'Key-Fehler: ' + str(solution_1[0][key]) + ' ' + str(key)+ '\n'
+                for key in solution_2[1]:
+                    if solution_2[0][key] < 0 and key != solution_2[1][-1]:
+                        correct_solution = False
+                        solution += 'Key-Fehler: ' + str(solution_2[0][key]) + ' ' + str(key) + '\n'
+                if correct_solution:
+                    solution += 'Selbiges Problem lässt sich auch durch die Aufstellung eines LGS nach den Bedingungen für ein Nash-Gleichgewicht lösen: ' + '\n'
+                    if len(solution_1[0]) > 0:
+                        solution += 'Das lineare Gleichungssystem für Spieler 1 lautet: ' + '\n'
+                        for equation in lgs1:
+                            solution += str((equation))
+                            solution += '\n'
+                        solution += 'Nach Auflösen des LGS ergeben sich folgene Werte für die optimale Strategienkombination: ' + '\n'
+                        for key in solution_1[1]:
+                            solution += str(key) + ':' + str(nsimplify(solution_1[0][key], tolerance=0.0001, rational=True)) + '\n'
+                    if len(solution_2[0]) > 0:
+                        solution += 'Das lineare Gleichungssystem für Spieler 2 lautet: ' + '\n'
+                        for equation in lgs2:
+                            solution += str(equation)
+                            solution += '\n'
+                        solution += 'Nach Auflösen des LGS ergeben sich folgene Werte für die optimale Strategienkombination: ' + '\n'
+                        for key in solution_2[1]:
+                            solution += str(key) + ':' + str(nsimplify(solution_2[0][key], tolerance=0.0001, rational=True)) + '\n'
+            except:
+                pass
+        else:
+            try:
+                nggw = solve_using_nggw(matrix1, matrix2)
+                solution_1 = nggw[0]
+                lgs1 = solution_1[2]
+                solution_2 = nggw[1]
+                lgs2 = solution_2[2]
+                correct_solution = True
+                for key in solution_1[1]:
+                    if solution_1[0][key] < 0 and key != solution_1[1][-1]:
+                        correct_solution = False
+                        solution += 'Key-Fehler: ' + str(solution_1[0][key]) + ' ' + str(key)+ '\n'
+                for key in solution_2[1]:
+                    if solution_2[0][key] < 0 and key != solution_2[1][-1]:
+                        correct_solution = False
+                        solution += 'Key-Fehler: ' + str(solution_2[0][key]) + ' ' + str(key) + '\n'
+                if correct_solution:
+                    solution += 'Selbiges Problem lässt sich auch durch die Aufstellung eines LGS nach den Bedingungen für ein Nash-Gleichgewicht lösen: ' + '\n'
+                    if len(solution_1[0]) > 0:
+                        solution += 'Das lineare Gleichungssystem für Spieler 1 lautet: ' + '\n'
+                        for equation in lgs1:
+                            solution += str((equation))
+                            solution += '\n'
+                        solution += 'Nach Auflösen des LGS ergeben sich folgene Werte für die optimale Strategienkombination: ' + '\n'
+                        for key in solution_1[1]:
+                            solution += str(key) + ':' + str(nsimplify(solution_1[0][key], tolerance=0.0001, rational=True)) + '\n'
+                    if len(solution_2[0]) > 0:
+                        solution += 'Das lineare Gleichungssystem für Spieler 2 lautet: ' + '\n'
+                        for equation in lgs2:
+                            solution += str(equation)
+                            solution += '\n'
+                        solution += 'Nach Auflösen des LGS ergeben sich folgene Werte für die optimale Strategienkombination: ' + '\n'
+                        for key in solution_2[1]:
+                            solution += str(key) + ':' + str(nsimplify(solution_2[0][key], tolerance=0.0001, rational=True)) + '\n'
+            except:
+                pass
+
+
+    return solution
 
 
 # Spielmatrix reduzieren
@@ -391,7 +566,7 @@ def use_simplex(payoff_matrix_1, payoff_matrix_2):
     simplex_1_solution = use_simplex_player1(simplex_games[1])
     simplex_2_solution = use_simplex_player2(simplex_games[0])
 
-    return [simplex_1_solution, simplex_2_solution]
+    return [simplex_1_solution, simplex_2_solution, simplex_games]
 
 
 # Simplex-Verfahren für Spieler 1 anwenden
@@ -458,10 +633,17 @@ def use_simplex_player1(simplex_game_2):
 # Gemischte Maximin-Strategien der Spieler
 def solve_using_nggw(payoff_matrix_1, payoff_matrix_2):
     # Gemischte Strategien p für Spieler 1 und Spielwert w für Spieler 2
-
+    payoff_matrice = reduce_matrix(payoff_matrix_1, payoff_matrix_2)
+    payoff_matrix_1 = payoff_matrice[0]
+    payoff_matrix_2 = payoff_matrice[1]
     # Variablen des LGS deklarieren
-    p = symbols('p:' + str(payoff_matrix_2.shape[0]), nonnegative=True)
-    w = symbols('w', real=True)
+    #p = symbols('p:' + str(payoff_matrix_2.shape[0]), nonnegative=True)
+    #v = Symbol("New symbol", positive=True)
+    #print(v.assumptions0)
+    p = []
+    w = Symbol('w', real=True)
+    for var in range(payoff_matrix_2.shape[0]):
+        p.append(Symbol('p'+str(var), nonnegative=True))
     # Lösungssystem erstellen und mit Gleichungen füllen
     # Variablensystem erstellen und füllen
     u = list()
@@ -469,50 +651,57 @@ def solve_using_nggw(payoff_matrix_1, payoff_matrix_2):
         temp = 0
         for line in range(payoff_matrix_2.shape[0]):
             temp += payoff_matrix_2[line][column] * p[line]
-        u.append(Eq(temp, w))
+        u.append(temp-w)
     temp_2 = 0
     symbol = list()
     for decisions in range(len(p)):
         temp_2 += 1 * p[decisions]
         symbol.append(p[decisions])
-    u.append(Eq(temp_2, 1))
+    u.append(temp_2-1)
     symbol.append(w)
-    print(u)
     # LGS lösen und speichern für Rückgabe
-    solution_1 = solve(u, force=True, check=False)
+    solution_1 = solve(u, force=True)
     solution = list()
 
     # Gemischte Strategien q für Spieler 2 und Spielwert w für Spieler 1
 
     # Variablen des LGS deklarieren
-    q = symbols('q:' + str(payoff_matrix_1.shape[1]), nonnegative=True)
-    w2 = symbols('w', real=True)
+    #q = symbols('q:' + str(payoff_matrix_1.shape[1]), positive=True, nonnegative=True)
+    w2 = Symbol('w', real=True)
+    q = []
     # Lösungssystem erstellen und mit Gleichungen füllen
     # Variablensystem erstellen und füllen
     u2 = list()
+    for var in range(payoff_matrix_1.shape[1]):
+        name = 'q' + str(var)
+        temp_sym = Symbol(name, nonnegative=True)
+        q.append(temp_sym)
     for line in range(payoff_matrix_1.shape[0]):
         temp = 0
         for column in range(payoff_matrix_1.shape[1]):
             temp += payoff_matrix_1[line][column] * q[column]
-        u2.append(Eq(temp, w2))
+        temp -= w2
+        u2.append(temp)
     temp_2 = 0
     symbol2 = list()
     for decisions in range(len(q)):
         temp_2 += 1 * q[decisions]
         symbol2.append(q[decisions])
-    u2.append(Eq(temp_2, 1))
+    u2.append(temp_2-1)
     symbol2.append(w2)
-    print(u2)
     # LGS lösen und speichern für Rückgabe
-    solution_2 = solve(u2, force=True, check=False)
-
+    solution_2 = solve(u2, check=False, force=True)
+    print(u, u2)
+    print(solution_1, solution_2)
+    print(symbol, symbol2)
     # print(solution_1[symbol[-1]], solution_2[symbol2[-1]])
     # print(solution_1[symbol[-1]].copy())
-    solution_1[symbol[-1]], solution_2[symbol2[-1]] = solution_2[symbol2[-1]], solution_1[symbol[-1]]
-    symbol[-1], symbol2[-1] = symbol2[-1], symbol[-1]
+    if len(solution_1) > 0 and len(solution_2) > 0:
+        solution_1[symbol[-1]], solution_2[symbol2[-1]] = solution_2[symbol2[-1]], solution_1[symbol[-1]]
+        symbol[-1], symbol2[-1] = symbol2[-1], symbol[-1]
 
-    solution.append([solution_1, symbol])
-    solution.append([solution_2, symbol2])
+    solution.append([solution_1, symbol, u])
+    solution.append([solution_2, symbol2, u2])
 
     # print(solution)
 
@@ -583,317 +772,3 @@ class SolvingSteps:
         return self.__array_xk
 
 
-# Kleine Tests der Funktionen
-A = np.asarray([[1, 2, 3],
-                [0, 1, 2]])
-B = np.asarray([[-1, -2, -3],
-                [0, -1, -2]])
-
-print(B[:, 1])
-
-# Determiniertheit und Maximin testen
-print(is_determined(A, B))
-print(solve_maximin_strategies(A, B))
-
-# Tests zur Matrixtransformation
-C = np.asarray([[0, -1, 2],
-                [2, 0, -1],
-                [-1, 2, 0]])
-print(C)
-print(np.rot90(C, 2))
-print(np.fliplr(np.flipud(C)))
-print(C * -1)
-
-# Spiel mit NGGW-Bedingung lösen
-solve_using_nggw(C, C * -1)
-D = np.asarray([[4, 1, 8, 0],
-                [5, 2, 2, 1],
-                [10, 2, 7, 8],
-                [-6, 5, 6, 2]])
-
-# Matrix reduzieren
-sol = (reduce_matrix(D, D * -1))
-print(D[0])
-print(sol[0])
-print(sol[1])
-
-E = np.asarray([[0, -1, 2],
-                [2, 0, -1],
-                [-1, 2, 0]])
-simplex = (use_simplex(E, E * -1))
-print()
-print('Fun: ')
-print(simplex[0][0]["fun"])
-print('X: ')
-print(simplex[0][0]['x'])
-print()
-print('Fun: ')
-print(simplex[1][0]["fun"])
-print('X: ')
-print(simplex[1][0]['x'])
-print()
-for table in range(len(simplex[1][1])):
-    print('Tableau ', table)
-    print(np.asarray(format_solution(simplex[1][1][table]["tableau"])))
-
-print(simplex[1][0])
-
-for table in range(len(simplex[0][1])):
-    print('Tableau ', table)
-    print(np.asarray(format_solution(simplex[0][1][table]["tableau"])))
-
-print(simplex[0][0])
-
-F = np.asarray([[2, -1],
-                [-1, 1]])
-
-G = np.asarray([[1, -1],
-                [-1, 2]])
-
-print(solve_using_nggw(F, G)[0][1])
-for val in solve_using_nggw(F, G)[0][1]:
-    print(val, solve_using_nggw(F, G)[0][0][val])
-
-H = np.asarray([[1, -2],
-                [-1, 1]])
-
-player = 1
-other_strategy = 0
-print('Bayes Strategie für Spieler ', player + 1, ' gegenüber Strategie ', other_strategy + 1, ' von Spieler 1:')
-print(bayes_strategy(H, H * -1, player, other_strategy) + 1)
-
-U = np.asarray([[10, 1],
-                [0, 1000],
-                [2000, 0]])
-
-print(bayes_strategy(U, U * -1, 0, 1) + 1)
-
-R = np.asarray([[4, 5, 2],
-                [6, 3, 2]])
-
-print(get_strategy_pairs(R, R * -1))
-print(is_determined(R, R * -1))
-
-S = np.asarray([[0, -1, 2],
-                [2, 0, -1],
-                [-1, 2, 0]])
-
-coords = get_payoff_diagramm(S, S * -1)
-
-# T = np.asarray([[2, -1],
-#                [-1, 1]])
-# U = np.asarray([[1, -1],
-#                [-1, 2]])
-
-fig = plt.figure()
-ax = fig.add_subplot(111)
-
-# TODO: Klausur testen
-# Klausurensammlung Nr1
-U = np.asarray([[80, 0],
-                [120, 10]])
-U2 = np.asarray([[80, 120],
-                 [0, 10]])
-
-coords2 = get_payoff_diagramm(U, U2)
-print(coords2)
-plt.ylabel('Auszahlung Spieler 2')
-plt.xlabel('Auszahlung Spieler 1')
-
-print('garantiepunkt:', get_guaranteed_payoff(U, U2))
-print('ggw: ', ggw(U, U2))
-
-# Klausurensammlung Nr2
-NR2 = np.asarray([[5, 0],
-                  [0, 1]])
-NR2b = np.asarray([[1, 0],
-                  [0, 5]])
-print('NGGW gemischt: ', solve_using_nggw(NR2, NR2b))
-
-# Klausurensammlung Nr3
-NR3 = np.asarray([[4, 1],
-                  [2, 3]])
-NR3b = np.asarray([[3, 2],
-                   [1, 5]])
-print('NGGW rein: ', ggw(NR3, NR3b))
-print('NGGW gemischt: ', solve_using_nggw(NR3, NR3b))
-
-# Klausurensammlung Nr4
-NR4 = np.asarray([[0, -1, 1],
-                  [1, 0, -1],
-                  [-1, 1, 0]])
-
-print('bayes: ', bayes_strategy(NR4, NR4*-1, 0, 1))
-print('maximin rein: ', solve_maximin_strategies(NR4, NR4*-1))
-print('maximin rein: ', get_strategy_pairs(NR4, NR4*-1))
-print('determination: ', determination_intervall(NR4, NR4*-1))
-print('maximin gemischt: ', solve_using_nggw(NR4, NR4*-1))
-
-# Klausurensammlung Nr5
-NR5 = np.asarray([[10, 1, -1],
-                  [12, 8, -2],
-                  [6, 6, 7]])
-print('Garantie: ', get_guaranteed_payoff(NR5, NR5*-1))
-print('maximin: ', solve_maximin_strategies(NR5, NR5*-1)[0])
-print('bayes: ', bayes_strategy(NR5, NR5*-1, 1, solve_maximin_strategies(NR5, NR5*-1)[0]))
-print('gemischt: ', solve_using_nggw(NR5, NR5*-1))
-
-# Klausurensammlung Nr6
-NR6 = np.asarray([
-    [3, -1, 3],
-    [-3, 3, 1],
-    [-4, -3, 3]
-])
-print('maximin: ', solve_maximin_strategies(NR6, NR6*-1))
-print('det: ', determination_intervall(NR6, NR6*-1))
-print('simplex: ', use_simplex(NR6, NR6*-1))
-
-# Klausurensammlung Nr7
-NR7 = np.asarray([
-    [0, 3, -2],
-    [-2, 0, 2],
-    [5, -2, 0]
-])
-print('bayes: ', bayes_strategy(NR7, NR7*-1, 0, 1))
-print('maximin: ', solve_maximin_strategies(NR7, NR7*-1))
-print('det: ', determination_intervall(NR7, NR7*-1))
-print('maximin gemischt: ', solve_using_nggw(NR7, NR7*-1))
-
-# Klausurensammlung Nr9
-NR8 = np.asarray([
-    [3, -1, -2],
-    [-3, 4, -1],
-    [-5, -3, 3]
-])
-print('maximin-wert: ', get_guaranteed_payoff(NR8, NR8*-1))
-print('simplex spieler 2: ', use_simplex_player1(NR8))
-
-# Klausurensammlung Nr11
-NR11 = np.asarray([
-    [10, 1, -1],
-    [11, 8, -2],
-    [6, 6, 8]
-])
-
-print('garantie punkt: ', get_guaranteed_payoff(NR11, NR11*-1))
-print('simplex spieler 1: ', use_simplex_player2(NR11))
-
-# Klausurensammlung Nr12
-NR12 = np.asarray([
-    [7, 2, -4],
-    [9, 9, -1],
-    [8, 6, 8]
-])
-
-print('')
-
-# Klausurensammlung Nr13
-
-
-# coords_2 = list()
-# for x in range(len(coords[0])):
-#     coords_2.append([coords[0][x], coords[1][x]])
-
-# coords_2 = np.asarray(coords_2)
-# print(coords_2)
-# print(coords)
-# points = np.random.rand(30, 2)
-# print(points)
-# hull = ConvexHull(coords)
-# print(hull)
-
-p1 = np.linspace(0, 1)
-p2 = np.linspace(0, 1)
-q1 = np.linspace(0, 1)
-q2 = np.linspace(0, 1)
-
-# x-Werte
-# F1 = 2*p1*q1 - 1*p1*q2 - 1*p2*q1 + 1*p2*q2
-# F3 = 2*p1*q1 - 1*p1*(1-q1) - 1*(1-p1)*q1 + 1*(1-p1)*(1-q1)
-# y-Werte
-# F2 = 1*p1*q1 - 1*p1*q2 - 1*p2*q1 + 2*p2*q2
-# F4 = 1*p1*q1 - 1*p1*(1-q1) - 1*(1-p1)*q1 + 2*(1-p1)*(1-q1)
-
-# print(len(F3))
-# print(F3)
-# print(len(F4))
-# print(F4)
-# plt.plot(F1, F2, 'k-')
-
-# print(coords[1][0])
-# print(coords[1][1])
-
-new_points = list()
-# for points in range(len(F3)):
-#     new_points.append((np.asarray([F3[points], F4[points]])))
-
-new_points = np.asarray(new_points)
-print(new_points)
-
-# coords[1].add_points(new_points)
-# print(coords[1].points)
-# for simplex in coords[1].simplices:
-#     plt.plot(coords[0][simplex, 0], coords[0][simplex, 1], 'k-')
-
-# plt.plot(coords[0][coords[1].vertices[0],0], coords[0][coords[1].vertices[0],1], 'ro')
-
-# print(FF1)
-print(coords2[0])
-# plt.plot(F3, F4, 'k-')
-# plt.plot(coords2[1][0], coords2[1][1], 'k-')
-print('test')
-x = list()
-y = list()
-for points in range(len(coords2[0])):
-    print(coords2[0][points])
-    print(points)
-    x.append(coords2[0][points][0])
-    y.append(coords2[0][points][1])
-    # plt.plot(points[0], points[1], 'k-')
-    # print(points)
-    # print(coords[points])
-    # print(coords[points][:, 0], coords[0][points][:, 1])
-
-# x.append(coords[0][0])
-# y.append(coords[0][1])
-plt.plot(x, y, 'k-')
-# plt.plot(coords_2[hull.vertices,0], coords_2[hull.vertices,1], 'r--', lw=2)
-# plt.plot(coords_2[hull.vertices[0],0], coords_2[hull.vertices[0],1], 'ro')
-plt.axis([-5, 130, -5, 130])
-plt.show()
-
-# polygon = Polygon(coords_2, True, joinstyle='bevel')
-
-# ax.add_patch(polygon)
-
-# ax.set_xlim(-15,15)
-# ax.set_ylim(-15,15)
-
-# plt.show()
-
-
-# plt.plot(polygon)
-# plt.axis([-15, 15, -15, 15])
-# plt.grid(True)
-# plt.show()
-
-Z = np.asarray([[5, 4, 3],
-                [3, 2, 1],
-                [2, 1, 0]])
-
-solve_maximin_strategies(Z, Z * -1)
-
-# print(get_guaranteed_payoff(T, U, 0))
-# print(solve_using_nggw(T, U))
-
-TT = np.asarray([[1, -1],
-                 [-1, 1]])
-
-print(get_guaranteed_payoff(TT, TT * -1, 0))
-
-MAT = np.asarray([[3, 2],
-                  [1, 4]])
-MAT2 = np.asarray([[2, 3],
-                   [3, 1]])
-
-print(solve_using_nggw(MAT, MAT2))
