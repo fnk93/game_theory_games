@@ -1,0 +1,45 @@
+{% autoescape on %}
+\documentclass{article}
+\begin{document}
+{{ content }}
+Bei der gegebenen Spielmatrix eines 2-Personen-Nullsummenspiels\\
+\begin{gather*}
+\begin{pmatrix*}
+{{ gamematrix }}
+\end{pmatrix*}
+\end{gather*}
+ergeben sich in reinen Strategien folgende Kennzahlen:\\
+Maximin-Strategie(n) für Spieler 1: {{ maxmin1 }}\\
+Maximin-Strategie(n) für Spieler 1: {{ maxmin1 }}\\
+Indeterminiertheitsintervall: {{ indet }}\\
+Das Spiel ist {{ det }}\\
+Aus dem unteren Spielwert von Spieler 1: {{ lowval1 }}\\
+und dem unteren Spielwert von Spieler 2: {{ lowval2} }\\
+ergibt sich der Garantiepunkt in reinen Strategien: {{ guar }}
+Um die Bayes-Strategie zu ermitteln muss die maximale Auszahlung bei gegebener Gegnerstrategie betrachtet werden.\\
+Für Spieler 1 müssen deshalb bei gegebener Strategie {{ bay1 }} von Spieler 2 die Auszahlungen {{ pay1 }} betrachtet werden.\\
+Hieraus ergibt sich die Bayes-Strategie: {{ baystrat1 }}\\
+Für Spieler 2 müssen deshalb bei gegebener Strategie {{ bay2 }} von Spieler 1 die Auszahlungen {{ pay2 }} betrachtet werden.\\
+Hieraus ergibt sich die Bayes-Strategie: {{ baystrat2 }}\\
+Das Erfüllen der Optimalitätsbedingung der Strategiekombinationen über beide Spieler aufsummiert sieht wie folgt aus:\\
+\begin{gather*}
+\begin{pmatrix*}
+{{ ggwmatr }}
+\end{pmatrix*}
+\end{gather*}
+Wobei sich für Spieler 1 folgende Verteilung der Erfüllung der Optimalitätsbedingung\\
+\begin{gather*}
+\begin{pmatrix*}
+{{ ggwmatr1 }}
+\end{pmatrix*}
+\end{gather*}
+und sich für Spieler 2 folgende Verteilung der Erfüllung der Optimalitätsbedingung ergab\\
+\begin{gather*}
+\begin{pmatrix*}
+{{ ggwmatr2 }}
+\end{pmatrix*}
+\end{gather*}
+{{ puresolve }}\\
+{{ solvemixed }}
+\end{document}
+{% endautoescape %}

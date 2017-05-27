@@ -1,244 +1,121 @@
-from scipy.optimize import linprog
 import numpy as np
-from sympy import nsimplify
-import matplotlib
+from copy import deepcopy
+from GameTheory_Game.Solving_Methods import *
+from django.http import HttpResponse
+from django.template import Context
+from django.template.loader import get_template
+from subprocess import Popen, PIPE
+import tempfile
+import os
+
+set = {'csrfmiddlewaretoken': ['TP6khmBFjWmF47MxMYC0jl1B5wGZxK5uqXyLv8P6T4kl93Fhg7pEX7Nt3yS2t2Dx'], 'mat1': ['[[ -2. -5. 0.]\r\n [ -1. 10. 10.]\r\n [ 7. -6. 7.]]'], 'mat2': ['[[ 2. 5. 0.]\r\n [ 1. -10. -10.]\r\n [ -7. 6. -7.]]'], 'mod': ['0'], 'ba1': ['1'], 'ba2': ['0'], 'pdf': ['PDF-Datei herunterladen']}
+print(np.array(set['mat1'][0]))
+print(set['mod'][0])
+x = np.array(set['mat1'][0])
+x.flatten()
+y = list(set['mat1'])
+print(y)
+print(np.asarray(y))
+
+test = "".join(y)
+test = test.replace('.', '')
+test = test.replace('[', '')
+test = test.split(' ')
+new_test = []
+for str in test:
+    new_test.append(str.replace("\r\n", ''))
+print(new_test)
+print(test)
+print('!!!!!')
+new_arr = []
+temp = []
+firstDigit = False
+endFound= False
+for i in range(len(new_test)):
+    print(new_test[i])
+    if "]" in new_test[i]:
+        new_test[i] = new_test[i].replace("]", "")
+        endFound = True
+    if new_test[i].isdigit() or (new_test[i].startswith('-') and new_test[i][1:].isdigit()):
+        firstDigit = True
+        temp.append(int(new_test[i]))
+    if (new_test[i] == "[" and temp and firstDigit) or endFound:
+        new_arr.append(deepcopy(temp))
+        print(temp)
+        print('added')
+        firstDigit = False
+        endFound = False
+        temp.clear()
+
+print('bereinigtes Array')
+print(new_arr)
+print(np.asarray(new_arr).shape[0])
+z = list(set['mat2'])
+print(set['mat2'])
+test2 = "".join(z)
+test2 = test2.replace('.', '')
+test2 = test2.replace('[', '')
+test2 = test2.split(' ')
+new_test2 = []
+for str2 in test2:
+    new_test2.append(str2.replace("\r\n", ''))
+
+firstDigit = False
+endFound = False
+new_arr2 = []
+temp2 = []
+print(new_test2)
+for j in range(len(new_test2)):
+    print(new_test2[j])
+    if "]" in new_test2[j]:
+        endFound = True
+        new_test2[j] = new_test2[j].replace("]", "")
+    if new_test2[j].isdigit() or (new_test2[j].startswith('-') and new_test2[j][1:].isdigit()):
+        firstDigit = True
+        temp2.append(int(new_test2[j]))
+    if (new_test2[j] == "[" and temp and firstDigit) or endFound:
+        new_arr2.append(deepcopy(temp2))
+        print(temp2)
+        temp2.clear()
+        print('added')
+        firstDigit = False
+        endFound = False
+print(new_arr2)
+
+new_arr = np.asarray(new_arr)
+new_arr2 = np.asarray(new_arr2)
+print(new_arr)
+print(new_arr2)
+print('shape')
+print(new_arr2.shape[1])
+print(get_calculations_latex(new_arr, new_arr2, True, int(set['ba1'][0]), int(set['ba2'][0]), 1)[0])
+print(get_calculations_latex(new_arr, new_arr2, True, int(set['ba1'][0]), int(set['ba2'][0]), 1)[1])
+print()
+print(get_calculations_latex(new_arr, new_arr2, True, int(set['ba1'][0]), int(set['ba2'][0]), 1)[2])
+
+mfb = r'abc\abc'
+print(mfb)
 
 
-# Funktion für Zwischenschritte
-# TODO: Aufbereiten und nach verschiedenen Lösungswegen suchen.
-class Tableau(object):
-    def __call__(self, xk, **kwargs):
-        print('Aktuelle Lösung: ' + str(xk))
-        print(kwargs['tableau'])
-        print(kwargs['pivot'])
-        print(kwargs['basis'])
-#        for key in kwargs:
-#            print(key)
-#            print(kwargs[key])
-
-
-# Ermittlung Oberer + Unterer Spielwert in reinen Strategien
-
-# matrix = [[4, 5, 2],
-#          [6, 3, 2]]
-
-# matrix = [[1, -1],
-#          [-1, 1]]
-
-# matrix = [[4, 1, 8, 0],
-#          [5, 2, 2, 1],
-#          [10, 2, 7, 8],
-#          [-6, 5, 6, 2]]
-
-matrix = [[2, 1, 4],
-          [4, 2, 1],
-          [1, 4, 2]]
-
-# matrix = [[4, 1, 2],
-#          [1, 5, 0],
-#          [4, 3, 3]]
-
-test_game = np.asarray(matrix)
-print(test_game)
-
-dimensionen_game = test_game.shape
-lines_game = dimensionen_game[0]
-columns_game = dimensionen_game[1]
-
-test_game_transposed = test_game.transpose()
-print(test_game_transposed)
-
-dimensionen_game_transposed = test_game_transposed.shape
-lines_game_transposed = dimensionen_game_transposed[0]
-columns_game_transposed = dimensionen_game_transposed[1]
-
-# Oberer Spielwert: min (j) max (i) u_ij
-max_player_2 = []
-
-for count in range(lines_game_transposed):
-    print(str(test_game_transposed[count]) + ', Spaltennmaximum: ' + str(max(test_game_transposed[count])))
-    max_player_2.append(max(test_game_transposed[count]))
-
-# print(test_game[0])
-# print(max(test_game[0]))
-# print(test_game[1])
-# print(max(test_game[1]))
-# max_player_2.append(max(test_game[0]))
-# max_player_2.append(max(test_game[1]))
-
-top_value_2 = min(max_player_2)
-print('Oberer Spielwert: ' + str(top_value_2))
-
-
-# Unterer Spielwert: max (i) min (j) u_ij
-max_win_player_1 = []
-
-for count in range(lines_game):
-    print(str(test_game[count]) + ', Zeilenminimum: ' + str(min(test_game[count])))
-    max_win_player_1.append(min(test_game[count]))
-
-# print(test_game_transposed[0])
-# print(min(test_game_transposed[0]))
-# print(test_game_transposed[1])
-# print(min(test_game_transposed[1]))
-# max_win_player_1.append(min(test_game_transposed[0]))
-# max_win_player_1.append(min(test_game_transposed[1]))
-
-top_value_1 = max(max_win_player_1)
-print('Unterer Spielwert: ' + str(top_value_1))
-
-determined = False
-indetermined_intervall = []
-if top_value_1 != top_value_2:
-    print('Spiel ist indeterminiert.')
-    indetermined_intervall.append(top_value_1)
-    indetermined_intervall.append(top_value_2)
-    print('Indeterminiertheitsintervall: ' + str(indetermined_intervall))
-else:
-    print('Spiel ist determiniert.')
-    determined = True
-
-# Maximin-Strategien Spieler 1
-strategies_1 = []
-for count in range(lines_game):
-    if min(test_game[count]) == top_value_1:
-        strategies_1.append(count+1)
-
-# Maximin-Strategien Spieler 2
-strategies_2 = []
-for count in range(lines_game_transposed):
-    if max(test_game_transposed[count]) == top_value_2:
-        strategies_2.append(count+1)
-
-print('Maximin-Strategien Spieler 1: ' + str(strategies_1))
-print('Maximin-Strategien Spieler 2: ' + str(strategies_2))
-
-# Lösungen des Spiels
-solutions = []
-for count in range(np.asarray(strategies_1).shape[0]):
-    for count_2 in range(np.asarray(strategies_2).shape[0]):
-        solutions.append([strategies_1[count], strategies_2[count_2]])
-
-print(solutions)
-
-# Indeterminiertes Spiel mit gemischten Strategien lösen
-# Summe der Wahrscheinlichkeiten p und q muss 1 ergeben
-if not determined:
-    p = np.zeros(lines_game)
-    q = np.zeros(columns_game)
-    print(p)
-    print(q)
-    reduced_game = np.asarray(matrix)
-
-    allCompared = False
-    while not allCompared and (reduced_game.shape[0] > 2 and reduced_game.shape[1] > 2):
-
-        # Annahme, dass falls kein Löschen möglich ist nicht mehr verglichen werden muss.
-        allCompared = True
-        dimensionen_reduced = reduced_game.shape
-        reduced_lines = dimensionen_reduced[0]
-        reduced_columns = dimensionen_reduced[1]
-        # Lösch-Array leeren
-        reduce = []
-        # Überprüfung der Zeilen auf dominierte Zeilen und Sammeln eben dieser.
-        for count in range(reduced_lines):
-            reducable_line = True
-            for count_2 in range(reduced_lines):
-                reducable_line = True
-                if count != count_2:
-                    for count_3 in range(reduced_columns):
-                        if reduced_game[count][count_3] > reduced_game[count_2][count_3] and reducable_line:
-                            reducable_line = False
-                    if reducable_line:
-                        reduce.append(count)
-                        allCompared = False
-
-
-        # Reduzierung der dominierten Zeilen
-        i = 0
-        for count in range(len(reduce)):
-            reduced_game = np.delete(reduced_game, reduce[count]-i, 0)
-            i += 1
-
-        # Dimensionen neu zuweisen, da evtl. Zeilen gelöscht
-        print(reduced_game)
-        dimensionen_reduced = reduced_game.shape
-        reduced_lines = dimensionen_reduced[0]
-        reduced_columns = dimensionen_reduced[1]
-
-        # Lösch-Array leeren
-        reduce = []
-        # Überprüfung der Spalten auf dominierte Spalten und Sammeln eben dieser.
-        for count in range(reduced_columns):
-            reducable_column = True
-            for count_2 in range(reduced_columns):
-                reducable_column = True
-                if count != count_2:
-                    for count_3 in range(reduced_lines):
-                        if reduced_game[count_3][count] < reduced_game[count_3][count_2] and reducable_column:
-                            reducable_column = False
-                    if reducable_column:
-                        reduce.append(count)
-                        allCompared = False
-
-
-        # Reduzierung der dominierten Spalten
-        i = 0
-        for count in range(len(reduce)):
-            reduced_game = np.delete(reduced_game, reduce[count] - i, 1)
-            i += 1
-        print(reduced_game)
-
-    # Vorbereiten des Simplex Algorithmus'
-    # Zielfunktion zum minimieren x1 + x2 + x3
-    c = []
-    for count in range(reduced_game.shape[1]):
-        c.append(1)
-
-    # Nebenbedingungen in Matrix-Form
-    A = []
-    for count in range(reduced_game.shape[1]):
-        temp = []
-        for count_2 in range(reduced_game.shape[0]):
-            temp.append(reduced_game[count_2][count]*-1)
-        A.append(temp)
-
-    # Beschränkungen der Nebenbedingungen
-    b = []
-    for count in range(reduced_game.shape[1]):
-        b.append(-1)
-
-    # Beschränkungen für Variablen x1, x2, ..., xn
-    bounds_here = []
-    for count in range(len(c)):
-        bounds_here.append((0, None))
-
-    # Durchführen des Simplex, Ergebnis beinhaltet Lösungsvektor x
-    result = linprog(c, A, b, bounds=bounds_here, options={"disp": True}, callback=Tableau())
-    print(result)
-    print(result.x)
-
-    # Ergebnis-Vektor des Simplex ausgeben
-    for count in range(len(result.x)):
-        print(nsimplify(result.x[count]))
-    print(nsimplify(result.fun))
-
-#    print(reduced_game)
-#    for count in range(lines_game):
-#        reducable_line = True
-#        for count_2 in range(lines_game):
-#            reducable_line = True
-#            if count != count_2:
-#                for count_3 in range(columns_game):
-#                    if test_game[count][count_3] > test_game[count_2][count_3] and reducable_line:
-#                        print(str(test_game[count][count_3]) + ' > ' + str(test_game[count_2][count_3]))
-#                        reducable_line = False
-#                if reducable_line:
-#                    reduce.append([count+1, count_2+1])
-#                    print(reducable_line)
-#    print(reduced_game)
-
-print('hallo test')
-
-
-
+# texfile1 = 'template.tex'
+# texvile2 = 'template2.tex'
+# f = open(texfile1, 'r+')
+# data = f.read()
+# f.close()
+# with open(texvile2, 'w') as texfile:
+#     texfile.write(data)
+#     texfile.write('\\\\')
+#     texfile.close()
+# context = Context(get_calculations_latex(new_arr, new_arr2, True, int(set['ba1'][0]), int(set['ba2'][0]), 1)[2])
+# template = get_template('template3.tex')
+# rendered_tpl = template.render(context).encode('utf-8')
+# with tempfile.TemporaryDirectory() as tempdir:
+#     for i in range(2):
+#         process = Popen(
+#             ['pdflatex', '-output-directory', tempdir],
+#             stdin = PIPE,
+#             stdout = PIPE
+#         )
+#         process.communicate(rendered_tpl)
+#     with open(os.path.join(tempdir, 'texput.pdf'), 'rb') as f:
+#         pdf = f.read()

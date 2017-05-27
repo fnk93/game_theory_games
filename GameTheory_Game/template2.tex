@@ -1,0 +1,24 @@
+{% autoescape on %}
+\documentclass{article}
+\nonstopmode
+\begin{document}
+{{ content }}
+Bei der gegebenen Spielmatrix eines 2-Personen-Nullsummenspiels\\
+\begin{gather*}
+\begin{pmatrix*}
+{{ gamematrix }}
+\end{pmatrix*}
+\end{gather*}
+Sollen folgende Kennzahlen für reine Strategien ermittelt werden:\\
+\begin{itemize}
+\item Maximin-Strategien beider Spieler
+\item Indeterminiertheitsintervall
+\item Die unteren Spielwerte für beide Spieler
+\item Garantiepunkt
+\item Bayes-Strategie von Spieler 1 gegenüber Strategie {{ bay1 }} von Spieler 2
+\item Bayes-Strategie von Spieler 2 gegenüber Strategie {{ bay2 }} von Spieler 1
+\item Gleichgewichtspunkt und zugehörige Auszahlungen für beide Spieler
+\end{itemize}
+{{ mixed }}
+\end{document}
+{% endautoescape %}
