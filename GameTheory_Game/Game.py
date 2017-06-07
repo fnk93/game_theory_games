@@ -184,4 +184,4 @@ new_game.matrix = np.asarray([[3, 0, 2],
 new_game.matrix2 = new_game.matrix*-1
 
 print('solutions')
-print(get_calculations_latex(new_game, True))
+#print(get_calculations_latex(new_game, True))
