@@ -7,12 +7,15 @@ from random import randrange
 from sympy.abc import u, v, x
 import collections
 import matplotlib.pyplot as plt
+from itertools import chain, combinations
+
 
 
 # Lösbar nach Nash:
 # Alle Gleichgewichtspunkte sind vertauschbar
 # Dominierte Gleichgewichtspunkte möglich
-
+def powerset(n):
+    return chain.from_iterable(combinations(range(n), r) for r in range(n + 1))
 
 # mode = 0 -> normale Spiele
 # mode = 1 -> Kampf der Geschlechter
@@ -779,6 +782,231 @@ def use_simplex_player1(simplex_game_2):
     # print('Player 1: ', c, A, b)
 
     return simplex_sol, simplex_steps, simplex_steps_2
+
+
+def get_possible_solutions(payoff_matrix_1, payoff_matrix_2):
+    shape1, shape2 = payoff_matrix_1.shape
+    possible_sols = []
+    sym = generate_symbols(payoff_matrix_1)
+    funcs = generate_functions(payoff_matrix_1, payoff_matrix_2)
+
+    for supp2 in (s for s in powerset(shape2) if len(s) > 0):
+        for supp1 in (s for s in powerset(shape1) if len(s) > 0):
+            temp = []
+            temp2 = []
+            temp_eq = 0
+            temp_eq2 = 0
+            #print(supp1, supp2)
+            for strat2 in sym[1][0]:
+                temp_eq2 += strat2
+            for strat1 in sym[0][0]:
+                temp_eq += strat1
+            temp_eq -= 1
+            temp_eq2 -= 1
+            strats1 = [temp_eq]
+            strats2 = [temp_eq2]
+            #print(supp1, supp2)
+            for strat2 in supp2:
+                strats1.append(funcs[1][0][strat2])
+            for strat1 in supp1:
+                strats2.append(funcs[0][0][strat1])
+            for i in range(len(sym[0][0])):
+                if i not in supp1:
+                    strats1.append(sym[0][0][i])
+            for i in range(len(sym[1][0])):
+                if i not in supp2:
+                    strats2.append(sym[1][0][i])
+            solu = solve(strats1, dict=True, check=False, force=True)
+            solu2 = solve(strats2, dict=True, check=False, force=True)
+            #print(solu, solu2)
+            solution = True
+            temp.append(strats1)
+            temp2.append(strats2)
+            if solu and solu2:
+                try:
+                    for key in solu[0]:
+                        if solu[0][key] < 0 and key in sym[0][0]:
+                            #print(solu[0][key])
+                            solution = False
+                    for key in solu2[0]:
+                        if solu2[0][key] < 0 and key in sym[1][0]:
+                            #print(solu2[0][key])
+                            solution = False
+                except TypeError:
+                    solution = False
+            if solution:
+                temp.append(solu)
+                temp.append([deepcopy(supp1), deepcopy(supp2)])
+                temp2.append(solu2)
+                temp2.append([deepcopy(supp1), deepcopy(supp2)])
+                possible_sols.append([temp, temp2])
+    return possible_sols
+
+
+def get_optimal_solution(payoff_matrix_1, payoff_matrix_2):
+    shape1, shape2 = payoff_matrix_1.shape
+    pos_solutions = get_possible_solutions(payoff_matrix_1, payoff_matrix_2)
+    values_ret = []
+    funcs = generate_functions(payoff_matrix_1, payoff_matrix_2)
+    sym = generate_symbols(payoff_matrix_1)
+    for sol in pos_solutions:
+        temp_funcs = []
+        temp_funcs2 = []
+        #for i in range(shape2):
+        #    if i not in sol[0][2][1]:
+        #        temp_funcs.append(funcs[1][0][i])
+        #for i in range(shape1):
+        #    if i not in sol[1][2][0]:
+        #        temp_funcs2.append(funcs[0][0][i])
+        temp_funcs.append(funcs[1][0][-1])
+        temp_funcs2.append(funcs[0][0][-1])
+        for symb in sym[0][0]:
+            try:
+                if sol[0][1]:
+                    #print(sol[0][1][0])
+                    temp_funcs.append(symb - sol[0][1][0][symb])
+            except KeyError:
+                pass
+        for symb in sym[1][0]:
+            try:
+                if sol[1][1]:
+                    #print(sol[1][1][0])
+                    temp_funcs2.append(symb - sol[1][1][0][symb])
+            except KeyError:
+                pass
+        vals1 = []
+        vals2 = []
+        for i in range(shape2):
+            if i not in sol[0][2][1]:
+                try:
+                    tempo = deepcopy(temp_funcs)
+                    tempo.append(funcs[1][0][i])
+                    #print(tempo)
+                    tempo_sol = solve(tempo, dict=True, check=False, force=True)
+                    vals1.append([tempo, tempo_sol[0][sym[1][1]]])
+                    #print(tempo_sol)
+                except KeyError:
+                    pass
+                except IndexError:
+                    pass
+        for i in range(shape1):
+            if i not in sol[1][2][0]:
+                try:
+                    tempo = deepcopy(temp_funcs2)
+                    tempo.append(funcs[0][0][i])
+                    #print(tempo)
+                    tempo_sol = solve(tempo, dict=True, check=False, force=True)
+                    vals2.append([tempo, tempo_sol[0][sym[0][1]]])
+                    #print(tempo_sol)
+                except KeyError:
+                    pass
+                except IndexError:
+                    pass
+        vals1 = np.asarray(vals1)
+        vals2 = np.asarray(vals2)
+        #print(vals1[:, 1], vals2[:, 1])
+        #other_sol = solve(temp_funcs, dict=True, check=False, force=True)
+        #other_sol2 = solve(temp_funcs2, dict=True, check=False, force=True)
+        optimal = False
+        try:
+            if sol[0][1] and vals1.any() and sol[1][1] and vals2.any():
+                #print(sol[0][1][0][sym[0][1]], vals1[:, 1])
+                #print(sol[1][1][0][sym[1][1]], vals2[:, 1])
+                if sol[0][1][0][sym[0][1]] >= max(vals1[:, 1]) and sol[1][1][0][sym[1][1]] >= max(vals2[:, 1]):
+                    optimal = True
+        except IndexError:
+            optimal = False
+        #print(sol[0][0], sol[0][1])
+        #print(sol[1][0], sol[1][1])
+        #print(sol[0][2], sol[1][2])
+        #print(sym[0][1])
+        #print(vals1, vals2)
+        #try:
+            #print(vals1[:, 1], sol[0][1][0][sym[0][1]])
+            #print(vals2[:, 1], sol[1][1][0][sym[1][1]])
+        #except IndexError:
+        #    pass
+        #except KeyError:
+        #    pass
+        #print(vals1[:, 0])
+        #print(vals2[:, 0])
+        if optimal:
+            values = []
+            # print(sol[0][0], sol[0][1])
+            # print(sol[1][0], sol[1][1])
+            # print(sol[0][2], sol[1][2])
+            # print(other_sol[0][sym[0][1]], sol[0][1][0][sym[0][1]])
+            # print(other_sol2[0][sym[1][1]], sol[1][1][0][sym[1][1]])
+            # print(temp_funcs)
+            # print(temp_funcs2)
+            # Spielwert Spieler 1, Spielwert Spieler 2
+            # values.append([sol[1][1][0][sym[1][1]], sol[0][1][0][sym[0][1]]])
+            # Strategiewahrscheinlichkeiten Spieler 1
+            # values.append([sol[0][0], sol[0][1]])
+            # Strategiewahrscheinlichkeiten Spieler 2
+            # values.append([sol[1][0], sol[1][1]])
+            # gewählter Support Spieler 1
+            # values.append([sol[0][2][0]])
+            # gewählter Support Spieler 2
+            # values.append([sol[0][2][1]])
+            # zu prüfende Strategien nicht im Support, bzgl. Spielwert Spieler 2:
+            # values.append([temp_funcs, other_sol[0][sym[0][1]]])
+            # zu prüfende Strategien nicht im Support, bzgl. Spielwert Spieler 1:
+            # values.append([temp_funcs2, other_sol2[0][sym[1][1]]])
+            # Spielwert Spieler 1, gewählte Strategien Spieler 1, gewählter Support Spieler 1
+            print(sol[0][2])
+            print(sol[1][2])
+            values.append([sol[1][1][0][sym[1][1]], sol[0][1], sol[0][2][0]])
+            # Spielwert Spieler 2, gewählte Strategien Spieler 2, gewählter Support Spieler 2
+            values.append([sol[0][1][0][sym[0][1]], sol[1][1], sol[1][2][1]])
+            # Betrachtetes LGS für Wahrscheinlichkeiten Spieler 1 / 2
+            values.append([sol[0][0], sol[1][0]])
+            # Zu betrachtendes LGS nicht im Support für Spieler 1 / 2 + Ergebnis
+            values.append([vals1, vals2])
+
+            print('Optimum gefunden')
+            print(values)
+            values_ret.append(values)
+    return values_ret
+
+
+def generate_symbols(payoff_matrix):
+    symbols_player_1 = symbols('p0:%d'%payoff_matrix.shape[0], nonnegative=True, seq=True)
+    symbols_player_2 = symbols('q0:%d' % payoff_matrix.shape[1], nonnegative=True, seq=True)
+    w = symbols('w')
+
+    return [[symbols_player_1, w], [symbols_player_2, w]]
+
+
+def generate_functions(payoff_matrix_1, payoff_matrix_2):
+    symbs = generate_symbols(payoff_matrix_1)
+    payoff_matrix_2 = payoff_matrix_2.transpose()
+    eqs1 = []
+    eqs2 = []
+    # Wahrscheinlichkeiten für Spieler 2 und Auszahlung für Spieler 1
+    temp2 = 0
+    for i in range(payoff_matrix_1.shape[0]):
+        temp = 0
+        for j in range(payoff_matrix_1.shape[1]):
+            temp += payoff_matrix_1[i][j]*symbs[1][0][j]
+        temp -= 1*symbs[1][1]
+        eqs1.append(temp)
+        temp2 += 1*symbs[1][0][i]
+    temp2 -= 1
+    eqs1.append(temp2)
+
+    # Wahrscheinlichkeiten für Spieler 1 und Auszahlung für Spieler 2
+    temp2 = 0
+    for i in range(payoff_matrix_2.shape[0]):
+        temp = 0
+        for j in range(payoff_matrix_2.shape[1]):
+            temp += payoff_matrix_2[i][j]*symbs[0][0][j]
+        temp -= 1*symbs[0][1]
+        eqs2.append(temp)
+        temp2 += 1*symbs[0][0][i]
+    temp2 -= 1
+    eqs2.append(temp2)
+    return [[eqs1], [eqs2]]
 
 
 # Lösung mit Bedingungen für NGGW
