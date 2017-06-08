@@ -1,17 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="a4169e96-57d3-41d9-b61a-12c5bd2a0918" name="Default" comment="Nash-GGW für reine Strategien.">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GameTheory_Game/BattleOfSexes.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GameTheory_Game/ConstantSumGame.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GameTheory_Game/PrisonersDilemma.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GameTheory_Game/ZerosumGame.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/game_theory_games.iml" afterPath="$PROJECT_DIR$/.idea/game_theory_games.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
+    <list default="true" id="a4169e96-57d3-41d9-b61a-12c5bd2a0918" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/GameTheory_Game/Game.py" afterPath="$PROJECT_DIR$/GameTheory_Game/Game.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/GameTheory_Game/Solving_Methods.py" afterPath="$PROJECT_DIR$/GameTheory_Game/Solving_Methods.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/GameTheory_Game/tests.py" afterPath="$PROJECT_DIR$/GameTheory_Game/tests.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -42,11 +34,11 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="Solving_Methods.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Solving_Methods.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/GameTheory_Game/Solving_Methods.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="429">
-              <caret line="1120" column="33" lean-forward="true" selection-start-line="1120" selection-start-column="33" selection-end-line="1120" selection-end-column="33" />
+            <state relative-caret-position="-292">
+              <caret line="1056" column="97" lean-forward="false" selection-start-line="1056" selection-start-column="97" selection-end-line="1056" selection-end-column="97" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
@@ -66,11 +58,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Game.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="Game.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/GameTheory_Game/Game.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="17">
-              <caret line="1" column="0" lean-forward="false" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
+            <state relative-caret-position="228">
+              <caret line="76" column="22" lean-forward="false" selection-start-line="76" selection-start-column="22" selection-end-line="76" selection-end-column="22" />
               <folding />
             </state>
           </provider>
@@ -103,8 +95,8 @@
       <file leaf-file-name="ZerosumGame.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/GameTheory_Game/ZerosumGame.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="459">
-              <caret line="27" column="0" lean-forward="false" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="0" />
+            <state relative-caret-position="85">
+              <caret line="5" column="0" lean-forward="false" selection-start-line="5" selection-start-column="0" selection-end-line="7" selection-end-column="48" />
               <folding>
                 <element signature="e#0#59#0" expanded="true" />
               </folding>
@@ -115,8 +107,8 @@
       <file leaf-file-name="ConstantSumGame.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/GameTheory_Game/ConstantSumGame.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="459">
-              <caret line="27" column="0" lean-forward="true" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="0" />
+            <state relative-caret-position="85">
+              <caret line="5" column="4" lean-forward="false" selection-start-line="5" selection-start-column="4" selection-end-line="8" selection-end-column="26" />
               <folding>
                 <element signature="e#0#37#0" expanded="true" />
               </folding>
@@ -774,7 +766,14 @@
       <option name="project" value="LOCAL" />
       <updated>1493757786178</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="Vererbung der Spieltypen implementiert.">
+      <created>1496940032419</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1496940032420</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -858,7 +857,8 @@
     <MESSAGE value="Letzte Code-Reste bei Spielerzeugung hinsichtlich 3-dimensionalem Spiel-Array entfernt." />
     <MESSAGE value="Next steps defined. Finished a few methods for solving. Function cleanup needed: preparations for using algorithms outside of these methods." />
     <MESSAGE value="Nash-GGW für reine Strategien." />
-    <option name="LAST_COMMIT_MESSAGE" value="Nash-GGW für reine Strategien." />
+    <MESSAGE value="Vererbung der Spieltypen implementiert." />
+    <option name="LAST_COMMIT_MESSAGE" value="Vererbung der Spieltypen implementiert." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1015,41 +1015,41 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/GameTheory_Game/ZerosumGame.py">
+    <entry file="file://$PROJECT_DIR$/GameTheory_Game/Solving_Methods.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="459">
-          <caret line="27" column="0" lean-forward="false" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="0" />
+        <state relative-caret-position="-292">
+          <caret line="1056" column="97" lean-forward="false" selection-start-line="1056" selection-start-column="97" selection-end-line="1056" selection-end-column="97" />
           <folding>
-            <element signature="e#0#59#0" expanded="true" />
+            <element signature="e#0#18#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/GameTheory_Game/ConstantSumGame.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="459">
-          <caret line="27" column="0" lean-forward="true" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="0" />
+        <state relative-caret-position="85">
+          <caret line="5" column="4" lean-forward="false" selection-start-line="5" selection-start-column="4" selection-end-line="8" selection-end-column="26" />
           <folding>
             <element signature="e#0#37#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/GameTheory_Game/Game.py">
+    <entry file="file://$PROJECT_DIR$/GameTheory_Game/ZerosumGame.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="1" column="0" lean-forward="false" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
-          <folding />
+        <state relative-caret-position="85">
+          <caret line="5" column="0" lean-forward="false" selection-start-line="5" selection-start-column="0" selection-end-line="7" selection-end-column="48" />
+          <folding>
+            <element signature="e#0#59#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/GameTheory_Game/Solving_Methods.py">
+    <entry file="file://$PROJECT_DIR$/GameTheory_Game/Game.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="429">
-          <caret line="1120" column="33" lean-forward="true" selection-start-line="1120" selection-start-column="33" selection-end-line="1120" selection-end-column="33" />
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="228">
+          <caret line="76" column="22" lean-forward="false" selection-start-line="76" selection-start-column="22" selection-end-line="76" selection-end-column="22" />
+          <folding />
         </state>
       </provider>
     </entry>

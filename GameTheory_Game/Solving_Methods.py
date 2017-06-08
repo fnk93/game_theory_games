@@ -805,6 +805,7 @@ def get_dominated_strategies(payoff_matrix_1, payoff_matrix_2=None):
             for column in range(shape2):
                 if payoff_matrix_1[line][column] <= payoff_matrix_1[compared_line][column]:
                     dominated_1 = False
+                    break
             if dominated_1:
                 dominated_player_1.add(compared_line)
             #print(compared_line, dominated_1)
@@ -814,18 +815,21 @@ def get_dominated_strategies(payoff_matrix_1, payoff_matrix_2=None):
             for line in range(shape1):
                 if payoff_matrix_2[line][column] <= payoff_matrix_2[line][compared_column]:
                     dominated_2 = False
+                    break
             if dominated_2:
                 dominated_player_2.add(compared_column)
     return(dominated_player_1, dominated_player_2)
 
 
-def get_possible_solutions(payoff_matrix_1, payoff_matrix_2=None):
+def get_possible_solutions(payoff_matrix_1, payoff_matrix_2=None, sym=None, funcs=None):
     if payoff_matrix_2 == None:
         payoff_matrix_2 = payoff_matrix_1*-1
     shape1, shape2 = payoff_matrix_1.shape
     possible_sols = []
-    sym = generate_symbols(payoff_matrix_1)
-    funcs = generate_functions(payoff_matrix_1, payoff_matrix_2)
+    if sym == None:
+        sym = generate_symbols(payoff_matrix_1)
+    if funcs == None:
+        funcs = generate_functions(payoff_matrix_1, payoff_matrix_2)
     dominated_strategies1, dominated_strategies2 = get_dominated_strategies(payoff_matrix_1, payoff_matrix_2)
     #print(dominated_strategies1, dominated_strategies2)
     #print(sym[0][0])
@@ -895,10 +899,10 @@ def get_optimal_solution(payoff_matrix_1, payoff_matrix_2=None):
     #print(payoff_matrix_2)
     shape1, shape2 = payoff_matrix_1.shape
     values_ret = []
-    pos_solutions = get_possible_solutions(payoff_matrix_1, payoff_matrix_2)
-    #print(pos_solutions)
-    funcs = generate_functions(payoff_matrix_1, payoff_matrix_2)
     sym = generate_symbols(payoff_matrix_1)
+    funcs = generate_functions(payoff_matrix_1, payoff_matrix_2, symbs=sym)
+    pos_solutions = get_possible_solutions(payoff_matrix_1, payoff_matrix_2, funcs=funcs, sym=sym)
+    #print(pos_solutions)
     #print(pos_solutions)
     for sol in pos_solutions:
         #print('sol')
@@ -1051,8 +1055,6 @@ def get_optimal_solution(payoff_matrix_1, payoff_matrix_2=None):
                 # zu prüfende Strategien nicht im Support, bzgl. Spielwert Spieler 1:
                 # values.append([temp_funcs2, other_sol2[0][sym[1][1]]])
                 # Spielwert Spieler 1, gewählte Strategien Spieler 1, gewählter Support Spieler 1
-                #print(sol[0][2])
-                #print(sol[1][2])
                 #values = np.array([sol[1][1][0][sym[1][1]], sol[0][1], sol[0][2][0]])
                 values = [sol[1][1][0][sym[1][1]], sol[0][1], sol[0][2][0]]
                 # Spielwert Spieler 2, gewählte Strategien Spieler 2, gewählter Support Spieler 2
@@ -1087,10 +1089,11 @@ def generate_symbols(payoff_matrix):
     return np.array((np.array((symbols_player_1, w)), np.array((symbols_player_2, w))))
 
 
-def generate_functions(payoff_matrix_1, payoff_matrix_2=None):
+def generate_functions(payoff_matrix_1, payoff_matrix_2=None, symbs=None):
     if payoff_matrix_2 == None:
         payoff_matrix_2 = payoff_matrix_1*-1
-    symbs = generate_symbols(payoff_matrix_1)
+    if symbs == None:
+        symbs = generate_symbols(payoff_matrix_1)
     payoff_matrix_2 = payoff_matrix_2.transpose()
     eqs1 = []
     eqs2 = []
