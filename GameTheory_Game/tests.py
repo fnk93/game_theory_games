@@ -4,7 +4,9 @@ from GameTheory_Game.Game import Game
 from itertools import chain, combinations
 import scipy as sp
 from sympy.solvers import solve
-from sympy import Symbol
+from sympy.solvers.solvers import solve_linear_system_LU
+from sympy import Matrix
+import time
 
 
 # def solve_indifference(A, rows=None, columns=None):
@@ -356,15 +358,81 @@ from sympy import Symbol
 abc = Game()
 
 abc.matrix = np.asarray([[-4., -3., -4., -7.],
- [-3., -1., -3.,  6.],
- [ 5.,  9.,  5., -5.],
- [-9.,  6.,-2.,  6.]])
+    [-3., -1., -3.,  6.],
+    [5.,  9.,  5., -5.],
+    [-9.,  6.,-2.,  6.]])
 abc.matrix2 = abc.matrix * -1
 print(abc.matrix)
 print(abc.matrix2)
-get_optimal_solution(abc.matrix, abc.matrix2)
+start_time = time.time()
+print(get_optimal_solution(abc.matrix, abc.matrix2))
+print("--- %s seconds ---" % (time.time() - start_time))
+# print(get_dominated_strategies(abc.matrix, abc.matrix2))
+# dom1, dom2 = get_dominated_strategies(abc.matrix, abc.matrix2)
+# s1 = (0, 2, 3)
+# s2 = (1, 2)
+#
+# print(any(x in s1 for x in dom1))
+#
+# print(dom1 in s1)
+# print(dom2 in s2)
+# print(type(dom2))
+# print(np.any(dom2))
+# for supp2 in (s for s in powerset(abc.matrix.shape[1]) if len(s) > 0 and not any(x in s for x in dom2)):
+#     for supp1 in (s for s in powerset(abc.matrix.shape[0]) if len(s) > 0 and not any(x in s for x in dom1)):
+#         print(supp1, supp2)
+#         print(dom1, dom2)
+    #print(np.any(dom2))
+    #print(np.any(dom2) in supp2)
+# pos_sols = get_possible_solutions(abc.matrix, abc.matrix2)
+# print(pos_sols)
+# print('possols0')
+# print(pos_sols[0])
+# print('possols1')
+# print(pos_sols[1])
+# print('possols00')
+# print(pos_sols[0][0])
 
-
+# rows = (1, 2)
+# columns = (0, 2, 3)
+#
+# M = (abc.matrix[np.array(rows)] - np.roll(abc.matrix[np.array(rows)], 1, axis=0))[:-1]
+# M2 = abc.matrix[np.array(rows)]
+# print(M2)
+# print(M)
+# zero_columns = set(range(abc.matrix.shape[1])) - set(columns)
+# print(zero_columns)
+# if zero_columns != set():
+#     for i, col in enumerate(M2.T):
+#         print(i, col)
+#     M2 = np.append(M2, [[int(i == j) for i, col in enumerate(M2.T)]for j in zero_columns], axis=0)
+#
+#     for j in zero_columns:
+#         print(j)
+# print(M2)
+#
+# M2 = np.append(M2, np.ones((1, M2.shape[1])), axis=0)
+# print(M2)
+# print(M2.T)
+# print(np.ones((1, M2.shape[1])))
+# b = np.append(np.zeros(len(M2) - 1), [1])
+# eq = np.append(M2.T, np.array([b]), axis=0).T
+# print(np.array([b]))
+#
+# print(b)
+# print(eq)
+# eq = Matrix(eq)
+# print(eq)
+#
+# #eq = np.append(M, b, axis=1)
+# #print(eq)
+# p0, p1, p2, p3 = symbols('p0:4', nonnegative=True)
+# prob = np.linalg.solve(M2, b)
+# print(prob)
+# #prob = solve([M, b])
+# #prob = solve_linear_system_LU(eq, [p0, p1, p2, p3])
+# if all(prob >= 0):
+#     print(prob)
 # p0, p1, p2, p3 = symbols('p0:4', nonnegative=True, seq=True)
 # q0, q1, q2, q3 = symbols('q0:4', nonnegative=True, seq=True)
 # w = symbols('w')
