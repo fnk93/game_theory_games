@@ -1,15 +1,12 @@
 import numpy as np
 from scipy import optimize
 from sympy.solvers import solve
-from sympy import nsimplify, symbols, Eq, Symbol
+from sympy import nsimplify, symbols, Symbol
 from copy import deepcopy
 from random import randrange
-from itertools import chain, combinations
+from itertools import chain, combinations, product
 
 
-# Lösbar nach Nash:
-# Alle Gleichgewichtspunkte sind vertauschbar
-# Dominierte Gleichgewichtspunkte möglich
 def powerset(n):
     return chain.from_iterable(combinations(range(n), r) for r in range(n + 1))
 
@@ -17,8 +14,8 @@ def powerset(n):
 # mode = 0 -> normale Spiele
 # mode = 1 -> Kampf der Geschlechter
 # TODO: Auszahlungsdiagramm gemischte Strategien für mehr als 2 Stragien nutzbar machen.
-def get_payoff_diagramm(payoff_matrix_1, payoff_matrix_2=None, mode=0):
-    if payoff_matrix_2 == None:
+def get_payoff_diagramm(payoff_matrix_1, payoff_matrix_2=0, mode=0):
+    if payoff_matrix_2 == 0:
         payoff_matrix_2 = payoff_matrix_1*-1
     # payoff_player_1 = list()
     # payoff_player_2 = list()
@@ -102,12 +99,12 @@ def get_payoff_diagramm(payoff_matrix_1, payoff_matrix_2=None, mode=0):
 
 # Leerer Return bedeutet kein Nash-GGW
 # Nash-GGW in reinen Strategien
-def ggw(payoff_matrix_1, payoff_matrix_2=None, mode=0):
-    if payoff_matrix_2 == None:
+def ggw(payoff_matrix_1, payoff_matrix_2=0, mode=0):
+    if payoff_matrix_2 == 0:
         payoff_matrix_2 = payoff_matrix_1*-1
     optimal1 = np.zeros((payoff_matrix_1.shape[0], payoff_matrix_1.shape[1]))
     optimal2 = np.zeros((payoff_matrix_1.shape[0], payoff_matrix_1.shape[1]))
-    optimal = None
+    optimal = 0
     dominated = list()
     result = list()
     if mode == 0:
@@ -177,8 +174,8 @@ def get_upper_values(payoff_matrix_1):
 # Untere Spielwerte für beide Spieler in reinen Strategien ermitteln
 # Spieler 1: Minimum der einzelnen Zeilen, davon das Maximum
 # Spieler 2: Minimum der einzelnen Spalten, davon das Maximum
-def get_lower_values(payoff_matrix_1, payoff_matrix_2=None):
-    if payoff_matrix_2 == None:
+def get_lower_values(payoff_matrix_1, payoff_matrix_2=0):
+    if payoff_matrix_2 == 0:
         payoff_matrix_2 = payoff_matrix_1*-1
     temp_values = list()
     for line in range(payoff_matrix_1.shape[0]):
@@ -198,8 +195,8 @@ def get_lower_values(payoff_matrix_1, payoff_matrix_2=None):
 
 # Maximin-Strategien der Spieler
 # Sollte nur bei determinierten Spielen angewendet werden
-def solve_maximin_strategies(payoff_matrix_1, payoff_matrix_2=None):
-    if payoff_matrix_2 == None:
+def solve_maximin_strategies(payoff_matrix_1, payoff_matrix_2=0):
+    if payoff_matrix_2 == 0:
         payoff_matrix_2 = payoff_matrix_1*-1
     minima_player_1 = list()
     for line in range(payoff_matrix_1.shape[0]):
@@ -247,8 +244,8 @@ def get_calculations_pdf(game, mode=0):
 # TODO: Auszahlungsdiagramme graphisch aufbereiten
 # TODO: Simplex-Tableaus graphisch aufbereiten
 # TODO: Parametrisierung welche Aufgaben gestellt wurden
-def get_calculations_latex(matrix1, matrix2=None, zerosum=False, bay1=0, bay2=0, mode=0):
-    if matrix2 == None:
+def get_calculations_latex(matrix1, matrix2=0, zerosum=False, bay1=0, bay2=0, mode=0):
+    if matrix2 == 0:
         matrix2 = matrix1*-1
     sol_tex = []
     sol_texpure = []
@@ -584,8 +581,8 @@ def get_calculations_latex(matrix1, matrix2=None, zerosum=False, bay1=0, bay2=0,
 
 
 # Spielmatrix reduzieren
-def reduce_matrix(payoff_matrix_1, payoff_matrix_2=None):
-    if payoff_matrix_2 == None:
+def reduce_matrix(payoff_matrix_1, payoff_matrix_2=0):
+    if payoff_matrix_2 == 0:
         payoff_matrix_2 = payoff_matrix_1*-1
     # Matrizen für Spieler 1 und 2 müssen betrachtet werden
     reduced_matrix_1 = np.asarray(payoff_matrix_1)
@@ -655,14 +652,11 @@ def reduce_matrix(payoff_matrix_1, payoff_matrix_2=None):
 
 # Matrix aller MinMax-Strategie-Paare ausgeben
 # TODO: evtl. in Game-Klasse übernehmen
-def get_strategy_pairs(payoff_matrix_1, payoff_matrix_2=None):
-    if payoff_matrix_2 == None:
+def get_strategy_pairs(payoff_matrix_1, payoff_matrix_2=0):
+    if payoff_matrix_2 == 0:
         payoff_matrix_2 = payoff_matrix_1*-1
     strategies = solve_maximin_strategies(payoff_matrix_1, payoff_matrix_2)
-    strategy_pairs = list()
-    for strategies_player_1 in range(len(strategies[0])):
-        for strategies_player_2 in range(len(strategies[1])):
-            strategy_pairs.append([strategies[0][strategies_player_1], strategies[1][strategies_player_2]])
+    strategy_pairs = product(strategies[0], strategies[1])
 
     return strategy_pairs
 
@@ -671,9 +665,8 @@ def get_strategy_pairs(payoff_matrix_1, payoff_matrix_2=None):
 # Undominiert, wenn kein anderer Auszahlungspunkt existiert bei dem u1 und u2 >= u1* und u2*
 # mode = 0 reine Strategien, mode = 1 gemischte Strategien
 # TODO: Dominiertheit bei gemischten Strategien erarbeiten
-
-def get_guaranteed_payoff(payoff_matrix_1, payoff_matrix_2=None, mode=0):
-    if payoff_matrix_2 == None:
+def get_guaranteed_payoff(payoff_matrix_1, payoff_matrix_2=0, mode=0):
+    if payoff_matrix_2 == 0:
         payoff_matrix_2 = payoff_matrix_1*-1
     payoff = list()
     dominated = False
@@ -698,8 +691,8 @@ def get_guaranteed_payoff(payoff_matrix_1, payoff_matrix_2=None, mode=0):
 
 # Matrizen für Simplex vorbereiten
 # Konstante hinzurechnen, sodass Spieler1-Matrix absolut positiv und Spieler2-Matrix absolut negativ ist
-def make_matrix_ready(payoff_matrix_1, payoff_matrix_2=None):
-    if payoff_matrix_2 == None:
+def make_matrix_ready(payoff_matrix_1, payoff_matrix_2=0):
+    if payoff_matrix_2 == 0:
         payoff_matrix_2 = payoff_matrix_1*-1
     # Matrix-Minimum für Spieler 1 herausfinden
     # Matrix-Maximum für Spieler 2 herausfinden
@@ -721,8 +714,8 @@ def make_matrix_ready(payoff_matrix_1, payoff_matrix_2=None):
     return [simplex_game_1, simplex_game_2]
 
 
-def use_simplex(payoff_matrix_1, payoff_matrix_2=None):
-    if payoff_matrix_2 == None:
+def use_simplex(payoff_matrix_1, payoff_matrix_2=0):
+    if payoff_matrix_2 == 0:
         payoff_matrix_2 = payoff_matrix_1*-1
     simplex_games = make_matrix_ready(payoff_matrix_1, payoff_matrix_2)
     # print('Matrizen: ', simplex_games)
@@ -741,12 +734,12 @@ def use_simplex_player2(simplex_game_1):
     b = list()
     for lines in range(np.asarray(simplex_game_1).shape[0]):
         temp = list()
-        for columns in range(np.asarray(simplex_game_1.shape[1])):
+        for columns in range(np.asarray(simplex_game_1).shape[1]):
             temp.append(simplex_game_1[lines][columns])
         a.append(temp)
         b.append(1)
 
-    for columns in range(np.asarray(simplex_game_1.shape[1])):
+    for columns in range(np.asarray(simplex_game_1).shape[1]):
         c.append(-1)
         game_bounds.append((0, None))
 
@@ -791,8 +784,8 @@ def use_simplex_player1(simplex_game_2):
 
     return simplex_sol, simplex_steps, simplex_steps_2
 
-def get_dominated_strategies(payoff_matrix_1, payoff_matrix_2=None):
-    if payoff_matrix_2 == None:
+def get_dominated_strategies(payoff_matrix_1, payoff_matrix_2=0):
+    if payoff_matrix_2 == 0:
         payoff_matrix_2 = payoff_matrix_1*-1
     shape1, shape2 = payoff_matrix_1.shape
     dominated_player_1 = set()
@@ -821,14 +814,14 @@ def get_dominated_strategies(payoff_matrix_1, payoff_matrix_2=None):
     return(dominated_player_1, dominated_player_2)
 
 
-def get_possible_solutions(payoff_matrix_1, payoff_matrix_2=None, sym=None, funcs=None):
-    if payoff_matrix_2 == None:
+def get_possible_solutions(payoff_matrix_1, payoff_matrix_2=0, sym=0, funcs=0):
+    if payoff_matrix_2 == 0:
         payoff_matrix_2 = payoff_matrix_1*-1
     shape1, shape2 = payoff_matrix_1.shape
     possible_sols = []
-    if sym == None:
+    if sym == 0:
         sym = generate_symbols(payoff_matrix_1)
-    if funcs == None:
+    if funcs == 0:
         funcs = generate_functions(payoff_matrix_1, payoff_matrix_2)
     dominated_strategies1, dominated_strategies2 = get_dominated_strategies(payoff_matrix_1, payoff_matrix_2)
     #print(dominated_strategies1, dominated_strategies2)
@@ -891,8 +884,8 @@ def get_possible_solutions(payoff_matrix_1, payoff_matrix_2=None, sym=None, func
     return possible_sols
 
 
-def get_optimal_solution(payoff_matrix_1, payoff_matrix_2=None):
-    if payoff_matrix_2 == None:
+def get_optimal_solution(payoff_matrix_1, payoff_matrix_2=0):
+    if payoff_matrix_2 == 0:
         payoff_matrix_2 = payoff_matrix_1*-1
     #payoff_matrix_1, payoff_matrix_2, reduced = reduce_matrix(payoff_matrix_1, payoff_matrix_2)
     #print(payoff_matrix_1)
@@ -1089,10 +1082,10 @@ def generate_symbols(payoff_matrix):
     return np.array((np.array((symbols_player_1, w)), np.array((symbols_player_2, w))))
 
 
-def generate_functions(payoff_matrix_1, payoff_matrix_2=None, symbs=None):
-    if payoff_matrix_2 == None:
+def generate_functions(payoff_matrix_1, payoff_matrix_2=0, symbs=0):
+    if payoff_matrix_2 == 0:
         payoff_matrix_2 = payoff_matrix_1*-1
-    if symbs == None:
+    if symbs == 0:
         symbs = generate_symbols(payoff_matrix_1)
     payoff_matrix_2 = payoff_matrix_2.transpose()
     eqs1 = []
@@ -1128,8 +1121,8 @@ def generate_functions(payoff_matrix_1, payoff_matrix_2=None, symbs=None):
 
 # Lösung mit Bedingungen für NGGW
 # Gemischte Maximin-Strategien der Spieler
-def solve_using_nggw(payoff_matrix_1, payoff_matrix_2=None):
-    if payoff_matrix_2 == None:
+def solve_using_nggw(payoff_matrix_1, payoff_matrix_2=0):
+    if payoff_matrix_2 == 0:
         payoff_matrix_2 = payoff_matrix_1*-1
     # Gemischte Strategien p für Spieler 1 und Spielwert w für Spieler 2
     payoff_matrice = reduce_matrix(payoff_matrix_1, payoff_matrix_2)

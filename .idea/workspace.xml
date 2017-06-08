@@ -13,7 +13,7 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="CoverageDataManager">
-    <SUITE FILE_PATH="coverage/game_theory_games$Solving_Methods.coverage" NAME="Solving_Methods Coverage Results" MODIFIED="1496931537926" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/GameTheory_Game" />
+    <SUITE FILE_PATH="coverage/game_theory_games$Solving_Methods.coverage" NAME="Solving_Methods Coverage Results" MODIFIED="1496954502913" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/GameTheory_Game" />
     <SUITE FILE_PATH="coverage/game_theory_games_2$test.coverage" NAME="test Coverage Results" MODIFIED="1495839020685" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/game_theory_games_2$Nosetests_in_test2_py.coverage" NAME="Nosetests in test2.py Coverage Results" MODIFIED="1495833606311" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/game_theory_games_2$Solving_Methods.coverage" NAME="Solving_Methods Coverage Results" MODIFIED="1496870985194" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/GameTheory_Game" />
@@ -34,11 +34,11 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="Solving_Methods.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="Solving_Methods.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/GameTheory_Game/Solving_Methods.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-292">
-              <caret line="1056" column="97" lean-forward="false" selection-start-line="1056" selection-start-column="97" selection-end-line="1056" selection-end-column="97" />
+            <state relative-caret-position="242">
+              <caret line="658" column="58" lean-forward="true" selection-start-line="658" selection-start-column="4" selection-end-line="658" selection-end-column="58" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
@@ -49,7 +49,7 @@
       <file leaf-file-name="tests.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/GameTheory_Game/tests.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="279">
+            <state relative-caret-position="6120">
               <caret line="368" column="54" lean-forward="false" selection-start-line="368" selection-start-column="54" selection-end-line="368" selection-end-column="54" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
@@ -58,10 +58,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Game.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Game.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/GameTheory_Game/Game.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="228">
+            <state relative-caret-position="511">
               <caret line="76" column="22" lean-forward="false" selection-start-line="76" selection-start-column="22" selection-end-line="76" selection-end-column="22" />
               <folding />
             </state>
@@ -71,8 +71,8 @@
       <file leaf-file-name="BattleOfSexes.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/GameTheory_Game/BattleOfSexes.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="306">
-              <caret line="18" column="0" lean-forward="true" selection-start-line="18" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
+            <state relative-caret-position="289">
+              <caret line="18" column="0" lean-forward="false" selection-start-line="18" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
               <folding>
                 <element signature="e#0#37#0" expanded="true" />
               </folding>
@@ -83,8 +83,8 @@
       <file leaf-file-name="PrisonersDilemma.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/GameTheory_Game/PrisonersDilemma.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="323">
-              <caret line="19" column="0" lean-forward="true" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
+            <state relative-caret-position="306">
+              <caret line="19" column="0" lean-forward="false" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
               <folding>
                 <element signature="e#0#37#0" expanded="true" />
               </folding>
@@ -95,7 +95,7 @@
       <file leaf-file-name="ZerosumGame.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/GameTheory_Game/ZerosumGame.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="85">
+            <state relative-caret-position="68">
               <caret line="5" column="0" lean-forward="false" selection-start-line="5" selection-start-column="0" selection-end-line="7" selection-end-column="48" />
               <folding>
                 <element signature="e#0#59#0" expanded="true" />
@@ -107,7 +107,7 @@
       <file leaf-file-name="ConstantSumGame.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/GameTheory_Game/ConstantSumGame.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="85">
+            <state relative-caret-position="68">
               <caret line="5" column="4" lean-forward="false" selection-start-line="5" selection-start-column="4" selection-end-line="8" selection-end-column="26" />
               <folding>
                 <element signature="e#0#37#0" expanded="true" />
@@ -137,6 +137,8 @@
       <find>clear</find>
       <find>lower</find>
       <find>determination_intervall</find>
+      <find>get_strategy</find>
+      <find>None</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -244,7 +246,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
+      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -273,7 +275,7 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scratches" />
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -773,7 +775,14 @@
       <option name="project" value="LOCAL" />
       <updated>1496940032420</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="Frühzeitiger Abbruch bei Erkennen, dass nicht dominierte Strategie.">
+      <created>1496953012099</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1496953012099</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -797,17 +806,17 @@
     <frame x="-7" y="0" width="1932" height="1047" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19017094" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1923077" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32980973" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32826087" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3186937" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24312897" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3186937" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="manage.py@game_theory_app" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32980973" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -858,7 +867,8 @@
     <MESSAGE value="Next steps defined. Finished a few methods for solving. Function cleanup needed: preparations for using algorithms outside of these methods." />
     <MESSAGE value="Nash-GGW für reine Strategien." />
     <MESSAGE value="Vererbung der Spieltypen implementiert." />
-    <option name="LAST_COMMIT_MESSAGE" value="Vererbung der Spieltypen implementiert." />
+    <MESSAGE value="Frühzeitiger Abbruch bei Erkennen, dass nicht dominierte Strategie." />
+    <option name="LAST_COMMIT_MESSAGE" value="Frühzeitiger Abbruch bei Erkennen, dass nicht dominierte Strategie." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -971,7 +981,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/GameTheory_Game/tests.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="279">
+        <state relative-caret-position="6120">
           <caret line="368" column="54" lean-forward="false" selection-start-line="368" selection-start-column="54" selection-end-line="368" selection-end-column="54" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
@@ -979,26 +989,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/GameTheory_Game/CooperativeGame.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="37" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/GameTheory_Game/NoncooperativeGame.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="12" column="47" lean-forward="false" selection-start-line="12" selection-start-column="47" selection-end-line="12" selection-end-column="47" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/GameTheory_Game/CooperativeGame.py" />
+    <entry file="file://$PROJECT_DIR$/GameTheory_Game/NoncooperativeGame.py" />
     <entry file="file://$PROJECT_DIR$/GameTheory_Game/BattleOfSexes.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="18" column="0" lean-forward="true" selection-start-line="18" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
+        <state relative-caret-position="289">
+          <caret line="18" column="0" lean-forward="false" selection-start-line="18" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
           <folding>
             <element signature="e#0#37#0" expanded="true" />
           </folding>
@@ -1007,27 +1003,17 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/GameTheory_Game/PrisonersDilemma.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="323">
-          <caret line="19" column="0" lean-forward="true" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
+        <state relative-caret-position="306">
+          <caret line="19" column="0" lean-forward="false" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
           <folding>
             <element signature="e#0#37#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/GameTheory_Game/Solving_Methods.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-292">
-          <caret line="1056" column="97" lean-forward="false" selection-start-line="1056" selection-start-column="97" selection-end-line="1056" selection-end-column="97" />
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/GameTheory_Game/ConstantSumGame.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="85">
+        <state relative-caret-position="68">
           <caret line="5" column="4" lean-forward="false" selection-start-line="5" selection-start-column="4" selection-end-line="8" selection-end-column="26" />
           <folding>
             <element signature="e#0#37#0" expanded="true" />
@@ -1037,7 +1023,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/GameTheory_Game/ZerosumGame.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="85">
+        <state relative-caret-position="68">
           <caret line="5" column="0" lean-forward="false" selection-start-line="5" selection-start-column="0" selection-end-line="7" selection-end-column="48" />
           <folding>
             <element signature="e#0#59#0" expanded="true" />
@@ -1047,9 +1033,19 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/GameTheory_Game/Game.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="228">
+        <state relative-caret-position="511">
           <caret line="76" column="22" lean-forward="false" selection-start-line="76" selection-start-column="22" selection-end-line="76" selection-end-column="22" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/GameTheory_Game/Solving_Methods.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="242">
+          <caret line="658" column="58" lean-forward="true" selection-start-line="658" selection-start-column="4" selection-end-line="658" selection-end-column="58" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
