@@ -8,6 +8,12 @@ from itertools import chain, combinations, product
 
 
 def powerset(n):
+    """Erzeugt einen Iterator, um die möglichen Supports in gemischten Strategien abzubilden
+
+    :param n: Anzahl der unterschiedlichen Werte, die kombiniert werden sollen
+    :returns: Einen Iterator, der alle Kombinationen von bis zu n Elementen der Werte von 0 bis n enthält
+    :rtype: chain
+    """
     return chain.from_iterable(combinations(range(n), r) for r in range(n + 1))
 
 
@@ -15,6 +21,17 @@ def powerset(n):
 # mode = 1 -> Kampf der Geschlechter
 # TODO: Auszahlungsdiagramm gemischte Strategien für mehr als 2 Stragien nutzbar machen.
 def get_payoff_diagramm(payoff_matrix_1, payoff_matrix_2=np.array([]), mode=0):
+    """Erzeugt ein Auszahlungsdiagramm in reinen oder gemischten Strategien
+
+    :param payoff_matrix_1: Die Auszahlungsmatrix von Spieler 1
+    :type payoff_matrix_1: ndarray
+    :param payoff_matrix_2: Die Auszahlungsmatrix von Spieler 2 (default: np.array([]))
+    :type payoff_matrix_2: ndarray
+    :param mode: Soll in reinen (mode=0) oder gemischten (mode=1) Strategien gearbeitet werden (default: 0)
+    :type mode: int
+    :return: Eine Liste der Auszahlungspunkte
+    :rtype: list
+    """
     if not payoff_matrix_2.size:
         payoff_matrix_2 = payoff_matrix_1*-1
     # payoff_player_1 = list()
@@ -99,7 +116,16 @@ def get_payoff_diagramm(payoff_matrix_1, payoff_matrix_2=np.array([]), mode=0):
 
 # Leerer Return bedeutet kein Nash-GGW
 # Nash-GGW in reinen Strategien
-def ggw(payoff_matrix_1, payoff_matrix_2=np.array([]), mode=0):
+def ggw(payoff_matrix_1, payoff_matrix_2=np.array([])):
+    """Bestimmt die Nash-Gleichgewichte in reinen Strategien
+
+    :param payoff_matrix_1: Die Auszahlungsmatrix von Spieler 1
+    :type payoff_matrix_1: ndarray
+    :param payoff_matrix_2: Die Auszahlungsmatrix von Spieler 2 (default: np.array([]))
+    :type payoff_matrix_2: ndarray
+    :return: Eine Liste, die die Strategie-Kombinationen, eine Stabilitäts-Aussage und den Rechenweg für jedes Nash-Gleichgewicht beinhaltet
+    :rtype: list
+    """
     if not payoff_matrix_2.size:
         payoff_matrix_2 = payoff_matrix_1*-1
     optimal1 = np.zeros(payoff_matrix_1.shape)
@@ -107,56 +133,56 @@ def ggw(payoff_matrix_1, payoff_matrix_2=np.array([]), mode=0):
     optimal = 0
     dominated = list()
     result = list()
-    if mode == 0:
-        for column in range(payoff_matrix_1.shape[1]):
-            opt = bayes_strategy(payoff_matrix_1.T, column)[0]
-            for bay in opt:
-                optimal1[bay[0]][column] += 1
-        #for column in range(payoff_matrix_1.shape[1]):
-        #    max_val_1 = (np.argmax(payoff_matrix_1[:, column]))
-        #    optimal1[max_val_1][column] += 1
-        #    for line in range(payoff_matrix_1.shape[0]):
-        #        if line != max_val_1 and payoff_matrix_1[line][column] == payoff_matrix_1[max_val_1][column]:
-        #            optimal1[line][column] += 1
-            # print(max_val_1)
-        for line in range(payoff_matrix_2.shape[0]):
-            opt = bayes_strategy(payoff_matrix_2, line)[0]
-            for bay in opt:
-                optimal2[line][bay[0]] += 1
-        #for line in range(payoff_matrix_2.shape[0]):
-        #    max_val_2 = (np.argmax(payoff_matrix_2[line]))
-        #    optimal2[line][max_val_2] += 1
-        #    for column in range(payoff_matrix_2.shape[1]):
-        #        if column != max_val_2 and payoff_matrix_2[line][column] == payoff_matrix_2[line][max_val_2]:
-        #            optimal2[line][column] += 1
-            # print(max_val_2)
-        # print(optimal)
-        optimal = optimal1 + optimal2
-        prep = np.where(optimal == 2)
-        for index in range(prep[0].shape[0]):
-            result.append([prep[0][index], prep[1][index]])
-        for ggws in range(len(result)):
-            dominated_temp = False
-            for lines in range(np.asarray(payoff_matrix_1).shape[0]):
-                for columns in range(np.asarray(payoff_matrix_2).shape[1]):
-                    if payoff_matrix_1[lines][columns] >= result[ggws][0] and \
-                                    payoff_matrix_2[lines][columns] >= result[ggws][1]:
-                        if payoff_matrix_1[lines][columns] != result[ggws][0] and \
-                                        payoff_matrix_2[lines][columns] != result[ggws][1]:
-                            dominated_temp = True
-            dominated.append(dominated_temp)
+
+    for column in range(payoff_matrix_1.shape[1]):
+        opt = bayes_strategy(payoff_matrix_1.T, column)[0]
+        for bay in opt:
+            optimal1[bay[0]][column] += 1
+    #for column in range(payoff_matrix_1.shape[1]):
+    #    max_val_1 = (np.argmax(payoff_matrix_1[:, column]))
+    #    optimal1[max_val_1][column] += 1
+    #    for line in range(payoff_matrix_1.shape[0]):
+    #        if line != max_val_1 and payoff_matrix_1[line][column] == payoff_matrix_1[max_val_1][column]:
+    #            optimal1[line][column] += 1
+        # print(max_val_1)
+    for line in range(payoff_matrix_2.shape[0]):
+        opt = bayes_strategy(payoff_matrix_2, line)[0]
+        for bay in opt:
+            optimal2[line][bay[0]] += 1
+    #for line in range(payoff_matrix_2.shape[0]):
+    #    max_val_2 = (np.argmax(payoff_matrix_2[line]))
+    #    optimal2[line][max_val_2] += 1
+    #    for column in range(payoff_matrix_2.shape[1]):
+    #        if column != max_val_2 and payoff_matrix_2[line][column] == payoff_matrix_2[line][max_val_2]:
+    #            optimal2[line][column] += 1
+        # print(max_val_2)
+    # print(optimal)
+    optimal = optimal1 + optimal2
+    prep = np.where(optimal == 2)
+    for index in range(prep[0].shape[0]):
+        result.append([prep[0][index], prep[1][index]])
+    for ggws in range(len(result)):
+        dominated_temp = False
+        for lines in range(np.asarray(payoff_matrix_1).shape[0]):
+            for columns in range(np.asarray(payoff_matrix_2).shape[1]):
+                if payoff_matrix_1[lines][columns] >= result[ggws][0] and \
+                                payoff_matrix_2[lines][columns] >= result[ggws][1]:
+                    if payoff_matrix_1[lines][columns] != result[ggws][0] and \
+                                    payoff_matrix_2[lines][columns] != result[ggws][1]:
+                        dominated_temp = True
+        dominated.append(dominated_temp)
     return result, dominated, optimal, optimal1, optimal2
 
 
 # Prüft ob für jeden Spieler unterer Spielwert dem oberen entspricht
-"""Prüft ob das Spiel determiniert ist
-
-:param payoff_matrix_1: Die Auszahlungsmatrix von Spieler 1
-:type payoff_matrix_1: ndarray
-:returns: Den Wahrheitswert, ob ein Spiel determiniert oder nicht ist
-:rtype: boolean
-"""
 def is_determined(payoff_matrix_1):
+    """Prüft ob das Spiel determiniert ist
+
+    :param payoff_matrix_1: Die Auszahlungsmatrix von Spieler 1
+    :type payoff_matrix_1: ndarray
+    :returns: Den Wahrheitswert, ob ein Spiel determiniert oder nicht ist
+    :rtype: boolean
+    """
     det_intervalls = determination_intervall(payoff_matrix_1)
 
     if min(det_intervalls[0]) != max(det_intervalls[1]):
@@ -166,14 +192,14 @@ def is_determined(payoff_matrix_1):
 
 
 # Determiniertheitsintervall für beide Spieler berechnen
-"""Bestimmt das Indeterminiertheitsintervall eines Spiels
-
-:param payoff_matrix_1: Die Auszahlungsmatrix von Spieler 1
-:type payoff_matrix_1: ndarray
-:returns: Das Indeterminiertheitsintervall als Liste
-:rtype: list
-"""
 def determination_intervall(payoff_matrix_1):
+    """Bestimmt das Indeterminiertheitsintervall eines Spiels
+
+    :param payoff_matrix_1: Die Auszahlungsmatrix von Spieler 1
+    :type payoff_matrix_1: ndarray
+    :returns: Das Indeterminiertheitsintervall als Liste
+    :rtype: list
+    """
     upper_values = get_upper_values(payoff_matrix_1)
     lower_values = get_lower_values(payoff_matrix_1)
     determination_intervalls = [lower_values[0], upper_values[0]]
@@ -182,16 +208,14 @@ def determination_intervall(payoff_matrix_1):
 
 
 # Obere Spielwerte für beide Spieler in reinen Strategien ermitteln
-"""Bestimmt den oberen Spielwert eines Zwei-Personennullsummenspiels
-
-:param payoff_matrix_1: Die Auszahlungsmatrix von Spieler 1
-:type payoff_matrix_1: ndarray
-:returns: Wert des oberen Spielwerts
-:rtype: int
-"""
-
-
 def get_upper_values(payoff_matrix_1):
+    """Bestimmt den oberen Spielwert eines Zwei-Personennullsummenspiels
+
+    :param payoff_matrix_1: Die Auszahlungsmatrix von Spieler 1
+    :type payoff_matrix_1: ndarray
+    :returns: Wert des oberen Spielwerts
+    :rtype: int
+    """
     upper_values = min([max(payoff_matrix_1[:, col]) for col in range(payoff_matrix_1.shape[1])])
     #temp_values = list()
     #for column in range(payoff_matrix_1.shape[1]):
@@ -205,18 +229,16 @@ def get_upper_values(payoff_matrix_1):
 # Untere Spielwerte für beide Spieler in reinen Strategien ermitteln
 # Spieler 1: Minimum der einzelnen Zeilen, davon das Maximum
 # Spieler 2: Minimum der einzelnen Spalten, davon das Maximum
-"""Bestimmt die unteren Spielwerte der Spieler in einem Zwei-Personenspiel
-
-:param payoff_matrix_1: Die Auszahlungsmatrix von Spieler 1
-:type payoff_matrix_1: ndarray
-:param payoff_matrix_2: Die Auszahlungsmatrix von Spieler 2
-:type payoff_matrix_2: ndarray
-:returns: Liste der unteren Spielwerte der beiden Spieler
-:rtype: list
-"""
-
-
 def get_lower_values(payoff_matrix_1, payoff_matrix_2=np.array([])):
+    """Bestimmt die unteren Spielwerte der Spieler in einem Zwei-Personenspiel
+
+    :param payoff_matrix_1: Die Auszahlungsmatrix von Spieler 1
+    :type payoff_matrix_1: ndarray
+    :param payoff_matrix_2: Die Auszahlungsmatrix von Spieler 2 (default: np.array([]))
+    :type payoff_matrix_2: ndarray
+    :returns: Liste der unteren Spielwerte der beiden Spieler
+    :rtype: list
+    """
     if not payoff_matrix_2.size:
         payoff_matrix_2 = (payoff_matrix_1*-1)
     payoff_matrix_2 = payoff_matrix_2.T
@@ -240,16 +262,16 @@ def get_lower_values(payoff_matrix_1, payoff_matrix_2=np.array([])):
 
 # Maximin-Strategien der Spieler
 # Sollte nur bei determinierten Spielen angewendet werden
-"""Erzeugt eine Liste aller Maximin-Strategien von zwei Spielern
-
-:param payoff_matrix_1: Die Auszahlungsmatrix von Spieler 1
-:type payoff_matrix_1: ndarray
-:param payoff_matrix_2: Die Auszahlungsmatrix von Spieler 2
-:type payoff_matrix_2: ndarray
-:returns: Eine Liste, die eine Liste aller Maximin-Strategien von Spieler 1 und eine Liste aller Maximin-Strategien von Spieler 2 enthält
-:rtype: list
-"""
 def solve_maximin_strategies(payoff_matrix_1, payoff_matrix_2=np.array([])):
+    """Erzeugt eine Liste aller Maximin-Strategien von zwei Spielern
+
+    :param payoff_matrix_1: Die Auszahlungsmatrix von Spieler 1
+    :type payoff_matrix_1: ndarray
+    :param payoff_matrix_2: Die Auszahlungsmatrix von Spieler 2 (default: np.array([]))
+    :type payoff_matrix_2: ndarray
+    :returns: Eine Liste, die eine Liste aller Maximin-Strategien von Spieler 1 und eine Liste aller Maximin-Strategien von Spieler 2 enthält
+    :rtype: list
+    """
     if not payoff_matrix_2.size:
         payoff_matrix_2 = payoff_matrix_1*-1
     payoff_matrix_2 = payoff_matrix_2.T
@@ -280,16 +302,16 @@ def solve_maximin_strategies(payoff_matrix_1, payoff_matrix_2=np.array([])):
 # Bayes Strategie von player, wenn der andere Spieler strategy wählt
 # Benötigt für Betrachtung Spieler 1 die transponierte Auszahlungsmatrix
 # Für Spieler 2 kann die normale Auszahlungsmatrix verwendet werden
-"""Ermittelt bei gegebener gegnerischen Strategie alle Bayes-Strategien
-
-:param payoff_matrix: Auszahlungsmatrix von Spieler 1 oder transponierte Auszahlungsmatrix von Spieler 2
-:type payoff_matrix: ndarray
-:param strategy: Gespielte Strategie des Gegenspielers
-:type strategy: int
-:returns: Die gefundenen Bayes-Strategien als Liste und die hierfür ausgewerteten Auszahlungen
-:rtype: tuple
-"""
 def bayes_strategy(payoff_matrix, strategy):
+    """Ermittelt bei gegebener gegnerischen Strategie alle Bayes-Strategien
+
+    :param payoff_matrix: Auszahlungsmatrix von Spieler 1 oder transponierte Auszahlungsmatrix von Spieler 2
+    :type payoff_matrix: ndarray
+    :param strategy: Gespielte Strategie des Gegenspielers
+    :type strategy: int
+    :returns: Die gefundenen Bayes-Strategien als Liste und die hierfür ausgewerteten Auszahlungen
+    :rtype: tuple
+    """
     bayes = np.where(payoff_matrix[strategy] == np.max(payoff_matrix[strategy]))
     watched_strategy = payoff_matrix[strategy]
     return bayes, watched_strategy
@@ -310,24 +332,24 @@ def get_calculations_pdf(game, mode=0):
 # TODO: Auszahlungsdiagramme graphisch aufbereiten
 # TODO: Simplex-Tableaus graphisch aufbereiten
 # TODO: Parametrisierung welche Aufgaben gestellt wurden
-"""Erzeugt eine verwendbare Ausgabe der berechneten Kennzahlen
-
-:param matrix1: Die Auszahlungsmatrix von Spieler 1
-:type matrix1: ndarray
-:param matrix2: Die Auszahlungsmatrix von Spieler 2
-:type matrix2: ndarray
-:param zerosum: Angabe, ob es sich um ein Nullsummenspiel handelt oder nicht
-:type zerosum: boolean
-:param bay1: Die von Spieler 2 gespielte Strategie zur Ermittlung der Bayes-Strategien
-:type bay1: int
-:param bay2: Die von Spieler 1 gespielte Strategie zur Ermittlung der Bayes-Strategien
-:type bay2: int
-:param mode: Angabe ob Berechnungen nur in reinen Strategien (mode=0) oder auch in gemischten Strategien (mode=1) erfolgen sollen
-:type mode: int
-:returns: Einen String zur Ausgabe, ein für LaTeX formatierter String und ein Context-Dictionary als Liste
-:rtype: list
-"""
 def get_calculations_latex(matrix1, matrix2=np.array([]), zerosum=False, bay1=0, bay2=0, mode=0):
+    """Erzeugt eine verwendbare Ausgabe der berechneten Kennzahlen
+
+    :param matrix1: Die Auszahlungsmatrix von Spieler 1
+    :type matrix1: ndarray
+    :param matrix2: Die Auszahlungsmatrix von Spieler 2 (default: np.array([]))
+    :type matrix2: ndarray
+    :param zerosum: Angabe, ob es sich um ein Nullsummenspiel handelt oder nicht (default: False)
+    :type zerosum: boolean
+    :param bay1: Die von Spieler 2 gespielte Strategie zur Ermittlung der Bayes-Strategien (default: 0)
+    :type bay1: int
+    :param bay2: Die von Spieler 1 gespielte Strategie zur Ermittlung der Bayes-Strategien (default: 0)
+    :type bay2: int
+    :param mode: Angabe ob Berechnungen nur in reinen Strategien (mode=0) oder auch in gemischten Strategien (mode=1) erfolgen sollen (default: 0)
+    :type mode: int
+    :returns: Einen String zur Ausgabe, ein für LaTeX formatierter String und ein Context-Dictionary als Liste
+    :rtype: list
+    """
     if not matrix2.size:
         matrix2 = matrix1*-1
     sol_tex = []
@@ -667,6 +689,17 @@ def get_calculations_latex(matrix1, matrix2=np.array([]), zerosum=False, bay1=0,
 
 # Spielmatrix reduzieren
 def reduce_matrix(payoff_matrix_1, payoff_matrix_2=np.array([]), stop_dimension=2):
+    """Reduziert die Auszahlungsmatrizen solange noch strikt dominierte Strategien gefunden werden und eine angegebene Mindestdimension nicht unterschritten wird
+
+    :param payoff_matrix_1: Die Auszahlungsmatrix von Spieler 1
+    :type payoff_matrix_1: ndarray
+    :param payoff_matrix_2: Die Auszahlungsmatrix von Spieler 2 (default: np.array([]))
+    :type payoff_matrix_2: ndarray
+    :param stop_dimension: Die Mindestanzahl der Strategien jedes Spielers, die nicht unterschritten werden soll (default: 2)
+    :type stop_dimension: int
+    :returns: Eine Liste, die die reduzierten Auszahlungsmatrizen beinhaltet, sowie eine Aussage, ob überhaupt reduziert werden konnte
+    :rtype: list
+    """
     if not payoff_matrix_2.size:
         payoff_matrix_2 = payoff_matrix_1*-1
     # Matrizen für Spieler 1 und 2 müssen betrachtet werden
@@ -737,16 +770,16 @@ def reduce_matrix(payoff_matrix_1, payoff_matrix_2=np.array([]), stop_dimension=
 
 # Matrix aller MinMax-Strategie-Paare ausgeben
 # TODO: evtl. in Game-Klasse übernehmen
-"""Kombiniert alle Maximin-Strategien der einzelnen Spieler zu Maximin-Strategie-Kombinationen
-
-:param payoff_matrix_1: Die Auszahlungsmatrix von Spieler 1
-:type payoff_matrix_1: ndarray
-:param payoff_matrix_2: Die Auszahlungsmatrix von Spieler 2
-:type payoff_matrix_2: ndarray
-:returns: Eine Liste aller Strategie-Kombinationen durch Einsatz der Maximin-Strategien
-:rtype: iterable
-"""
 def get_strategy_pairs(payoff_matrix_1, payoff_matrix_2=np.array([])):
+    """Kombiniert alle Maximin-Strategien der einzelnen Spieler zu Maximin-Strategie-Kombinationen
+
+    :param payoff_matrix_1: Die Auszahlungsmatrix von Spieler 1
+    :type payoff_matrix_1: ndarray
+    :param payoff_matrix_2: Die Auszahlungsmatrix von Spieler 2 (default: np.array([]))
+    :type payoff_matrix_2: ndarray
+    :returns: Eine Liste aller Strategie-Kombinationen durch Einsatz der Maximin-Strategien
+    :rtype: product
+    """
     if not payoff_matrix_2.size:
         payoff_matrix_2 = payoff_matrix_1*-1
     strategies = solve_maximin_strategies(payoff_matrix_1, payoff_matrix_2)
@@ -759,18 +792,18 @@ def get_strategy_pairs(payoff_matrix_1, payoff_matrix_2=np.array([])):
 # Undominiert, wenn kein anderer Auszahlungspunkt existiert bei dem u1 und u2 >= u1* und u2*
 # mode = 0 reine Strategien, mode = 1 gemischte Strategien
 # TODO: Dominiertheit bei gemischten Strategien erarbeiten
-"""Berechnet den Garantiepunkt eines Spiels in reinen oder gemischten Strategien
-
-:param payoff_matrix_1: Die Auszahlungsmatrix von Spieler 1
-:type payoff_matrix_1: ndarray
-:param payoff_matrix_2: Die Auszahlungsmatrix von Spieler 2
-:type payoff_matrix_2: ndarray
-:param mode: Angabe, ob der Garantiepunkt in reinen (mode=0) oder gemischten (mode=1) Strategien ermittelt werden soll
-:type mode: int
-:returns: Eine Liste, die den Garantiepunkt, sowie eine Aussage über Dominiertheit enthält
-:rtype: list
-"""
 def get_guaranteed_payoff(payoff_matrix_1, payoff_matrix_2=np.array([]), mode=0):
+    """Berechnet den Garantiepunkt eines Spiels in reinen oder gemischten Strategien
+
+    :param payoff_matrix_1: Die Auszahlungsmatrix von Spieler 1
+    :type payoff_matrix_1: ndarray
+    :param payoff_matrix_2: Die Auszahlungsmatrix von Spieler 2 (default: np.array([]))
+    :type payoff_matrix_2: ndarray
+    :param mode: Angabe, ob der Garantiepunkt in reinen (mode=0) oder gemischten (mode=1) Strategien ermittelt werden soll (default: 0)
+    :type mode: int
+    :returns: Eine Liste, die den Garantiepunkt, sowie eine Aussage über Dominiertheit enthält
+    :rtype: list
+    """
     if not payoff_matrix_2.size:
         payoff_matrix_2 = payoff_matrix_1*-1
         print('payoff2 generiert')
@@ -808,16 +841,16 @@ def get_guaranteed_payoff(payoff_matrix_1, payoff_matrix_2=np.array([]), mode=0)
 
 # Matrizen für Simplex vorbereiten
 # Konstante hinzurechnen, sodass Spieler1-Matrix absolut positiv und Spieler2-Matrix absolut negativ ist
-"""Bereitet die Auszahlungsmatrizen der Spieler für die Nutzung des Simplex-Algorithmus vor
-
-:param payoff_matrix_1: Die Auszahlungsmatrix von Spieler 1
-:type payoff_matrix_1: ndarray
-:param payoff_matrix_2: Die Auszahlungsmatrix von Spieler 2
-:type payoff_matrix_2: ndarray
-:returns: Eine Liste, die beide aufbereiteten Auszahlungsmatrizen enthält
-:rtype: list
-"""
 def make_matrix_ready(payoff_matrix_1, payoff_matrix_2=np.array([])):
+    """Bereitet die Auszahlungsmatrizen der Spieler für die Nutzung des Simplex-Algorithmus vor
+
+    :param payoff_matrix_1: Die Auszahlungsmatrix von Spieler 1
+    :type payoff_matrix_1: ndarray
+    :param payoff_matrix_2: Die Auszahlungsmatrix von Spieler 2 (default: np.array([]))
+    :type payoff_matrix_2: ndarray
+    :returns: Eine Liste, die beide aufbereiteten Auszahlungsmatrizen enthält
+    :rtype: list
+    """
     if not payoff_matrix_2.size:
         payoff_matrix_2 = payoff_matrix_1*-1
     # Matrix-Minimum für Spieler 1 herausfinden
@@ -839,16 +872,17 @@ def make_matrix_ready(payoff_matrix_1, payoff_matrix_2=np.array([])):
 
     return [simplex_game_1, simplex_game_2]
 
-"""Ruft die Methoden zur Generierung und Lösung der linearen Probleme beider Spiele auf 
 
-:param payoff_matrix_1: Die Auszahlungsmatrix von Spieler 1
-:type payoff_matrix_1: ndarray
-:param payoff_matrix_2: Die Auszahlungsmatrix von Spieler 2
-:type payoff_matrix_2: ndarray
-:returns: Die Listen mit der Lösung und allen Zwischenschritten für beide Spieler, sowie die vorbereiteten Auszahlungsmatrizen
-:rtype: list
-"""
 def use_simplex(payoff_matrix_1, payoff_matrix_2=np.array([])):
+    """Ruft die Methoden zur Generierung und Lösung der linearen Probleme beider Spiele auf
+
+    :param payoff_matrix_1: Die Auszahlungsmatrix von Spieler 1
+    :type payoff_matrix_1: ndarray
+    :param payoff_matrix_2: Die Auszahlungsmatrix von Spieler 2 (default: np.array([]))
+    :type payoff_matrix_2: ndarray
+    :returns: Die Listen mit der Lösung und allen Zwischenschritten für beide Spieler, sowie die vorbereiteten Auszahlungsmatrizen
+    :rtype: list
+    """
     if not payoff_matrix_2.size:
         payoff_matrix_2 = payoff_matrix_1*-1
     simplex_games = make_matrix_ready(payoff_matrix_1, payoff_matrix_2)
@@ -861,29 +895,33 @@ def use_simplex(payoff_matrix_1, payoff_matrix_2=np.array([])):
 
 # Simplex-Verfahren für Spieler 1 anwenden
 # TODO: Formatierung des Lösungswegs direkt hier machen
-"""Erzeugung und Lösung des linearen Problems für die Auszahlung von Spieler 2 und die von Spieler 1 gespielten Wahrscheinlichkeiten
-
-:param simmplex_game_1: Die zuvor aufbereitete Auszahlungsmatrix von Spieler 2
-:type simplex_game_1: ndarray
-:returns: Eine Liste mit der Lösung des linearen Problems, den Zwischenergebnissen und den zugeörigen Pivots und den in Brüchen formatierten Zwischentableaus
-:rtype: list
-"""
 def use_simplex_player2(simplex_game_1):
-    c = list()
-    game_bounds = list()
-    a = list()
-    b = list()
-    for lines in range(np.asarray(simplex_game_1).shape[0]):
-        temp = list()
-        for columns in range(np.asarray(simplex_game_1).shape[1]):
-            temp.append(simplex_game_1[lines][columns])
-        a.append(temp)
-        b.append(1)
+    """Erzeugung und Lösung des linearen Problems für die Auszahlung von Spieler 2 und die von Spieler 1 gespielten Wahrscheinlichkeiten
 
-    for columns in range(np.asarray(simplex_game_1).shape[1]):
-        c.append(-1)
-        game_bounds.append((0, None))
-
+    :param simplex_game_1: Die zuvor aufbereitete Auszahlungsmatrix von Spieler 2, die nur negative Auszahlungen enthält
+    :type simplex_game_1: ndarray
+    :returns: Eine Liste mit der Lösung des linearen Problems, den Zwischenergebnissen und den zugeörigen Pivots und den in Brüchen formatierten Zwischentableaus
+    :rtype: list
+    """
+    #c = list()
+    #game_bounds = list()
+    #a = list()
+    #b = list()
+    #for lines in range(np.asarray(simplex_game_1).shape[0]):
+    #    temp = list()
+    #    for columns in range(np.asarray(simplex_game_1).shape[1]):
+    #        temp.append(simplex_game_1[lines][columns])
+    #    a.append(temp)
+    #    b.append(1)
+    a = []
+    for lines in range(simplex_game_1.shape[0]):
+        a.append([simplex_game_1[lines][columns] for columns in range(simplex_game_1.shape[1])])
+    b = [1] * simplex_game_1.shape[0]
+    #for columns in range(np.asarray(simplex_game_1).shape[1]):
+    #    c.append(-1)
+    #    game_bounds.append((0, None))
+    c = [-1] * simplex_game_1.shape[1]
+    game_bounds = [(0, None)] * simplex_game_1.shape[1]
     # xk_arr1 = list()
     # kwargs_arr1 = list()
     solve_report_1 = SolvingSteps()
@@ -898,30 +936,33 @@ def use_simplex_player2(simplex_game_1):
 
 # Simplex-Verfahren für Spieler 2 anwenden
 # TODO: Formatierung des Lösungswegs direkt hier machen
-"""Erzeugung und Lösung des linearen Problems für die Auszahlung von Spieler 1 und die von Spieler 2 gespielten Wahrscheinlichkeiten
-
-:param simmplex_game_2: Die zuvor aufbereitete Auszahlungsmatrix von Spieler 1
-:type simplex_game_2: ndarray
-:returns: Eine Liste mit der Lösung des linearen Problems, den Zwischenergebnissen und den zugeörigen Pivots und den in Brüchen formatierten Zwischentableaus
-:rtype: list
-"""
 def use_simplex_player1(simplex_game_2):
+    """Erzeugung und Lösung des linearen Problems für die Auszahlung von Spieler 1 und die von Spieler 2 gespielten Wahrscheinlichkeiten
+
+    :param simplex_game_2: Die zuvor aufbereitete Auszahlungsmatrix von Spieler 1, die nur positive Auszahlungen enthält
+    :type simplex_game_2: ndarray
+    :returns: Eine Liste mit der Lösung des linearen Problems, den Zwischenergebnissen und den zugeörigen Pivots und den in Brüchen formatierten Zwischentableaus
+    :rtype: list
+    """
     #c = list()
     #game_bounds = list()
-    a = list()
+    #a = list()
     #b = list()
     #for lines in range(np.asarray(simplex_game_2).shape[0]):
     #    c.append(1)
     #    game_bounds.append((0, None))
-    c = [1 for x in range(np.asarray(simplex_game_2).shape[0])]
-    game_bounds = [(0, None) for x in range(np.asarray(simplex_game_2).shape[0])]
-    for columns in range(np.asarray(simplex_game_2).shape[1]):
-        #b.append(-1)
-        temp = list()
-        for lines in range(np.asarray(simplex_game_2).shape[0]):
-            temp.append(simplex_game_2[lines][columns])
-        a.append(temp)
-    b = [-1 for x in range(np.asarray(simplex_game_2).shape[1])]
+    c = [1] * simplex_game_2.shape[0]
+    game_bounds = [(0, None)] * simplex_game_2.shape[0]
+    #for columns in range(np.asarray(simplex_game_2).shape[1]):
+    #    #b.append(-1)
+    #    temp = list()
+    #    for lines in range(np.asarray(simplex_game_2).shape[0]):
+    #        temp.append(simplex_game_2[lines][columns])
+    #    a.append(temp)
+    a = []
+    for columns in range(simplex_game_2.shape[1]):
+        a.append([simplex_game_2[lines][columns] for lines in range(simplex_game_2.shape[0])])
+    b = [-1] * simplex_game_2.shape[1]
 
     # xk_arr2 = list()
     # kwargs_arr2 = list()
@@ -936,36 +977,68 @@ def use_simplex_player1(simplex_game_2):
 
 
 def get_dominated_strategies(payoff_matrix_1, payoff_matrix_2=np.array([])):
+    """Ermittelt alle strikt dominierten Strategien eines Zwei-Personenspiels
+
+    :param payoff_matrix_1: Die Auszahlungsmatrix von Spieler 1
+    :type payoff_matrix_1: ndarray
+    :param payoff_matrix_2: Die Auszahlungsmatrix von Spieler 2 (default: np.array([]))
+    :type payoff_matrix_2: ndarray
+    :returns: Eine Liste der für den jeweiligen Spieler strikt dominierten Strategien
+    :rtype: list
+    """
     if not payoff_matrix_2.size:
         payoff_matrix_2 = payoff_matrix_1*-1
     shape1, shape2 = payoff_matrix_1.shape
     dominated_player_1 = set()
     dominated_player_2 = set()
-    for line in range(shape1):
+    for lincol in combinations(range(shape1), 2):
+        if np.all(payoff_matrix_1[lincol[0], :] > payoff_matrix_1[lincol[1], :]):
+            dominated_player_1.add(lincol[1])
+        elif np.all(payoff_matrix_1[lincol[0], :] < payoff_matrix_1[lincol[1], :]):
+            dominated_player_1.add(lincol[0])
+    #for line in range(shape1):
         #print('Zeile')
         #print(line)
-        for compared_line in (lin for lin in range(shape1) if lin != line):
-            dominated_1 = True
-            for column in range(shape2):
-                if payoff_matrix_1[line][column] <= payoff_matrix_1[compared_line][column]:
-                    dominated_1 = False
-                    break
-            if dominated_1:
-                dominated_player_1.add(compared_line)
+        #for compared_line in (lin for lin in range(shape1) if lin != line):
+            #dominated_1 = True
+            #for column in range(shape2):
+                #if payoff_matrix_1[line][column] <= payoff_matrix_1[compared_line][column]:
+                    #dominated_1 = False
+                    #break
+            #if dominated_1:
+                #dominated_player_1.add(compared_line)
             #print(compared_line, dominated_1)
-    for column in range(shape2):
-        for compared_column in (col for col in range(shape2) if col != column):
-            dominated_2 = True
-            for line in range(shape1):
-                if payoff_matrix_2[line][column] <= payoff_matrix_2[line][compared_column]:
-                    dominated_2 = False
-                    break
-            if dominated_2:
-                dominated_player_2.add(compared_column)
-    return(dominated_player_1, dominated_player_2)
+    for collin in combinations(range(shape2), 2):
+        if np.all(payoff_matrix_2[:, collin[0]] > payoff_matrix_2[:, collin[1]]):
+            dominated_player_2.add(collin[1])
+        elif np.all(payoff_matrix_2[:, collin[0]] < payoff_matrix_2[:, collin[1]]):
+            dominated_player_2.add(collin[0])
+    #for column in range(shape2):
+    #    for compared_column in (col for col in range(shape2) if col != column):
+    #        dominated_2 = True
+    #        for line in range(shape1):
+    #            if payoff_matrix_2[line][column] <= payoff_matrix_2[line][compared_column]:
+    #                dominated_2 = False
+    #                break
+    #        if dominated_2:
+    #            dominated_player_2.add(compared_column)
+    return list(dominated_player_1), list(dominated_player_2)
 
 
 def get_possible_solutions(payoff_matrix_1, payoff_matrix_2=np.array([]), sym=np.array([]), funcs=np.array([])):
+    """Ermittelt mögliche, auf die Einhaltung der Bedingungen eines Nash-Gleichgewichts zu überprüfende, Support-Kombinationen beider Spieler in gemischten Strategien
+
+    :param payoff_matrix_1: Die Auszahlungsmatrix von Spieler 1
+    :type payoff_matrix_1: ndarray
+    :param payoff_matrix_2: Die Auszahlungsmatrix von Spieler 2 (default: np.array([]))
+    :type payoff_matrix_2: ndarray
+    :param sym: Die Variablen der Gleichungssysteme (default: np.array([]))
+    :type sym: ndarray
+    :param funcs: Eine Liste der Gleichungssysteme beider Spieler (default: np.array([]))
+    :type funcs: ndarray
+    :returns: Eine Liste aller vorselektieren Support-Kombinationen, die auf Existenz eines Nash-Gleichgewichts überpüft werden müssen
+    :rtype: list
+    """
     if not payoff_matrix_2.size:
         payoff_matrix_2 = payoff_matrix_1*-1
     shape1, shape2 = payoff_matrix_1.shape
@@ -999,7 +1072,7 @@ def get_possible_solutions(payoff_matrix_1, payoff_matrix_2=np.array([]), sym=np
                 strats2 = np.append(strats2, funcs[0][strat1])
             for i in range(len(sym[0][0])):
                 if i not in supp1:
-                    strats1 = np.append(strats1,sym[0][0][i])
+                    strats1 = np.append(strats1, sym[0][0][i])
             for i in range(len(sym[1][0])):
                 if i not in supp2:
                     strats2 = np.append(strats2, sym[1][0][i])
@@ -1036,6 +1109,15 @@ def get_possible_solutions(payoff_matrix_1, payoff_matrix_2=np.array([]), sym=np
 
 
 def get_optimal_solution(payoff_matrix_1, payoff_matrix_2=np.array([])):
+    """Überprüft mögliche Support-Kombinationen auf die Einhaltung der Bedingungen eines Nash-Gleichgewichts
+
+    :param payoff_matrix_1: Die Auszahlungsmatrix von Spieler 1
+    :type payoff_matrix_1: ndarray
+    :param payoff_matrix_2: Die Auszahlungsmatrix von Spieler 2 (default: np.array([}]))
+    :type payoff_matrix_2: ndarray
+    :returns: Eine Liste aller Nash-Gleichgewichte, inklusive deren Supports, Auszahlungen und Wahrscheinlichkeitsverteilungen über die reinen Strategien oder False falls kein Nash-Gleichgewicht ermittelt werden konnte.
+    :rtype: list
+    """
     if not payoff_matrix_2.size:
         payoff_matrix_2 = payoff_matrix_1*-1
     #payoff_matrix_1, payoff_matrix_2, reduced = reduce_matrix(payoff_matrix_1, payoff_matrix_2)
@@ -1258,10 +1340,16 @@ def get_optimal_solution(payoff_matrix_1, payoff_matrix_2=np.array([])):
     if len(values_ret) > 0:
         return values_ret
     else:
-        return False
+        return []
 
 
 def generate_symbols(payoff_matrix):
+    """Erzeugt die für die Lösung eines Gleichungssystems benötigten Variablen
+
+    :param payoff_matrix: Die Auszahlungsmatrix von Spieler 1
+    :returns: Ein NumPy-Array, das für beide Spieler alle Variablen der Wahrscheinlichkeitsverteilung und des Spielwerts beinhaltet
+    :rtype: ndarray
+    """
     symbols_player_1 = symbols('p0:%d' % payoff_matrix.shape[0], nonnegative=True, seq=True)
     symbols_player_2 = symbols('q0:%d' % payoff_matrix.shape[1], nonnegative=True, seq=True)
     w = symbols('w')
@@ -1270,6 +1358,17 @@ def generate_symbols(payoff_matrix):
 
 
 def generate_functions(payoff_matrix_1, payoff_matrix_2=np.array([]), symbs=np.array([])):
+    """Erzeugt ein zu lösendes Gleichungssystem
+
+    :param payoff_matrix_1: Die Auszahlungsmatrix von Spieler 1
+    :type payoff_matrix_1: ndarray
+    :param payoff_matrix_2: Die Auszahlungsmatrix von Spieler 2 (default: np.array([]))
+    :type payoff_matrix_2: ndarray
+    :param symbs: Die Variablen des Gleichungssystems (default: np.array([]))
+    :type symbs: ndarray
+    :returns: Ein NumPy-Array, das die Gleichungssysteme der beiden Spieler beinhaltet
+    :rtype: ndarray
+    """
     if not payoff_matrix_2.size:
         payoff_matrix_2 = payoff_matrix_1*-1
     if not symbs.size:
@@ -1309,6 +1408,15 @@ def generate_functions(payoff_matrix_1, payoff_matrix_2=np.array([]), symbs=np.a
 # Lösung mit Bedingungen für NGGW
 # Gemischte Maximin-Strategien der Spieler
 def solve_using_nggw(payoff_matrix_1, payoff_matrix_2=np.array([])):
+    """Ursprüngliche Methode zur Lösung allgemeiner gemischten Erweiterungen, jedoch durch get_optimal_solution ersetzt
+
+    :param payoff_matrix_1: Die Auszahlungsmatrix von Spieler 1
+    :type payoff_matrix_1: ndarray
+    :param payoff_matrix_2: Die Auszahlungsmatrix von Spieler 2
+    :type payoff_matrix_2: ndarray
+    :returns: Eine Liste, die für jeden Spieler die Lösung der Gleichungssysteme, die Variablen und die Gleichungssysteme beinhaltet
+    :rtype: list
+    """
     if not payoff_matrix_2.size:
         payoff_matrix_2 = payoff_matrix_1*-1
     # Gemischte Strategien p für Spieler 1 und Spielwert w für Spieler 2
@@ -1388,18 +1496,30 @@ def solve_using_nggw(payoff_matrix_1, payoff_matrix_2=np.array([])):
 
 
 def format_solution(solution_array):
+    """Formatiert eine Lösungsliste in Bruchschreibweise um.
+
+    :param solution_array: Die neu zu formatierende Liste
+    :type solution_array: list
+    :returns: Eine Liste bestehend aus Einträgen in der Bruchschreibweise
+    :rtype: list
+    """
     # print('Formatting: ')
-    solution = list()
+    #solution = list()
     # print(np.asarray(solution_array))
     # print('Formatting:')
     # print(np.asarray(solution_array))
+    solution = []
     for line in range(np.asarray(solution_array).shape[0]):
-        temp = list()
-        for column in range(np.asarray(solution_array).shape[1]):
-            temp.append(nsimplify(solution_array[line][column], tolerance=0.0001, rational=True))
-            # print(nsimplify(solution_array[line][column], tolerance=0.0001, rational=True))
-        if np.amin(temp) != 0 or np.amax(temp) != 0:
-            solution.append(temp)
+        if np.amin(solution_array[line]) or np.amax(solution_array[line]) != 0:
+            solution.append([nsimplify(solution_array[line][column], tolerance=0.0001, rational=True) for column in
+                             range(np.asarray(solution_array).shape[1])])
+    #for line in range(np.asarray(solution_array).shape[0]):
+    #    temp = list()
+    #    for column in range(np.asarray(solution_array).shape[1]):
+    #        temp.append(nsimplify(solution_array[line][column], tolerance=0.0001, rational=True))
+    #        # print(nsimplify(solution_array[line][column], tolerance=0.0001, rational=True))
+    #    if np.amin(temp) != 0 or np.amax(temp) != 0:
+    #        solution.append(temp)
     # print(solution)
 
     return solution
@@ -1407,6 +1527,10 @@ def format_solution(solution_array):
 
 # Callable Methode um Zwischenschritte des Simplex abzufangen
 class SolvingSteps:
+    """
+
+
+    """
     def __init__(self):
         self.__array_xk = []
         self.__array_kwargs = []
@@ -1449,12 +1573,3 @@ class SolvingSteps:
     # Funktion um Parameter des Simplex abzufragen
     def get_array_xk(self):
         return self.__array_xk
-
-
-A = np.asarray([[2,5],
-                [4,3],
-                [3,6],
-                [5,4],
-                [4,4]])
-A2 = A*-1
-print(ggw(A, A2))

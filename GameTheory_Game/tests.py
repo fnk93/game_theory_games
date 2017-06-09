@@ -362,7 +362,18 @@ abc.matrix = np.asarray([[-4., -3., -4., -7.],
     [5.,  9.,  5., -5.],
     [-9.,  6.,-2.,  6.]])
 abc.matrix2 = abc.matrix * -1
-print(abc.matrix)
+a = [[abc.matrix[lines][columns] for lines in range(abc.matrix.shape[0])] for columns in range(abc.matrix.shape[1])]
+print(a)
+print(type(abc.matrix))
+print([1]*5)
+for lincol in combinations(range(abc.matrix.shape[0]), 2):
+    print(lincol)
+    print(all(abc.matrix[lincol[0], :] > abc.matrix[lincol[1], :]))
+for collin in combinations(range(abc.matrix2.shape[1]), 2):
+    print(collin)
+    print(all(abc.matrix2[:, collin[0]] > abc.matrix2[:, collin[1]]))
+
+print(get_dominated_strategies(abc.matrix, abc.matrix2))
 #start_time = time.time()
 #print(get_optimal_solution(abc.matrix, abc.matrix2))
 #print("--- %s seconds ---" % (time.time() - start_time))
