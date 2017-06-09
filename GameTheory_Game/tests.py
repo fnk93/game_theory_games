@@ -372,8 +372,17 @@ for lincol in combinations(range(abc.matrix.shape[0]), 2):
 for collin in combinations(range(abc.matrix2.shape[1]), 2):
     print(collin)
     print(all(abc.matrix2[:, collin[0]] > abc.matrix2[:, collin[1]]))
-
-print(get_dominated_strategies(abc.matrix, abc.matrix2))
+dominated_strats = get_dominated_strategies(abc.matrix, abc.matrix2)
+print(dominated_strats)
+dominated_strats = ()
+if dominated_strats:
+    print(dominated_strats)
+print(np.delete(abc.matrix, [0, 1], axis=1))
+A = np.asarray([2,3,4,5])
+print(A[0:1])
+#print(A.shape[0] < abc.matrix.shape[0] or A.shape[1] < abc.matrix.shape[1])
+print(A.shape < abc.matrix.shape)
+print(reduce_matrix(abc.matrix, abc.matrix2))
 #start_time = time.time()
 #print(get_optimal_solution(abc.matrix, abc.matrix2))
 #print("--- %s seconds ---" % (time.time() - start_time))

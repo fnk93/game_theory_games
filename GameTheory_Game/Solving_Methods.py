@@ -159,8 +159,9 @@ def ggw(payoff_matrix_1, payoff_matrix_2=np.array([])):
     # print(optimal)
     optimal = optimal1 + optimal2
     prep = np.where(optimal == 2)
-    for index in range(prep[0].shape[0]):
-        result.append([prep[0][index], prep[1][index]])
+    result = [[prep[0][index] for index in range(prep[0].shape[0])], [prep[1][index] for index in range(prep[0].shape[0])]]
+    #for index in range(prep[0].shape[0]):
+    #    result.append([prep[0][index], prep[1][index]])
     for ggws in range(len(result)):
         dominated_temp = False
         for lines in range(np.asarray(payoff_matrix_1).shape[0]):
@@ -688,15 +689,17 @@ def get_calculations_latex(matrix1, matrix2=np.array([]), zerosum=False, bay1=0,
 
 
 # Spielmatrix reduzieren
-def reduce_matrix(payoff_matrix_1, payoff_matrix_2=np.array([]), stop_dimension=2):
+def reduce_matrix(payoff_matrix_1, payoff_matrix_2=np.array([]), stop_dimension1=0, stop_dimension2=0):
     """Reduziert die Auszahlungsmatrizen solange noch strikt dominierte Strategien gefunden werden und eine angegebene Mindestdimension nicht unterschritten wird
 
     :param payoff_matrix_1: Die Auszahlungsmatrix von Spieler 1
     :type payoff_matrix_1: ndarray
     :param payoff_matrix_2: Die Auszahlungsmatrix von Spieler 2 (default: np.array([]))
     :type payoff_matrix_2: ndarray
-    :param stop_dimension: Die Mindestanzahl der Strategien jedes Spielers, die nicht unterschritten werden soll (default: 2)
-    :type stop_dimension: int
+    :param stop_dimension1: Die Mindestanzahl der Strategien für Spieler 1, die nicht unterschritten werden soll (default: 0)
+    :type stop_dimension1: int
+    :param stop_dimension2: Die Mindestanzahl der Strategien für Spieler 2, die nicht unterschritten werden soll (default: 0)
+    :type stop_dimension2: int
     :returns: Eine Liste, die die reduzierten Auszahlungsmatrizen beinhaltet, sowie eine Aussage, ob überhaupt reduziert werden konnte
     :rtype: list
     """
@@ -705,65 +708,91 @@ def reduce_matrix(payoff_matrix_1, payoff_matrix_2=np.array([]), stop_dimension=
     # Matrizen für Spieler 1 und 2 müssen betrachtet werden
     reduced_matrix_1 = np.asarray(payoff_matrix_1)
     reduced_matrix_2 = np.asarray(payoff_matrix_2)
-    all_compared = False
-    run = 0
+    shape1, shape2 = reduced_matrix_1.shape
+    shape = reduced_matrix_1.shape
+    dominated_strats = get_dominated_strategies(reduced_matrix_1, reduced_matrix_2)
+    last_reduce = False
     reduced = False
-    while not all_compared:
-        run += 1
-        all_compared = True
-        dimensions = reduced_matrix_1.shape
-        reduce = []
-        if dimensions[0] > 2:
-            for count in range(dimensions[0]):
-                # reducable_line = True
-                added = False
-                for count_2 in range(dimensions[0]):
-                    reducable_line = True
-                    if count != count_2:
-                        for count_3 in range(dimensions[1]):
-                            if reduced_matrix_1[count][count_3] > reduced_matrix_1[count_2][count_3] and reducable_line:
-                                reducable_line = False
-                        if reducable_line:
-                            if not added:
-                                reduce.append(count)
-                                all_compared = False
-                                added = True
-            i = 0
-            for count in range(len(reduce)):
-                if dimensions[0] > 2:
-                    reduced_matrix_1 = np.delete(reduced_matrix_1, reduce[count] - i, 0)
-                    reduced_matrix_2 = np.delete(reduced_matrix_2, reduce[count] - i, 0)
-                    i += 1
-                    reduced = True
-                    dimensions = reduced_matrix_1.shape
-            dimensions = reduced_matrix_1.shape
-        reduce = []
+    while dominated_strats and shape1 >= stop_dimension1 and shape2 >= stop_dimension2 and not last_reduce:
+        last_reduce = True
+        if shape1 - len(dominated_strats[0]) >= stop_dimension1:
+            reduced_matrix_1 = np.delete(reduced_matrix_1, dominated_strats[0], axis=0)
+            reduced_matrix_2 = np.delete(reduced_matrix_2, dominated_strats[0], axis=0)
+        elif shape1 > stop_dimension1:
+            reduced_matrix_1 = np.delete(reduced_matrix_1, dominated_strats[0][0:stop_dimension1-shape1], axis=0)
+            reduced_matrix_2 = np.delete(reduced_matrix_2, dominated_strats[0][0:stop_dimension1-shape1], axis=0)
+        if shape2 - len(dominated_strats[1]) >= stop_dimension2:
+            reduced_matrix_1 = np.delete(reduced_matrix_1, dominated_strats[1], axis=1)
+            reduced_matrix_2 = np.delete(reduced_matrix_2, dominated_strats[1], axis=1)
+        elif shape2 > stop_dimension2:
+            reduced_matrix_1 = np.delete(reduced_matrix_1, dominated_strats[1][0:stop_dimension2 - shape2], axis=1)
+            reduced_matrix_2 = np.delete(reduced_matrix_2, dominated_strats[1][0:stop_dimension2 - shape2], axis=1)
+        if reduced_matrix_1.shape < shape:
+            last_reduce = False
+            reduced = True
+            dominated_strats = get_dominated_strategies(reduced_matrix_1, reduced_matrix_2)
+            shape1, shape2 = reduced_matrix_1.shape
+            shape = reduced_matrix_1.shape
 
-        if dimensions[1] > 2:
-            for count in range(dimensions[1]):
-                # reducable_column = True
-                added = False
-                for count_2 in range(dimensions[1]):
-                    reducable_column = True
-                    if count != count_2:
-                        for count_3 in range(dimensions[0]):
-                            if reduced_matrix_2[count_3][count] > reduced_matrix_2[count_3][count_2]:
-                                if reducable_column:
-                                    reducable_column = False
-                        if reducable_column and not added:
-                            reduce.append(count)
-                            all_compared = False
-                            added = True
-            i = 0
-            for count in range(len(reduce)):
-                if dimensions[1] > 2:
-                    reduced_matrix_1 = np.delete(reduced_matrix_1, reduce[count] - i, 1)
-                    reduced_matrix_2 = np.delete(reduced_matrix_2, reduce[count] - i, 1)
-                    i += 1
-                    reduced = True
-                    dimensions = reduced_matrix_1.shape
-        if reduced_matrix_1.shape[0] <= 2 and reduced_matrix_1.shape[1] <= 2:
-            all_compared = True
+    # all_compared = False
+    # run = 0
+    # reduced = False
+    # while not all_compared:
+    #     run += 1
+    #     all_compared = True
+    #     dimensions = reduced_matrix_1.shape
+    #     reduce = []
+    #     if dimensions[0] > stop_dimension1:
+    #         for count in range(dimensions[0]):
+    #             # reducable_line = True
+    #             added = False
+    #             for count_2 in range(dimensions[0]):
+    #                 reducable_line = True
+    #                 if count != count_2:
+    #                     for count_3 in range(dimensions[1]):
+    #                         if reduced_matrix_1[count][count_3] > reduced_matrix_1[count_2][count_3] and reducable_line:
+    #                             reducable_line = False
+    #                     if reducable_line:
+    #                         if not added:
+    #                             reduce.append(count)
+    #                             all_compared = False
+    #                             added = True
+    #         i = 0
+    #         for count in range(len(reduce)):
+    #             if dimensions[0] > stop_dimension1:
+    #                 reduced_matrix_1 = np.delete(reduced_matrix_1, reduce[count] - i, 0)
+    #                 reduced_matrix_2 = np.delete(reduced_matrix_2, reduce[count] - i, 0)
+    #                 i += 1
+    #                 reduced = True
+    #                 dimensions = reduced_matrix_1.shape
+    #         dimensions = reduced_matrix_1.shape
+    #     reduce = []
+    #
+    #     if dimensions[1] > stop_dimension2:
+    #         for count in range(dimensions[1]):
+    #             # reducable_column = True
+    #             added = False
+    #             for count_2 in range(dimensions[1]):
+    #                 reducable_column = True
+    #                 if count != count_2:
+    #                     for count_3 in range(dimensions[0]):
+    #                         if reduced_matrix_2[count_3][count] > reduced_matrix_2[count_3][count_2]:
+    #                             if reducable_column:
+    #                                 reducable_column = False
+    #                     if reducable_column and not added:
+    #                         reduce.append(count)
+    #                         all_compared = False
+    #                         added = True
+    #         i = 0
+    #         for count in range(len(reduce)):
+    #             if dimensions[1] > stop_dimension2:
+    #                 reduced_matrix_1 = np.delete(reduced_matrix_1, reduce[count] - i, 1)
+    #                 reduced_matrix_2 = np.delete(reduced_matrix_2, reduce[count] - i, 1)
+    #                 i += 1
+    #                 reduced = True
+    #                 dimensions = reduced_matrix_1.shape
+    #     if reduced_matrix_1.shape[0] <= stop_dimension1 and reduced_matrix_1.shape[1] <= stop_dimension2:
+    #         all_compared = True
 
     return [reduced_matrix_1, reduced_matrix_2, reduced]
 
