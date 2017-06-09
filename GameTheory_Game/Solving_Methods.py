@@ -123,14 +123,15 @@ def ggw(payoff_matrix_1, payoff_matrix_2=np.array([])):
     :type payoff_matrix_1: ndarray
     :param payoff_matrix_2: Die Auszahlungsmatrix von Spieler 2 (default: np.array([]))
     :type payoff_matrix_2: ndarray
-    :return: Eine Liste, die die Strategie-Kombinationen, eine Stabilitäts-Aussage und den Rechenweg für jedes Nash-Gleichgewicht beinhaltet
+    :return: Eine Liste, die die Strategie-Kombinationen, eine Stabilitäts-Aussage und den Rechenweg für jedes Nash-\
+    Gleichgewicht beinhaltet
     :rtype: list
     """
     if not payoff_matrix_2.size:
         payoff_matrix_2 = payoff_matrix_1*-1
     optimal1 = np.zeros(payoff_matrix_1.shape)
     optimal2 = np.zeros(payoff_matrix_1.shape)
-    optimal = 0
+    #optimal = 0
     dominated = list()
     result = list()
 
@@ -159,7 +160,8 @@ def ggw(payoff_matrix_1, payoff_matrix_2=np.array([])):
     # print(optimal)
     optimal = optimal1 + optimal2
     prep = np.where(optimal == 2)
-    result = [[prep[0][index] for index in range(prep[0].shape[0])], [prep[1][index] for index in range(prep[0].shape[0])]]
+    result = [[prep[0][index] for index in range(prep[0].shape[0])], [prep[1][index]
+                                                                      for index in range(prep[0].shape[0])]]
     #for index in range(prep[0].shape[0]):
     #    result.append([prep[0][index], prep[1][index]])
     for ggws in range(len(result)):
@@ -203,7 +205,7 @@ def determination_intervall(payoff_matrix_1):
     """
     upper_values = get_upper_values(payoff_matrix_1)
     lower_values = get_lower_values(payoff_matrix_1)
-    determination_intervalls = [lower_values[0], upper_values[0]]
+    determination_intervalls = [lower_values[0], upper_values]
 
     return determination_intervalls
 
@@ -249,7 +251,8 @@ def get_lower_values(payoff_matrix_1, payoff_matrix_2=np.array([])):
     #    temp_values.append(min(payoff_matrix_1[line]))
     #    temp_values2.append(min(payoff_matrix_2[line]))
     #lower_values = [deepcopy(max(temp_values)), deepcopy(max(temp_values2))]
-    lower_values = [max([min(payoff_matrix_1[line]) for line in range(payoff_matrix_1.shape[0])]), max([min(payoff_matrix_2[line]) for line in range(payoff_matrix_2.shape[0])])]
+    lower_values = [max([min(payoff_matrix_1[line]) for line in range(payoff_matrix_1.shape[0])]),
+                    max([min(payoff_matrix_2[line]) for line in range(payoff_matrix_2.shape[0])])]
     #del temp_values[:]
     #del temp_values2[:]
 
@@ -270,7 +273,8 @@ def solve_maximin_strategies(payoff_matrix_1, payoff_matrix_2=np.array([])):
     :type payoff_matrix_1: ndarray
     :param payoff_matrix_2: Die Auszahlungsmatrix von Spieler 2 (default: np.array([]))
     :type payoff_matrix_2: ndarray
-    :returns: Eine Liste, die eine Liste aller Maximin-Strategien von Spieler 1 und eine Liste aller Maximin-Strategien von Spieler 2 enthält
+    :returns: Eine Liste, die eine Liste aller Maximin-Strategien von Spieler 1 und eine Liste aller Maximin-Strategien\
+     von Spieler 2 enthält
     :rtype: list
     """
     if not payoff_matrix_2.size:
@@ -284,8 +288,8 @@ def solve_maximin_strategies(payoff_matrix_1, payoff_matrix_2=np.array([])):
     #for column in range(payoff_matrix_2.shape[1]):
     #    minima_player_2.append(np.amin(payoff_matrix_2[:, column]))
     minima_player_2 = [np.amin(payoff_matrix_2[line][:]) for line in range(payoff_matrix_2.shape[0])]
-    player_1_maximin = list()
-    player_2_maximin = list()
+    #player_1_maximin = list()
+    #player_2_maximin = list()
     lower_values = get_lower_values(payoff_matrix_1, payoff_matrix_2)
     #for strategy in range(len(minima_player_1)):
     #    if minima_player_1[strategy] == (lower_values[0]):
@@ -346,14 +350,15 @@ def get_calculations_latex(matrix1, matrix2=np.array([]), zerosum=False, bay1=0,
     :type bay1: int
     :param bay2: Die von Spieler 1 gespielte Strategie zur Ermittlung der Bayes-Strategien (default: 0)
     :type bay2: int
-    :param mode: Angabe ob Berechnungen nur in reinen Strategien (mode=0) oder auch in gemischten Strategien (mode=1) erfolgen sollen (default: 0)
+    :param mode: Angabe ob Berechnungen nur in reinen Strategien (mode=0) oder auch in gemischten Strategien (mode=1)\
+     erfolgen sollen (default: 0)
     :type mode: int
     :returns: Einen String zur Ausgabe, ein für LaTeX formatierter String und ein Context-Dictionary als Liste
     :rtype: list
     """
     if not matrix2.size:
         matrix2 = matrix1*-1
-    sol_tex = []
+    #sol_tex = []
     sol_texpure = []
     sol_texmixed = []
     matrix1 = np.asarray(matrix1)
@@ -377,7 +382,7 @@ def get_calculations_latex(matrix1, matrix2=np.array([]), zerosum=False, bay1=0,
     bs_2 = bayes_strategy(matrix2, bay2)
     bayes_2 = bs_2[0]
     watch_2 = bs_2[1]
-    equi = ggw(matrix1, matrix2, 0)
+    equi = ggw(matrix1, matrix2)
     low_values = get_lower_values(matrix1, matrix2)
     equi_points = []
     optimals = equi[2]
@@ -385,7 +390,7 @@ def get_calculations_latex(matrix1, matrix2=np.array([]), zerosum=False, bay1=0,
     optimals2 = equi[4]
     determined = is_determined(matrix1)
     for equis in equi[0]:
-        equi_points.append([equis[0]+1,equis[1]+1])
+        equi_points.append([equis[0]+1, equis[1]+1])
     #equi_point = [equi[0][0][0]+1,equi[0][0][1]+1]
     solution += 'Bei der gegebenen Spielmatrix eines 2-Personen-Nullsummenspiels' + '\n'
     solution += str(matrix1) + '\n'
@@ -396,7 +401,7 @@ def get_calculations_latex(matrix1, matrix2=np.array([]), zerosum=False, bay1=0,
             temp_str += str(matrix1[lines][cols]) + r'&'
         temp_str += r'\\'
     context['gamematrix'] = temp_str
-    solution += 'ergeben sich folgende Kennzahlen: '+ '\n'
+    solution += 'ergeben sich folgende Kennzahlen: ' + '\n'
     solution += 'Maximin-Strategie(n) für Spieler 1: ' + str(maximins_1) + '\n'
     solution += 'Maximin-Strategie(n) für Spieler 2: ' + str(maximins_2) + '\n'
     sol_texpure.append(maximins_1)
@@ -422,8 +427,10 @@ def get_calculations_latex(matrix1, matrix2=np.array([]), zerosum=False, bay1=0,
     solution += 'ergibt sich der Garantiepunkt des Spiels in reinen Strategien: ' + str(guarantee[0]) + '\n'
     context['guar'] = str(guarantee[0])
     sol_texpure.append(guarantee[0])
-    solution += 'Um die Bayes-Strategie zu ermitteln muss die maximale Auszahlung bei gegebener Gegnerstrategie betrachtet werden.' + '\n'
-    solution += 'Für Spieler 1 müssen deshalb bei gegebener Strategie ' + str(played_strategy_2+1) + ' von Spieler 2 die Auszahlungen ' + str(watch_1) + ' betrachtet werden.' + '\n'
+    solution += 'Um die Bayes-Strategie zu ermitteln muss die maximale Auszahlung bei gegebener \
+    Gegnerstrategie betrachtet werden.' + '\n'
+    solution += 'Für Spieler 1 müssen deshalb bei gegebener Strategie ' + str(played_strategy_2+1) + \
+                ' von Spieler 2 die Auszahlungen ' + str(watch_1) + ' betrachtet werden.' + '\n'
     solution += 'Hieraus ergibt sich die Bayes-Strategie : ' + str(bayes_1+1) + '\n'
     context['bay1'] = str(played_strategy_2+1)
     context['pay1'] = str(watch_1)
@@ -440,7 +447,8 @@ def get_calculations_latex(matrix1, matrix2=np.array([]), zerosum=False, bay1=0,
     sol_texpure.append(played_strategy_1 + 1)
     sol_texpure.append(watch_2)
     sol_texpure.append(bayes_2 + 1)
-    solution += 'Das Erfüllen der Optimalitätsbedingung der Strategiekombinationen über beide Spieler aufsummiert sieht wie folgt aus:'+ '\n'
+    solution += 'Das Erfüllen der Optimalitätsbedingung der Strategiekombinationen über beide Spieler \
+    aufsummiert sieht wie folgt aus:' + '\n'
     solution += str(optimals) + '\n'
     temp_str = ''
     for lines in range(optimals.shape[0]):
@@ -468,18 +476,27 @@ def get_calculations_latex(matrix1, matrix2=np.array([]), zerosum=False, bay1=0,
     context['ggwmatr2'] = temp_str
     sol_texpure.append(optimals2)
     if len(equi_points) > 0:
-        solution += 'Jede Strategiekombination, die sowohl für Spieler 1, als auch für Spieler 2 die Optimalitätsbedingung erfüllt ist Gleichgewichtspunkt des Spiels in reinen Strategien' + '\n'
-        solution += 'Gleichgewichtspunkt(e): '+ str(equi_points) + ' mit zugehöriger Auszahlung für Spieler 1: ' + str(matrix1[equi[0][0][0]][equi[0][0][1]]) + '\n' + 'und Auszahlung für Spieler 2: ' + str(matrix2[equi[0][0][0]][equi[0][0][1]])
+        solution += 'Jede Strategiekombination, die sowohl für Spieler 1, als auch für Spieler 2 die \
+        Optimalitätsbedingung erfüllt ist Gleichgewichtspunkt des Spiels in reinen Strategien' + '\n'
+        solution += 'Gleichgewichtspunkt(e): ' + str(equi_points) + ' mit zugehöriger Auszahlung für Spieler 1: ' + \
+                    str(matrix1[equi[0][0][0]][equi[0][0][1]]) + '\n' + 'und Auszahlung für Spieler 2: ' +\
+                    str(matrix2[equi[0][0][0]][equi[0][0][1]])
         sol_texpure.append(equi_points)
         sol_texpure.append(matrix1[equi[0][0][0]][equi[0][0][1]])
         sol_texpure.append(matrix2[equi[0][0][0]][equi[0][0][1]])
-        context['puresolve'] = 'Jede Strategiekombination, die sowohl für Spieler 1, als auch für Spieler 2 die Optimalitätsbedingung erfüllt ist Gleichgewichtspunkt des Spiels in reinen Strategien\\Gleichgewichtspunkt(e): '+ str(equi_points) + ' mit zugehöriger Auszahlung für Spieler 1: ' + str(matrix1[equi[0][0][0]][equi[0][0][1]]) + '\n' + 'und Auszahlung für Spieler 2: ' + str(matrix2[equi[0][0][0]][equi[0][0][1]]) + r'\\'
+        context['puresolve'] = 'Jede Strategiekombination, die sowohl für Spieler 1, als auch für Spieler 2 die \
+        Optimalitätsbedingung erfüllt ist Gleichgewichtspunkt des Spiels in reinen Strategien\\Gleichgewichtspunkt(e): '\
+                               + str(equi_points) + ' mit zugehöriger Auszahlung für Spieler 1: ' + \
+                               str(matrix1[equi[0][0][0]][equi[0][0][1]]) + '\n' + 'und Auszahlung für Spieler 2: ' + \
+                               str(matrix2[equi[0][0][0]][equi[0][0][1]]) + r'\\'
     else:
-        solution += 'Da keine Strategiekombination sowohl für Spieler 1, als auch für Spieler 2 die Optimalitätsbedingung erfüllt existiert kein Gleichgewichtspunkt in reinen Strategien'
+        solution += 'Da keine Strategiekombination sowohl für Spieler 1, als auch für Spieler 2 die ' \
+                    'Optimalitätsbedingung erfüllt existiert kein Gleichgewichtspunkt in reinen Strategien'
         sol_texpure.append([])
         sol_texpure.append([])
         sol_texpure.append([])
-        context['puresolve'] = 'Da keine Strategiekombination sowohl für Spieler 1, als auch für Spieler 2 die Optimalitätsbedingung erfüllt existiert kein Gleichgewichtspunkt in reinen Strategien\\'
+        context['puresolve'] = 'Da keine Strategiekombination sowohl für Spieler 1, als auch für Spieler 2 die ' \
+                               'Optimalitätsbedingung erfüllt existiert kein Gleichgewichtspunkt in reinen Strategien\\'
     context['solvemixed'] = ""
     if mode > 0:
         if not determined:
@@ -487,11 +504,16 @@ def get_calculations_latex(matrix1, matrix2=np.array([]), zerosum=False, bay1=0,
             if zerosum:
                 simplex = use_simplex(matrix1, matrix2)
                 if simplex[2][0].all() != matrix1.all():
-                    solution += 'Aufgrund der Beschränkungen des Simplex-Algorithmus muss zunächst die Auszahlungsmatrix des betrachteten Zwei-Personen-Nullsummenspiels absolut positiv werden.' + '\n'
+                    solution += 'Aufgrund der Beschränkungen des Simplex-Algorithmus muss zunächst die ' \
+                                'Auszahlungsmatrix des betrachteten Zwei-Personen-Nullsummenspiels absolut ' \
+                                'positiv werden.' + '\n'
                     solution += 'Die zu lösende Matrix sieht nun folgendermaßen aus: ' + '\n'
                     solution += str(simplex[2][0]) + '\n'
                     sol_texmixed.append(simplex[2][0])
-                    context['solvemixed'] += r'Aufgrund der Beschränkungen des Simplex-Algorithmus muss zunächst die Auszahlungsmatrix des betrachteten Zwei-Personen-Nullsummenspiels absolut positiv werden.\\Die zu lösende Matrix sieht nun folgendermaßen aus:\\'
+                    context['solvemixed'] += r'Aufgrund der Beschränkungen des Simplex-Algorithmus muss ' \
+                                             r'zunächst die Auszahlungsmatrix des betrachteten ' \
+                                             r'Zwei-Personen-Nullsummenspiels absolut positiv werden.\\Die zu ' \
+                                             r'lösende Matrix sieht nun folgendermaßen aus:\\'
                     context['solvemixed'] += r'\begin{gather*}\begin{pmatrix*}'
                     temp_str = ''
                     for lines in range(simplex[2][0].shape[0]):
@@ -503,7 +525,8 @@ def get_calculations_latex(matrix1, matrix2=np.array([]), zerosum=False, bay1=0,
                     solution += 'Das folgende Spiel soll nun mithilfe des Simplex-Algorithmus gelöst werden:' + '\n'
                     solution += str(matrix1)
                     sol_texmixed.append(matrix1)
-                    context['solvemixed'] += r'Das folgende Spiel soll nun mithilfe des Simplex-Algorithmus gelöst werden:\\'
+                    context['solvemixed'] += r'Das folgende Spiel soll nun mithilfe des Simplex-Algorithmus ' \
+                                             r'gelöst werden:\\'
                     temp_str = ''
                     for lines in range(matrix1.shape[0]):
                         for cols in range(matrix1.shape[1]):
@@ -511,7 +534,8 @@ def get_calculations_latex(matrix1, matrix2=np.array([]), zerosum=False, bay1=0,
                         temp_str += r'\\'
                     context['solvemixed'] += temp_str + r'\\'
                 solution += 'Die Lösungsschritte des Simplexalgorithmus für Spieler 2 sehen nun wie folgt aus: ' + '\n'
-                context['solvemixed'] += r'Die Lösungsschritte des Simplexalgorithmus für Spieler 2 sehen nun wie folgt aus:\\ ' + r' \begin{gather*}'
+                context['solvemixed'] += r'Die Lösungsschritte des Simplexalgorithmus für Spieler 2 sehen nun wie ' \
+                                         r'folgt aus:\\ ' + r' \begin{gather*}'
                 #context['solvemixed'] += r'\begin{gather*}'
                 for step in simplex[1][1:][0]:
                     temp_arr = np.asarray(format_solution(step['tableau']))
@@ -531,34 +555,51 @@ def get_calculations_latex(matrix1, matrix2=np.array([]), zerosum=False, bay1=0,
                         sol_texmixed.append([])
                 context['solvemixed'] += r'\end{gather*}\\'
                 added_value = np.amax(simplex[2][0]-matrix1)
-                solution += 'Da nicht der Spielwert maximiert wurde, sondern 1/G minimiert wurde und eine Konstante ' + str(added_value) + ' zur Matrix addiert wurde, muss man die Konstante wieder vom Ergebnis subtrahieren und den Kehrbruch verwenden.' + '\n'
+                solution += 'Da nicht der Spielwert maximiert wurde, sondern 1/G minimiert wurde und eine ' \
+                            'Konstante ' + str(added_value) + ' zur Matrix addiert wurde, muss man die ' \
+                                                              'Konstante wieder vom Ergebnis subtrahieren und den ' \
+                                                              'Kehrbruch verwenden.' + '\n'
                 sol_texmixed.append(added_value)
-                context['solvemixed'] += r'Da nicht der Spielwert maximiert wurde, sondern 1/G minimiert wurde und eine Konstante ' + str(added_value) + r' zur Matrix addiert wurde, muss man die Konstante wieder vom Ergebnis subtrahieren und den Kehrbruch verwenden.\\'
+                context['solvemixed'] += r'Da nicht der Spielwert maximiert wurde, sondern 1/G minimiert wurde und ' \
+                                         r'eine Konstante ' + str(added_value) + r' zur Matrix addiert wurde, muss ' \
+                                                                                 r'man die Konstante wieder vom ' \
+                                                                                 r'Ergebnis subtrahieren und den ' \
+                                                                                 r'Kehrbruch verwenden.\\'
                 game_value_1 = nsimplify((1/simplex[1][0]['fun']) + added_value, tolerance=0.0001, rational=True)
                 strategies = []
                 for strategy in simplex[1][0]['x']:
-                    strategies.append(nsimplify(abs(((1/simplex[1][0]['fun'])*strategy)), tolerance=0.0001, rational=True))
+                    strategies.append(nsimplify(abs(((1/simplex[1][0]['fun'])*strategy)),
+                                                tolerance=0.0001, rational=True))
                 solution += 'Hieraus ergibt sich der tatsächliche Spielwert für Spieler 2: ' + str(game_value_1) + '\n'
-                context['solvemixed'] += 'Hieraus ergibt sich der tatsächliche Spielwert für Spieler 2: ' + str(game_value_1) + r'\\'
+                context['solvemixed'] += 'Hieraus ergibt sich der tatsächliche Spielwert für Spieler 2: ' + \
+                                         str(game_value_1) + r'\\'
                 sol_texmixed.append(game_value_1)
                 solution += 'Und die optimale Strategienkombination für Spieler 2: ' + str(strategies) + '\n'
-                context['solvemixed'] += 'Und die optimale Strategienkombination für Spieler 2: ' + str(strategies) + r'\\'
+                context['solvemixed'] += 'Und die optimale Strategienkombination für Spieler 2: ' + \
+                                         str(strategies) + r'\\'
                 sol_texmixed.append(strategies)
-                solution += 'Da ein Zwei-Personen-Nullsummenspiel betrachtet wurde ergibt sich der Spielwert für Spieler 1: ' + str(game_value_1*-1) + '\n'
-                context['solvemixed'] += 'Da ein Zwei-Personen-Nullsummenspiel betrachtet wurde ergibt sich der Spielwert für Spieler 1: ' + str(game_value_1*-1) + r'\\'
+                solution += 'Da ein Zwei-Personen-Nullsummenspiel betrachtet wurde ergibt sich der Spielwert ' \
+                            'für Spieler 1: ' + str(game_value_1*-1) + '\n'
+                context['solvemixed'] += 'Da ein Zwei-Personen-Nullsummenspiel betrachtet wurde ergibt sich der ' \
+                                         'Spielwert für Spieler 1: ' + str(game_value_1*-1) + r'\\'
                 strategies_1 = []
                 sol_texmixed.append(game_value_1*-1)
                 possible_choices = -1 - matrix1.shape[0]
                 for elements in simplex[1][1][-1]['tableau'][-1][possible_choices:-1]:
-                    strategies_1.append(nsimplify(elements*(1/simplex[1][1][-1]['tableau'][-1][-1]), tolerance=0.0001, rational=True))
-                solution += 'Die Dualität des Problems erlaubt es, die optimale Strategienkombination für Spieler 1 direkt aus der Zielfunktionszeile abzulesen: ' + str(strategies_1) + '\n'
+                    strategies_1.append(nsimplify(elements*(1/simplex[1][1][-1]['tableau'][-1][-1]),
+                                                  tolerance=0.0001, rational=True))
+                solution += 'Die Dualität des Problems erlaubt es, die optimale Strategienkombination für Spieler 1' \
+                            ' direkt aus der Zielfunktionszeile abzulesen: ' + str(strategies_1) + '\n'
                 sol_texmixed.append(strategies_1)
-                context['solvemixed'] += 'Die Dualität des Problems erlaubt es, die optimale Strategienkombination für Spieler 1 direkt aus der Zielfunktionszeile abzulesen: ' + str(strategies_1) + r'\\'
+                context['solvemixed'] += 'Die Dualität des Problems erlaubt es, die optimale Strategienkombination' \
+                                         ' für Spieler 1 direkt aus der Zielfunktionszeile abzulesen: ' + \
+                                         str(strategies_1) + r'\\'
                 solution += '\n\n\n'
                 reduced = reduce_matrix(matrix1, matrix2)
-                boole = reduced[2]
+                #boole = reduced[2]
                 #if boole:
-                #    solution += 'Zunächst müssen die überflüssigen Zeilen und Spalten der Ausgangsmatrix entfernt werden.' + '\n'
+                #    solution += 'Zunächst müssen die überflüssigen Zeilen und Spalten der Ausgangsmatrix
+                # entfernt werden.' + '\n'
                 #    solution += 'Hierdurch ergibt sich folgende Matrix für Spieler 1:' + '\n'
                 #    solution += str(reduced[0]) + '\n'
 
@@ -573,29 +614,34 @@ def get_calculations_latex(matrix1, matrix2=np.array([]), zerosum=False, bay1=0,
                     for key in solution_1[1]:
                         if solution_1[0][key] < 0 and key != solution_1[1][-1]:
                             correct_solution = False
-                            solution += 'Key-Fehler: ' + str(solution_1[0][key]) + ' ' + str(key)+ '\n'
+                            solution += 'Key-Fehler: ' + str(solution_1[0][key]) + ' ' + str(key) + '\n'
                     for key in solution_2[1]:
                         if solution_2[0][key] < 0 and key != solution_2[1][-1]:
                             correct_solution = False
                             solution += 'Key-Fehler: ' + str(solution_2[0][key]) + ' ' + str(key) + '\n'
                     if correct_solution:
-                        solution += 'Selbiges Problem lässt sich auch durch die Aufstellung eines LGS nach den Bedingungen für ein Nash-Gleichgewicht lösen: ' + '\n'
-                        context['solvemixed'] += r'Selbiges Problem lässt sich auch durch die Aufstellung eines LGS nach den Bedingungen für ein Nash-Gleichgewicht lösen:\\'
+                        solution += 'Selbiges Problem lässt sich auch durch die Aufstellung eines LGS nach den ' \
+                                    'Bedingungen für ein Nash-Gleichgewicht lösen: ' + '\n'
+                        context['solvemixed'] += r'Selbiges Problem lässt sich auch durch die Aufstellung eines ' \
+                                                 r'LGS nach den Bedingungen für ein Nash-Gleichgewicht lösen:\\'
                         if len(solution_1[0]) > 0:
                             solution += 'Das lineare Gleichungssystem für Spieler 1 lautet: ' + '\n'
                             context['solvemixed'] += r'Das lineare Gleichungssystem für Spieler 1 lautet:\\'
                             temp = []
                             for equation in lgs1:
-                                solution += str((equation))
+                                solution += str(equation)
                                 solution += '\n'
                                 temp.append(equation)
                                 context['solvemixed'] += str(equation) + r'\\'
                             sol_texmixed.append(temp)
-                            solution += 'Nach Auflösen des LGS ergeben sich folgene Werte für die optimale Strategienkombination: ' + '\n'
-                            context['solvemixed'] += r'Nach Auflösen des LGS ergeben sich folgene Werte für die optimale Strategienkombination:\\'
+                            solution += 'Nach Auflösen des LGS ergeben sich folgene Werte für die optimale ' \
+                                        'Strategienkombination: ' + '\n'
+                            context['solvemixed'] += r'Nach Auflösen des LGS ergeben sich folgene Werte für ' \
+                                                     r'die optimale Strategienkombination:\\'
                             temp = []
                             for key in solution_1[1]:
-                                solution += str(key) + ':' + str(nsimplify(solution_1[0][key], tolerance=0.0001, rational=True)) + '\n'
+                                solution += str(key) + ':' + str(nsimplify(solution_1[0][key], tolerance=0.0001,
+                                                                           rational=True)) + '\n'
                                 val = nsimplify(solution_1[0][key], tolerance=0.0001, rational=True)
                                 temp.append([key, val])
                                 context['solvemixed'] += str(key) + ':' + str(val) + r'\\'
@@ -610,12 +656,15 @@ def get_calculations_latex(matrix1, matrix2=np.array([]), zerosum=False, bay1=0,
                                 solution += '\n'
                                 context['solvemixed'] += str(equation) + r'\\'
                             sol_texmixed.append(temp)
-                            solution += 'Nach Auflösen des LGS ergeben sich folgene Werte für die optimale Strategienkombination: ' + '\n'
+                            solution += 'Nach Auflösen des LGS ergeben sich folgene Werte für die optimale ' \
+                                        'Strategienkombination: ' + '\n'
                             context[
-                                'solvemixed'] += r'Nach Auflösen des LGS ergeben sich folgene Werte für die optimale Strategienkombination:\\'
+                                'solvemixed'] += r'Nach Auflösen des LGS ergeben sich folgene Werte für die ' \
+                                                 r'optimale Strategienkombination:\\'
                             temp = []
                             for key in solution_2[1]:
-                                solution += str(key) + ':' + str(nsimplify(solution_2[0][key], tolerance=0.0001, rational=True)) + '\n'
+                                solution += str(key) + ':' + str(nsimplify(solution_2[0][key], tolerance=0.0001,
+                                                                           rational=True)) + '\n'
                                 val = nsimplify(solution_2[0][key], tolerance=0.0001, rational=True)
                                 temp.append([key, val])
                                 context['solvemixed'] += str(key) + ':' + str(val) + r'\\'
@@ -640,8 +689,10 @@ def get_calculations_latex(matrix1, matrix2=np.array([]), zerosum=False, bay1=0,
                             correct_solution = False
                             solution += 'Key-Fehler: ' + str(solution_2[0][key]) + ' ' + str(key) + '\n'
                     if correct_solution:
-                        solution += 'Selbiges Problem lässt sich auch durch die Aufstellung eines LGS nach den Bedingungen für ein Nash-Gleichgewicht lösen: ' + '\n'
-                        context['solvemixed'] += r'Selbiges Problem lässt sich auch durch die Aufstellung eines LGS nach den Bedingungen für ein Nash-Gleichgewicht lösen:\\'
+                        solution += 'Selbiges Problem lässt sich auch durch die Aufstellung eines LGS nach den ' \
+                                    'Bedingungen für ein Nash-Gleichgewicht lösen: ' + '\n'
+                        context['solvemixed'] += r'Selbiges Problem lässt sich auch durch die Aufstellung eines ' \
+                                                 r'LGS nach den Bedingungen für ein Nash-Gleichgewicht lösen:\\'
                         if len(solution_1[0]) > 0:
                             solution += 'Das lineare Gleichungssystem für Spieler 1 lautet: ' + '\n'
                             context['solvemixed'] += r'Das lineare Gleichungssystem für Spieler 1 lautet:\\'
@@ -652,11 +703,14 @@ def get_calculations_latex(matrix1, matrix2=np.array([]), zerosum=False, bay1=0,
                                 temp.append(equation)
                                 context['solvemixed'] += str(equation) + r'\\'
                             sol_texmixed.append(temp)
-                            solution += 'Nach Auflösen des LGS ergeben sich folgene Werte für die optimale Strategienkombination: ' + '\n'
-                            context['solvemixed'] += r'Nach Auflösen des LGS ergeben sich folgene Werte für die optimale Strategienkombination:\\'
+                            solution += 'Nach Auflösen des LGS ergeben sich folgene Werte für die optimale ' \
+                                        'Strategienkombination: ' + '\n'
+                            context['solvemixed'] += r'Nach Auflösen des LGS ergeben sich folgene Werte für die ' \
+                                                     r'optimale Strategienkombination:\\'
                             temp = []
                             for key in solution_1[1]:
-                                solution += str(key) + ':' + str(nsimplify(solution_1[0][key], tolerance=0.0001, rational=True)) + '\n'
+                                solution += str(key) + ':' + str(nsimplify(solution_1[0][key], tolerance=0.0001,
+                                                                           rational=True)) + '\n'
                                 val = nsimplify(solution_1[0][key], tolerance=0.0001, rational=True)
                                 temp.append([key, val])
                                 context['solvemixed'] += str(key) + ':' + str(val) + r'\\'
@@ -671,12 +725,15 @@ def get_calculations_latex(matrix1, matrix2=np.array([]), zerosum=False, bay1=0,
                                 solution += '\n'
                                 context['solvemixed'] += str(equation) + r'\\'
                             sol_texmixed.append(temp)
-                            solution += 'Nach Auflösen des LGS ergeben sich folgene Werte für die optimale Strategienkombination: ' + '\n'
+                            solution += 'Nach Auflösen des LGS ergeben sich folgene Werte für die optimale ' \
+                                        'Strategienkombination: ' + '\n'
                             context[
-                                'solvemixed'] += r'Nach Auflösen des LGS ergeben sich folgene Werte für die optimale Strategienkombination:\\'
+                                'solvemixed'] += r'Nach Auflösen des LGS ergeben sich folgene Werte für die ' \
+                                                 r'optimale Strategienkombination:\\'
                             temp = []
                             for key in solution_2[1]:
-                                solution += str(key) + ':' + str(nsimplify(solution_2[0][key], tolerance=0.0001, rational=True)) + '\n'
+                                solution += str(key) + ':' + str(nsimplify(solution_2[0][key], tolerance=0.0001,
+                                                                           rational=True)) + '\n'
                                 val = nsimplify(solution_2[0][key], tolerance=0.0001, rational=True)
                                 temp.append([key, val])
                                 context['solvemixed'] += str(key) + ':' + str(val) + r'\\'
@@ -690,17 +747,21 @@ def get_calculations_latex(matrix1, matrix2=np.array([]), zerosum=False, bay1=0,
 
 # Spielmatrix reduzieren
 def reduce_matrix(payoff_matrix_1, payoff_matrix_2=np.array([]), stop_dimension1=0, stop_dimension2=0):
-    """Reduziert die Auszahlungsmatrizen solange noch strikt dominierte Strategien gefunden werden und eine angegebene Mindestdimension nicht unterschritten wird
+    """Reduziert die Auszahlungsmatrizen solange noch strikt dominierte Strategien gefunden werden und \
+    eine angegebene Mindestdimension nicht unterschritten wird
 
     :param payoff_matrix_1: Die Auszahlungsmatrix von Spieler 1
     :type payoff_matrix_1: ndarray
     :param payoff_matrix_2: Die Auszahlungsmatrix von Spieler 2 (default: np.array([]))
     :type payoff_matrix_2: ndarray
-    :param stop_dimension1: Die Mindestanzahl der Strategien für Spieler 1, die nicht unterschritten werden soll (default: 0)
+    :param stop_dimension1: Die Mindestanzahl der Strategien für Spieler 1, die nicht unterschritten \
+    werden soll (default: 0)
     :type stop_dimension1: int
-    :param stop_dimension2: Die Mindestanzahl der Strategien für Spieler 2, die nicht unterschritten werden soll (default: 0)
+    :param stop_dimension2: Die Mindestanzahl der Strategien für Spieler 2, die nicht unterschritten \
+    werden soll (default: 0)
     :type stop_dimension2: int
-    :returns: Eine Liste, die die reduzierten Auszahlungsmatrizen beinhaltet, sowie eine Aussage, ob überhaupt reduziert werden konnte
+    :returns: Eine Liste, die die reduzierten Auszahlungsmatrizen beinhaltet, sowie eine Aussage, ob \
+    überhaupt reduziert werden konnte
     :rtype: list
     """
     if not payoff_matrix_2.size:
@@ -750,7 +811,8 @@ def reduce_matrix(payoff_matrix_1, payoff_matrix_2=np.array([]), stop_dimension1
     #                 reducable_line = True
     #                 if count != count_2:
     #                     for count_3 in range(dimensions[1]):
-    #                         if reduced_matrix_1[count][count_3] > reduced_matrix_1[count_2][count_3] and reducable_line:
+    #                         if reduced_matrix_1[count][count_3] > reduced_matrix_1[count_2][count_3]
+    # and reducable_line:
     #                             reducable_line = False
     #                     if reducable_line:
     #                         if not added:
@@ -828,7 +890,8 @@ def get_guaranteed_payoff(payoff_matrix_1, payoff_matrix_2=np.array([]), mode=0)
     :type payoff_matrix_1: ndarray
     :param payoff_matrix_2: Die Auszahlungsmatrix von Spieler 2 (default: np.array([]))
     :type payoff_matrix_2: ndarray
-    :param mode: Angabe, ob der Garantiepunkt in reinen (mode=0) oder gemischten (mode=1) Strategien ermittelt werden soll (default: 0)
+    :param mode: Angabe, ob der Garantiepunkt in reinen (mode=0) oder gemischten (mode=1) Strategien \
+    ermittelt werden soll (default: 0)
     :type mode: int
     :returns: Eine Liste, die den Garantiepunkt, sowie eine Aussage über Dominiertheit enthält
     :rtype: list
@@ -852,10 +915,12 @@ def get_guaranteed_payoff(payoff_matrix_1, payoff_matrix_2=np.array([]), mode=0)
         #result = solve_using_nggw(payoff_matrix_1, payoff_matrix_2)
         result2 = get_optimal_solution(payoff_matrix_1, payoff_matrix_2)
         #print('result2')
-        #print(result2[0])
+        #print(result2[0][0])
         for solution in result2:
-        #    print(solution[0], solution[3][0])
-            payoff2.add((solution[0], solution[3][0]))
+            #print('solution')
+            #print(solution)
+            #print(solution[0][0], solution[0][1])
+            payoff2.add((solution[0][0][0], solution[0][1][0]))
         # print(result)
         #for players in range(len(result)):
             # print(result[players][1][-1])
@@ -909,7 +974,8 @@ def use_simplex(payoff_matrix_1, payoff_matrix_2=np.array([])):
     :type payoff_matrix_1: ndarray
     :param payoff_matrix_2: Die Auszahlungsmatrix von Spieler 2 (default: np.array([]))
     :type payoff_matrix_2: ndarray
-    :returns: Die Listen mit der Lösung und allen Zwischenschritten für beide Spieler, sowie die vorbereiteten Auszahlungsmatrizen
+    :returns: Die Listen mit der Lösung und allen Zwischenschritten für beide Spieler, sowie die \
+    vorbereiteten Auszahlungsmatrizen
     :rtype: list
     """
     if not payoff_matrix_2.size:
@@ -925,11 +991,13 @@ def use_simplex(payoff_matrix_1, payoff_matrix_2=np.array([])):
 # Simplex-Verfahren für Spieler 1 anwenden
 # TODO: Formatierung des Lösungswegs direkt hier machen
 def use_simplex_player2(simplex_game_1):
-    """Erzeugung und Lösung des linearen Problems für die Auszahlung von Spieler 2 und die von Spieler 1 gespielten Wahrscheinlichkeiten
+    """Erzeugung und Lösung des linearen Problems für die Auszahlung von Spieler 2 und die von Spieler 1 \
+    gespielten Wahrscheinlichkeiten
 
     :param simplex_game_1: Die zuvor aufbereitete Auszahlungsmatrix von Spieler 2, die nur negative Auszahlungen enthält
     :type simplex_game_1: ndarray
-    :returns: Eine Liste mit der Lösung des linearen Problems, den Zwischenergebnissen und den zugeörigen Pivots und den in Brüchen formatierten Zwischentableaus
+    :returns: Eine Liste mit der Lösung des linearen Problems, den Zwischenergebnissen und den zugeörigen \
+    Pivots und den in Brüchen formatierten Zwischentableaus
     :rtype: list
     """
     #c = list()
@@ -950,7 +1018,7 @@ def use_simplex_player2(simplex_game_1):
     #    c.append(-1)
     #    game_bounds.append((0, None))
     c = [-1] * simplex_game_1.shape[1]
-    game_bounds = [(0, None)] * simplex_game_1.shape[1]
+    #game_bounds = [(0, None)] * simplex_game_1.shape[1]
     # xk_arr1 = list()
     # kwargs_arr1 = list()
     solve_report_1 = SolvingSteps()
@@ -966,11 +1034,14 @@ def use_simplex_player2(simplex_game_1):
 # Simplex-Verfahren für Spieler 2 anwenden
 # TODO: Formatierung des Lösungswegs direkt hier machen
 def use_simplex_player1(simplex_game_2):
-    """Erzeugung und Lösung des linearen Problems für die Auszahlung von Spieler 1 und die von Spieler 2 gespielten Wahrscheinlichkeiten
+    """Erzeugung und Lösung des linearen Problems für die Auszahlung von Spieler 1 und die von Spieler 2 \
+    gespielten Wahrscheinlichkeiten
 
-    :param simplex_game_2: Die zuvor aufbereitete Auszahlungsmatrix von Spieler 1, die nur positive Auszahlungen enthält
+    :param simplex_game_2: Die zuvor aufbereitete Auszahlungsmatrix von Spieler 1, die nur positive \
+    Auszahlungen enthält
     :type simplex_game_2: ndarray
-    :returns: Eine Liste mit der Lösung des linearen Problems, den Zwischenergebnissen und den zugeörigen Pivots und den in Brüchen formatierten Zwischentableaus
+    :returns: Eine Liste mit der Lösung des linearen Problems, den Zwischenergebnissen und den zugeörigen \
+    Pivots und den in Brüchen formatierten Zwischentableaus
     :rtype: list
     """
     #c = list()
@@ -981,7 +1052,7 @@ def use_simplex_player1(simplex_game_2):
     #    c.append(1)
     #    game_bounds.append((0, None))
     c = [1] * simplex_game_2.shape[0]
-    game_bounds = [(0, None)] * simplex_game_2.shape[0]
+    #game_bounds = [(0, None)] * simplex_game_2.shape[0]
     #for columns in range(np.asarray(simplex_game_2).shape[1]):
     #    #b.append(-1)
     #    temp = list()
@@ -1055,7 +1126,8 @@ def get_dominated_strategies(payoff_matrix_1, payoff_matrix_2=np.array([])):
 
 
 def get_possible_solutions(payoff_matrix_1, payoff_matrix_2=np.array([]), sym=np.array([]), funcs=np.array([])):
-    """Ermittelt mögliche, auf die Einhaltung der Bedingungen eines Nash-Gleichgewichts zu überprüfende, Support-Kombinationen beider Spieler in gemischten Strategien
+    """Ermittelt mögliche, auf die Einhaltung der Bedingungen eines Nash-Gleichgewichts zu überprüfende, \
+    Support-Kombinationen beider Spieler in gemischten Strategien
 
     :param payoff_matrix_1: Die Auszahlungsmatrix von Spieler 1
     :type payoff_matrix_1: ndarray
@@ -1065,7 +1137,8 @@ def get_possible_solutions(payoff_matrix_1, payoff_matrix_2=np.array([]), sym=np
     :type sym: ndarray
     :param funcs: Eine Liste der Gleichungssysteme beider Spieler (default: np.array([]))
     :type funcs: ndarray
-    :returns: Eine Liste aller vorselektieren Support-Kombinationen, die auf Existenz eines Nash-Gleichgewichts überpüft werden müssen
+    :returns: Eine Liste aller vorselektieren Support-Kombinationen, die auf Existenz eines Nash-Gleichgewichts \
+    überpüft werden müssen
     :rtype: list
     """
     if not payoff_matrix_2.size:
@@ -1144,7 +1217,9 @@ def get_optimal_solution(payoff_matrix_1, payoff_matrix_2=np.array([])):
     :type payoff_matrix_1: ndarray
     :param payoff_matrix_2: Die Auszahlungsmatrix von Spieler 2 (default: np.array([}]))
     :type payoff_matrix_2: ndarray
-    :returns: Eine Liste aller Nash-Gleichgewichte, inklusive deren Supports, Auszahlungen und Wahrscheinlichkeitsverteilungen über die reinen Strategien oder False falls kein Nash-Gleichgewicht ermittelt werden konnte.
+    :returns: Eine Liste aller Nash-Gleichgewichte, inklusive deren Supports, Auszahlungen und \
+    Wahrscheinlichkeitsverteilungen über die reinen Strategien oder False falls kein Nash-Gleichgewicht \
+    ermittelt werden konnte.
     :rtype: list
     """
     if not payoff_matrix_2.size:
@@ -1347,24 +1422,19 @@ def get_optimal_solution(payoff_matrix_1, payoff_matrix_2=np.array([])):
                 # values.append([temp_funcs2, other_sol2[0][sym[1][1]]])
                 # Spielwert Spieler 1, gewählte Strategien Spieler 1, gewählter Support Spieler 1
                 #values = np.array([sol[1][1][0][sym[1][1]], sol[0][1], sol[0][2][0]])
-                values = [sol[1][1][0][sym[1][1]], sol[0][1], sol[0][2][0]]
+                values = [[sol[1][1][0][sym[1][1]], sol[0][1], sol[0][2][0]],
+                          [sol[0][1][0][sym[0][1]], sol[1][1], sol[1][2][1]], [sol[0][0], sol[1][0]], [vals1, vals2]]
                 # Spielwert Spieler 2, gewählte Strategien Spieler 2, gewählter Support Spieler 2
                 #values = np.append(values, [sol[0][1][0][sym[0][1]], sol[1][1], sol[1][2][1]])
-                values.append([sol[0][1][0][sym[0][1]], sol[1][1], sol[1][2][1]])
                 # Betrachtetes LGS für Wahrscheinlichkeiten Spieler 1 / 2
                 #values = np.append(values, [sol[0][0], sol[1][0]])
-                values.append([sol[0][0], sol[1][0]])
                 # Zu betrachtendes LGS nicht im Support für Spieler 1 / 2 + Ergebnis
                 #values = np.append(values, [vals1, vals2])
-                values.append([vals1, vals2])
 
                 #print('Optimum gefunden')
                 #print(values)
-                if len(values_ret) == 0:
-                    values_ret = [values]
-                else:
-                    #values_ret = np.append(values_ret, values)
-                    values_ret.append([values])
+
+                values_ret.append([values])
 
     if len(values_ret) > 0:
         return values_ret
@@ -1376,7 +1446,8 @@ def generate_symbols(payoff_matrix):
     """Erzeugt die für die Lösung eines Gleichungssystems benötigten Variablen
 
     :param payoff_matrix: Die Auszahlungsmatrix von Spieler 1
-    :returns: Ein NumPy-Array, das für beide Spieler alle Variablen der Wahrscheinlichkeitsverteilung und des Spielwerts beinhaltet
+    :returns: Ein NumPy-Array, das für beide Spieler alle Variablen der Wahrscheinlichkeitsverteilung und \
+    des Spielwerts beinhaltet
     :rtype: ndarray
     """
     symbols_player_1 = symbols('p0:%d' % payoff_matrix.shape[0], nonnegative=True, seq=True)
@@ -1437,13 +1508,15 @@ def generate_functions(payoff_matrix_1, payoff_matrix_2=np.array([]), symbs=np.a
 # Lösung mit Bedingungen für NGGW
 # Gemischte Maximin-Strategien der Spieler
 def solve_using_nggw(payoff_matrix_1, payoff_matrix_2=np.array([])):
-    """Ursprüngliche Methode zur Lösung allgemeiner gemischten Erweiterungen, jedoch durch get_optimal_solution ersetzt
+    """Ursprüngliche Methode zur Lösung allgemeiner gemischten Erweiterungen, jedoch durch \
+    get_optimal_solution ersetzt
 
     :param payoff_matrix_1: Die Auszahlungsmatrix von Spieler 1
     :type payoff_matrix_1: ndarray
     :param payoff_matrix_2: Die Auszahlungsmatrix von Spieler 2
     :type payoff_matrix_2: ndarray
-    :returns: Eine Liste, die für jeden Spieler die Lösung der Gleichungssysteme, die Variablen und die Gleichungssysteme beinhaltet
+    :returns: Eine Liste, die für jeden Spieler die Lösung der Gleichungssysteme, die Variablen und \
+    die Gleichungssysteme beinhaltet
     :rtype: list
     """
     if not payoff_matrix_2.size:
