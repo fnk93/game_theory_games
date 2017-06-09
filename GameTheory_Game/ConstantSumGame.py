@@ -9,11 +9,8 @@ class ConstantSumGame(Game):
         self.fill_matrix()
 
     def fill_matrix(self):
-        for count_lin in range(self.lines):
-            for count_col in range(self.cols):
-                x = np.random.randint(self.minint, self.maxint + 1)
-                self.matrix[count_lin][count_col] = x
-        self.matrix2 = self.c - np.asarray(self.matrix)
+        self.matrix = np.random.randint(self.minint, self.maxint + 1, size=(self.lines, self.cols))
+        self.matrix2 = self.c - self.matrix
 
     def getc(self):
         return self.__c

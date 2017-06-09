@@ -363,10 +363,9 @@ abc.matrix = np.asarray([[-4., -3., -4., -7.],
     [-9.,  6.,-2.,  6.]])
 abc.matrix2 = abc.matrix * -1
 print(abc.matrix)
-print(abc.matrix2)
-start_time = time.time()
-print(get_optimal_solution(abc.matrix, abc.matrix2))
-print("--- %s seconds ---" % (time.time() - start_time))
+#start_time = time.time()
+#print(get_optimal_solution(abc.matrix, abc.matrix2))
+#print("--- %s seconds ---" % (time.time() - start_time))
 # print(get_dominated_strategies(abc.matrix, abc.matrix2))
 # dom1, dom2 = get_dominated_strategies(abc.matrix, abc.matrix2)
 # s1 = (0, 2, 3)

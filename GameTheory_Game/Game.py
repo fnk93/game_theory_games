@@ -81,9 +81,5 @@ class Game:
 
     def fill_matrix(self):
         # Nicht kooperative 2-Personenspiele
-        for count_lin in range(self.lines):
-            for count_col in range(self.cols):
-                x = np.random.randint(self.minint, self.maxint + 1)
-                y = np.random.randint(self.minint, self.maxint + 1)
-                self.matrix[count_lin][count_col] = x
-                self.matrix2[count_lin][count_col] = y
+        self.matrix = np.random.randint(self.minint, self.maxint+1, size=(self.lines,self.cols))
+        self.matrix2 = np.random.randint(self.minint, self.maxint+1, size=(self.lines,self.cols))
