@@ -21,7 +21,7 @@
     <SUITE FILE_PATH="coverage/game_theory_games$tests.coverage" NAME="tests Coverage Results" MODIFIED="1496859162612" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/GameTheory_Game" />
     <SUITE FILE_PATH="coverage/game_theory_games$Game.coverage" NAME="Game Coverage Results" MODIFIED="1495791821179" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/GameTheory_Game" />
     <SUITE FILE_PATH="coverage/game_theory_games_2$manage.coverage" NAME="manage Coverage Results" MODIFIED="1495804805580" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../game_theory_app" />
-    <SUITE FILE_PATH="coverage/game_theory_games_2$tests.coverage" NAME="tests Coverage Results" MODIFIED="1497052655322" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/GameTheory_Game" />
+    <SUITE FILE_PATH="coverage/game_theory_games_2$tests.coverage" NAME="tests Coverage Results" MODIFIED="1497092049844" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/GameTheory_Game" />
     <SUITE FILE_PATH="coverage/game_theory_games_2$test2.coverage" NAME="test2 Coverage Results" MODIFIED="1495837496879" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="CreatePatchCommitExecutor">
@@ -36,8 +36,8 @@
       <file leaf-file-name="Solving_Methods.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/GameTheory_Game/Solving_Methods.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="357">
-              <caret line="1022" column="26" lean-forward="true" selection-start-line="1022" selection-start-column="26" selection-end-line="1022" selection-end-column="26" />
+            <state relative-caret-position="240">
+              <caret line="814" column="36" lean-forward="true" selection-start-line="814" selection-start-column="36" selection-end-line="814" selection-end-column="36" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
@@ -48,9 +48,11 @@
       <file leaf-file-name="tests.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/GameTheory_Game/tests.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="501">
-              <caret line="386" column="54" lean-forward="false" selection-start-line="386" selection-start-column="54" selection-end-line="386" selection-end-column="54" />
-              <folding />
+            <state relative-caret-position="140">
+              <caret line="374" column="60" lean-forward="true" selection-start-line="374" selection-start-column="60" selection-end-line="374" selection-end-column="60" />
+              <folding>
+                <element signature="e#0#18#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -58,7 +60,7 @@
       <file leaf-file-name="Game.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/GameTheory_Game/Game.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="556">
+            <state relative-caret-position="1428">
               <caret line="84" column="97" lean-forward="false" selection-start-line="84" selection-start-column="97" selection-end-line="84" selection-end-column="97" />
               <folding />
             </state>
@@ -85,6 +87,9 @@
       <find>\</find>
       <find>get_optimal_solution</find>
       <find>get_guarante</find>
+      <find>ggw</find>
+      <find>optimalitäts</find>
+      <find>def generate_func</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -188,6 +193,7 @@
     </navigator>
     <panes>
       <pane id="Scratches" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -216,7 +222,6 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -233,125 +238,6 @@
       <recent name="F:\Program Files (x86)\game_learning\gaming" />
       <recent name="F:\Program Files (x86)\untitled\games" />
     </key>
-  </component>
-  <component name="RestoreUpdateTree" date="Moments ago" ActionInfo="_Update">
-    <UpdatedFiles>
-      <FILE-GROUP>
-        <option name="myUpdateName" value="Updated from server" />
-        <option name="myStatusName" value="Changed on server" />
-        <option name="mySupportsDeletion" value="false" />
-        <option name="myCanBeAbsent" value="false" />
-        <option name="myId" value="CHANGED_ON_SERVER" />
-        <FILE-GROUP>
-          <option name="myUpdateName" value="Updated" />
-          <option name="myStatusName" value="Changed" />
-          <option name="mySupportsDeletion" value="false" />
-          <option name="myCanBeAbsent" value="false" />
-          <option name="myId" value="UPDATED" />
-          <PATH vcs="Git" revision="">$PROJECT_DIR$/.idea/game_theory_games.iml</PATH>
-          <PATH vcs="Git" revision="">$PROJECT_DIR$/.idea/misc.xml</PATH>
-          <PATH vcs="Git" revision="">$PROJECT_DIR$/.idea/workspace.xml</PATH>
-          <PATH vcs="Git" revision="">$PROJECT_DIR$/GameTheory_Game/Game.py</PATH>
-          <PATH vcs="Git" revision="">$PROJECT_DIR$/GameTheory_Game/Solving_Methods.py</PATH>
-          <PATH vcs="Git" revision="">$PROJECT_DIR$/GameTheory_Game/tests.py</PATH>
-        </FILE-GROUP>
-        <FILE-GROUP>
-          <option name="myUpdateName" value="Created" />
-          <option name="myStatusName" value="Created" />
-          <option name="mySupportsDeletion" value="false" />
-          <option name="myCanBeAbsent" value="false" />
-          <option name="myId" value="CREATED" />
-          <PATH vcs="Git" revision="">$PROJECT_DIR$/GameTheory_Game/BattleOfSexes.py</PATH>
-          <PATH vcs="Git" revision="">$PROJECT_DIR$/GameTheory_Game/ConstantSumGame.py</PATH>
-          <PATH vcs="Git" revision="">$PROJECT_DIR$/GameTheory_Game/PrisonersDilemma.py</PATH>
-          <PATH vcs="Git" revision="">$PROJECT_DIR$/GameTheory_Game/ZerosumGame.py</PATH>
-        </FILE-GROUP>
-        <FILE-GROUP>
-          <option name="myUpdateName" value="Deleted" />
-          <option name="myStatusName" value="Deleted" />
-          <option name="mySupportsDeletion" value="false" />
-          <option name="myCanBeAbsent" value="true" />
-          <option name="myId" value="REMOVED_FROM_REPOSITORY" />
-        </FILE-GROUP>
-        <FILE-GROUP>
-          <option name="myUpdateName" value="Restored" />
-          <option name="myStatusName" value="Will be restored" />
-          <option name="mySupportsDeletion" value="false" />
-          <option name="myCanBeAbsent" value="false" />
-          <option name="myId" value="RESTORED" />
-        </FILE-GROUP>
-      </FILE-GROUP>
-      <FILE-GROUP>
-        <option name="myUpdateName" value="Modified" />
-        <option name="myStatusName" value="Modified" />
-        <option name="mySupportsDeletion" value="false" />
-        <option name="myCanBeAbsent" value="false" />
-        <option name="myId" value="MODIFIED" />
-      </FILE-GROUP>
-      <FILE-GROUP>
-        <option name="myUpdateName" value="Skipped" />
-        <option name="myStatusName" value="Skipped" />
-        <option name="mySupportsDeletion" value="false" />
-        <option name="myCanBeAbsent" value="false" />
-        <option name="myId" value="SKIPPED" />
-      </FILE-GROUP>
-      <FILE-GROUP>
-        <option name="myUpdateName" value="Merged with conflicts" />
-        <option name="myStatusName" value="Will be merged with conflicts" />
-        <option name="mySupportsDeletion" value="false" />
-        <option name="myCanBeAbsent" value="false" />
-        <option name="myId" value="MERGED_WITH_CONFLICTS" />
-      </FILE-GROUP>
-      <FILE-GROUP>
-        <option name="myUpdateName" value="Merged with tree conflicts" />
-        <option name="myStatusName" value="Merged with tree conflicts" />
-        <option name="mySupportsDeletion" value="false" />
-        <option name="myCanBeAbsent" value="false" />
-        <option name="myId" value="MERGED_WITH_TREE_CONFLICT" />
-      </FILE-GROUP>
-      <FILE-GROUP>
-        <option name="myUpdateName" value="Merged with property conflicts" />
-        <option name="myStatusName" value="Will be merged with property conflicts" />
-        <option name="mySupportsDeletion" value="false" />
-        <option name="myCanBeAbsent" value="false" />
-        <option name="myId" value="MERGED_WITH_PROPERTY_CONFLICT" />
-      </FILE-GROUP>
-      <FILE-GROUP>
-        <option name="myUpdateName" value="Merged" />
-        <option name="myStatusName" value="Will be merged" />
-        <option name="mySupportsDeletion" value="false" />
-        <option name="myCanBeAbsent" value="false" />
-        <option name="myId" value="MERGED" />
-      </FILE-GROUP>
-      <FILE-GROUP>
-        <option name="myUpdateName" value="Not in repository" />
-        <option name="myStatusName" value="Not in repository" />
-        <option name="mySupportsDeletion" value="true" />
-        <option name="myCanBeAbsent" value="false" />
-        <option name="myId" value="UNKNOWN" />
-      </FILE-GROUP>
-      <FILE-GROUP>
-        <option name="myUpdateName" value="Locally added" />
-        <option name="myStatusName" value="Locally added" />
-        <option name="mySupportsDeletion" value="false" />
-        <option name="myCanBeAbsent" value="false" />
-        <option name="myId" value="LOCALLY_ADDED" />
-      </FILE-GROUP>
-      <FILE-GROUP>
-        <option name="myUpdateName" value="Locally removed" />
-        <option name="myStatusName" value="Locally removed" />
-        <option name="mySupportsDeletion" value="false" />
-        <option name="myCanBeAbsent" value="false" />
-        <option name="myId" value="LOCALLY_REMOVED" />
-      </FILE-GROUP>
-      <FILE-GROUP>
-        <option name="myUpdateName" value="Switched" />
-        <option name="myStatusName" value="Switched" />
-        <option name="mySupportsDeletion" value="false" />
-        <option name="myCanBeAbsent" value="false" />
-        <option name="myId" value="SWITCHED" />
-      </FILE-GROUP>
-    </UpdatedFiles>
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -847,7 +733,14 @@
       <option name="project" value="LOCAL" />
       <updated>1497051027504</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="Code-Bereinigungen und Anpassung der Listen-Generierung der Nash-Gleichgewichte in gemischten Strategien zum besseren Verständnis">
+      <created>1497052767525</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1497052767525</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -877,7 +770,7 @@
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24312897" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3192389" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.49154335" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
@@ -934,7 +827,8 @@
     <MESSAGE value="Berechnung aller Nash-GGW über Betrachtung aller Supports und deren Auszahlungen." />
     <MESSAGE value="Dokumentation Solving_Methods komplettiert" />
     <MESSAGE value="Matrixreduktion aufgeräumt und Abbruchbedingung der Dimensionen variabel gestaltet." />
-    <option name="LAST_COMMIT_MESSAGE" value="Matrixreduktion aufgeräumt und Abbruchbedingung der Dimensionen variabel gestaltet." />
+    <MESSAGE value="Code-Bereinigungen und Anpassung der Listen-Generierung der Nash-Gleichgewichte in gemischten Strategien zum besseren Verständnis" />
+    <option name="LAST_COMMIT_MESSAGE" value="Code-Bereinigungen und Anpassung der Listen-Generierung der Nash-Gleichgewichte in gemischten Strategien zum besseren Verständnis" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1059,7 +953,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/GameTheory_Game/Game.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="556">
+        <state relative-caret-position="1428">
           <caret line="84" column="97" lean-forward="false" selection-start-line="84" selection-start-column="97" selection-end-line="84" selection-end-column="97" />
           <folding />
         </state>
@@ -1067,16 +961,18 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/GameTheory_Game/tests.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="501">
-          <caret line="386" column="54" lean-forward="false" selection-start-line="386" selection-start-column="54" selection-end-line="386" selection-end-column="54" />
-          <folding />
+        <state relative-caret-position="140">
+          <caret line="374" column="60" lean-forward="true" selection-start-line="374" selection-start-column="60" selection-end-line="374" selection-end-column="60" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/GameTheory_Game/Solving_Methods.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="357">
-          <caret line="1022" column="26" lean-forward="true" selection-start-line="1022" selection-start-column="26" selection-end-line="1022" selection-end-column="26" />
+        <state relative-caret-position="240">
+          <caret line="814" column="36" lean-forward="true" selection-start-line="814" selection-start-column="36" selection-end-line="814" selection-end-column="36" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
           </folding>

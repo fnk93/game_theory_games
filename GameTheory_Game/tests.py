@@ -1,6 +1,7 @@
 import numpy as np
 from GameTheory_Game.Solving_Methods import *
 from GameTheory_Game.Game import Game
+from GameTheory_Game.ZerosumGame import ZerosumGame
 from itertools import chain, combinations
 import scipy as sp
 from sympy.solvers import solve
@@ -362,29 +363,34 @@ abc.matrix = np.asarray([[-4., -3., -4., -7.],
     [5.,  9.,  5., -5.],
     [-9.,  6.,-2.,  6.]])
 abc.matrix2 = abc.matrix * -1
-a = [[abc.matrix[lines][columns] for lines in range(abc.matrix.shape[0])] for columns in range(abc.matrix.shape[1])]
-print(a)
-print(type(abc.matrix))
-print([1]*5)
-for lincol in combinations(range(abc.matrix.shape[0]), 2):
-    print(lincol)
-    print(all(abc.matrix[lincol[0], :] > abc.matrix[lincol[1], :]))
-for collin in combinations(range(abc.matrix2.shape[1]), 2):
-    print(collin)
-    print(all(abc.matrix2[:, collin[0]] > abc.matrix2[:, collin[1]]))
-dominated_strats = get_dominated_strategies(abc.matrix, abc.matrix2)
-print(dominated_strats)
-dominated_strats = ()
-if dominated_strats:
-    print(dominated_strats)
-print(np.delete(abc.matrix, [0, 1], axis=1))
-A = np.asarray([2,3,4,5])
-print(A[0:1])
-#print(A.shape[0] < abc.matrix.shape[0] or A.shape[1] < abc.matrix.shape[1])
-print(A.shape < abc.matrix.shape)
-print(reduce_matrix(abc.matrix, abc.matrix2))
-print(get_upper_values(abc.matrix))
-print(get_guaranteed_payoff(abc.matrix, abc.matrix2, 1))
+#print(get_calculations_latex(abc.matrix, abc.matrix2)[0])
+
+
+new_game = ZerosumGame()
+print(get_calculations_latex(new_game.matrix, new_game.matrix2, zerosum=True, mode=1, rand_bays=True)[0])
+# a = [[abc.matrix[lines][columns] for lines in range(abc.matrix.shape[0])] for columns in range(abc.matrix.shape[1])]
+# print(a)
+# print(type(abc.matrix))
+# print([1]*5)
+# for lincol in combinations(range(abc.matrix.shape[0]), 2):
+#     print(lincol)
+#     print(all(abc.matrix[lincol[0], :] > abc.matrix[lincol[1], :]))
+# for collin in combinations(range(abc.matrix2.shape[1]), 2):
+#     print(collin)
+#     print(all(abc.matrix2[:, collin[0]] > abc.matrix2[:, collin[1]]))
+# dominated_strats = get_dominated_strategies(abc.matrix, abc.matrix2)
+# print(dominated_strats)
+# dominated_strats = ()
+# if dominated_strats:
+#     print(dominated_strats)
+# print(np.delete(abc.matrix, [0, 1], axis=1))
+# A = np.asarray([2,3,4,5])
+# print(A[0:1])
+# #print(A.shape[0] < abc.matrix.shape[0] or A.shape[1] < abc.matrix.shape[1])
+# print(A.shape < abc.matrix.shape)
+# print(reduce_matrix(abc.matrix, abc.matrix2))
+# print(get_upper_values(abc.matrix))
+# print(get_possible_solutions(abc.matrix, abc.matrix2))
 #start_time = time.time()
 #print(get_optimal_solution(abc.matrix, abc.matrix2))
 #print("--- %s seconds ---" % (time.time() - start_time))

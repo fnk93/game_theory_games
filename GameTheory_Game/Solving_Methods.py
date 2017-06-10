@@ -160,14 +160,16 @@ def ggw(payoff_matrix_1, payoff_matrix_2=np.array([])):
     # print(optimal)
     optimal = optimal1 + optimal2
     prep = np.where(optimal == 2)
-    result = [[prep[0][index] for index in range(prep[0].shape[0])], [prep[1][index]
-                                                                      for index in range(prep[0].shape[0])]]
-    #for index in range(prep[0].shape[0]):
-    #    result.append([prep[0][index], prep[1][index]])
+    #result = [[prep[0][index], prep[1][index]] for index in range(prep[0].shape[0])]]
+    result = []
+    for index in range(prep[0].shape[0]):
+        result.append([prep[0][index], prep[1][index]])
+    #print(result, len(result), np.asarray(result[0]).size)
     for ggws in range(len(result)):
         dominated_temp = False
         for lines in range(np.asarray(payoff_matrix_1).shape[0]):
             for columns in range(np.asarray(payoff_matrix_2).shape[1]):
+                print(lines, columns, ggws)
                 if payoff_matrix_1[lines][columns] >= result[ggws][0] and \
                                 payoff_matrix_2[lines][columns] >= result[ggws][1]:
                     if payoff_matrix_1[lines][columns] != result[ggws][0] and \
@@ -187,8 +189,8 @@ def is_determined(payoff_matrix_1):
     :rtype: boolean
     """
     det_intervalls = determination_intervall(payoff_matrix_1)
-
-    if min(det_intervalls[0]) != max(det_intervalls[1]):
+    #print(det_intervalls)
+    if det_intervalls[0] != det_intervalls[1]:
         return False
 
     return True
@@ -297,8 +299,10 @@ def solve_maximin_strategies(payoff_matrix_1, payoff_matrix_2=np.array([])):
     #for strategy_2 in range(len(minima_player_2)):
     #    if minima_player_2[strategy_2] == (lower_values[1]):
     #        player_2_maximin.append(strategy_2)
-    player_1_maximin = [strategy for strategy in range(len(minima_player_1)) if minima_player_1 == (lower_values[0])]
-    player_2_maximin = [strategy for strategy in range(len(minima_player_2)) if minima_player_2 == (lower_values[1])]
+    player_1_maximin = [strategy for strategy in range(len(minima_player_1)) if
+                        minima_player_1[strategy] == (lower_values[0])]
+    player_2_maximin = [strategy for strategy in range(len(minima_player_2)) if
+                        minima_player_2[strategy] == (lower_values[1])]
     # print('Minmax-Strategien: ', player_1_maximin, player_2_maximin)
 
     return [player_1_maximin, player_2_maximin]
@@ -334,10 +338,9 @@ def get_calculations_pdf(game, mode=0):
 
 # Ergebnisse und Lösungswege als LaTeX formatieren
 # TODO: evtl. in Game-Klasse übernehmen
-# TODO: Auszahlungsdiagramme graphisch aufbereiten
 # TODO: Simplex-Tableaus graphisch aufbereiten
 # TODO: Parametrisierung welche Aufgaben gestellt wurden
-def get_calculations_latex(matrix1, matrix2=np.array([]), zerosum=False, bay1=0, bay2=0, mode=0):
+def get_calculations_latex(matrix1, matrix2=np.array([]), zerosum=False, bay1=0, bay2=0, mode=0, rand_bays=False):
     """Erzeugt eine verwendbare Ausgabe der berechneten Kennzahlen
 
     :param matrix1: Die Auszahlungsmatrix von Spieler 1
@@ -345,7 +348,7 @@ def get_calculations_latex(matrix1, matrix2=np.array([]), zerosum=False, bay1=0,
     :param matrix2: Die Auszahlungsmatrix von Spieler 2 (default: np.array([]))
     :type matrix2: ndarray
     :param zerosum: Angabe, ob es sich um ein Nullsummenspiel handelt oder nicht (default: False)
-    :type zerosum: boolean
+    :type zerosum: bool
     :param bay1: Die von Spieler 2 gespielte Strategie zur Ermittlung der Bayes-Strategien (default: 0)
     :type bay1: int
     :param bay2: Die von Spieler 1 gespielte Strategie zur Ermittlung der Bayes-Strategien (default: 0)
@@ -353,6 +356,8 @@ def get_calculations_latex(matrix1, matrix2=np.array([]), zerosum=False, bay1=0,
     :param mode: Angabe ob Berechnungen nur in reinen Strategien (mode=0) oder auch in gemischten Strategien (mode=1)\
      erfolgen sollen (default: 0)
     :type mode: int
+    :param rand_bays: Gibt an, ob zur Ermittlung der Bayes-Strategien zufällige Gegenstrategien gewählt werden sollen
+    :type rand_bays: bool
     :returns: Einen String zur Ausgabe, ein für LaTeX formatierter String und ein Context-Dictionary als Liste
     :rtype: list
     """
@@ -374,8 +379,9 @@ def get_calculations_latex(matrix1, matrix2=np.array([]), zerosum=False, bay1=0,
         maximins_2.append(element+1)
     dets = determination_intervall(matrix1)
     guarantee = get_guaranteed_payoff(matrix1, matrix2)
-    played_strategy_1 = randrange(0, matrix1.shape[0])
-    played_strategy_2 = randrange(0, matrix1.shape[1])
+    if rand_bays:
+        bay2 = np.random.randint(0, matrix1.shape[0])
+        bay1 = np.random.randint(0, matrix1.shape[1])
     bs_1 = bayes_strategy(matrix1.T, bay1)
     bayes_1 = bs_1[0]
     watch_1 = bs_1[1]
@@ -389,8 +395,13 @@ def get_calculations_latex(matrix1, matrix2=np.array([]), zerosum=False, bay1=0,
     optimals1 = equi[3]
     optimals2 = equi[4]
     determined = is_determined(matrix1)
+    #print(equi)
+    #print('equi0')
+    print(equi[0])
     for equis in equi[0]:
-        equi_points.append([equis[0]+1, equis[1]+1])
+        print(equis)
+        if np.asarray(equis).size:
+            equi_points.append([equis[0]+1, equis[1]+1])
     #equi_point = [equi[0][0][0]+1,equi[0][0][1]+1]
     solution += 'Bei der gegebenen Spielmatrix eines 2-Personen-Nullsummenspiels' + '\n'
     solution += str(matrix1) + '\n'
@@ -427,28 +438,29 @@ def get_calculations_latex(matrix1, matrix2=np.array([]), zerosum=False, bay1=0,
     solution += 'ergibt sich der Garantiepunkt des Spiels in reinen Strategien: ' + str(guarantee[0]) + '\n'
     context['guar'] = str(guarantee[0])
     sol_texpure.append(guarantee[0])
-    solution += 'Um die Bayes-Strategie zu ermitteln muss die maximale Auszahlung bei gegebener \
-    Gegnerstrategie betrachtet werden.' + '\n'
-    solution += 'Für Spieler 1 müssen deshalb bei gegebener Strategie ' + str(played_strategy_2+1) + \
+    solution += 'Um die Bayes-Strategie zu ermitteln muss die maximale Auszahlung bei gegebener ' + \
+    'Gegnerstrategie betrachtet werden.' + '\n'
+    solution += 'Für Spieler 1 müssen deshalb bei gegebener Strategie ' + str(bay2+1) + \
                 ' von Spieler 2 die Auszahlungen ' + str(watch_1) + ' betrachtet werden.' + '\n'
-    solution += 'Hieraus ergibt sich die Bayes-Strategie : ' + str(bayes_1+1) + '\n'
-    context['bay1'] = str(played_strategy_2+1)
+    print(bayes_1[0])
+    solution += 'Hieraus ergeben sich die Bayes-Strategie(n): ' + str(bayes_1[0]+1) + '\n'
+    context['bay1'] = str(bay2+1)
     context['pay1'] = str(watch_1)
-    context['baystrat1'] = str(bayes_1+1)
-    sol_texpure.append(played_strategy_2+1)
+    context['baystrat1'] = str(bayes_1[0]+1)
+    sol_texpure.append(bay2+1)
     sol_texpure.append(watch_1)
-    sol_texpure.append(bayes_1+1)
+    sol_texpure.append(bayes_1[0]+1)
     solution += 'Für Spieler 2 müssen deshalb bei gegebener Strategie ' + str(
-        played_strategy_1 + 1) + ' von Spieler 1 die Auszahlungen ' + str(watch_2) + ' betrachtet werden.' + '\n'
-    solution += 'Hieraus ergibt sich die Bayes-Strategie : ' + str(bayes_2+1) + '\n'
-    context['bay2'] = str(played_strategy_1 + 1)
+        bay1 + 1) + ' von Spieler 1 die Auszahlungen ' + str(watch_2) + ' betrachtet werden.' + '\n'
+    solution += 'Hieraus ergeben sich die Bayes-Strategie(n): ' + str(bayes_2[0]+1) + '\n'
+    context['bay2'] = str(bay1 + 1)
     context['pay2'] = str(watch_2)
-    context['baystrat2'] = str(bayes_2 + 1)
-    sol_texpure.append(played_strategy_1 + 1)
+    context['baystrat2'] = str(bayes_2[0] + 1)
+    sol_texpure.append(bay1 + 1)
     sol_texpure.append(watch_2)
-    sol_texpure.append(bayes_2 + 1)
-    solution += 'Das Erfüllen der Optimalitätsbedingung der Strategiekombinationen über beide Spieler \
-    aufsummiert sieht wie folgt aus:' + '\n'
+    sol_texpure.append(bayes_2[0] + 1)
+    solution += 'Das Erfüllen der Optimalitätsbedingung der Strategiekombinationen über beide Spieler ' + \
+    'aufsummiert sieht wie folgt aus:' + '\n'
     solution += str(optimals) + '\n'
     temp_str = ''
     for lines in range(optimals.shape[0]):
@@ -476,8 +488,8 @@ def get_calculations_latex(matrix1, matrix2=np.array([]), zerosum=False, bay1=0,
     context['ggwmatr2'] = temp_str
     sol_texpure.append(optimals2)
     if len(equi_points) > 0:
-        solution += 'Jede Strategiekombination, die sowohl für Spieler 1, als auch für Spieler 2 die \
-        Optimalitätsbedingung erfüllt ist Gleichgewichtspunkt des Spiels in reinen Strategien' + '\n'
+        solution += 'Jede Strategiekombination, die sowohl für Spieler 1, als auch für Spieler 2 die ' + \
+        'Optimalitätsbedingung erfüllt ist Gleichgewichtspunkt des Spiels in reinen Strategien' + '\n'
         solution += 'Gleichgewichtspunkt(e): ' + str(equi_points) + ' mit zugehöriger Auszahlung für Spieler 1: ' + \
                     str(matrix1[equi[0][0][0]][equi[0][0][1]]) + '\n' + 'und Auszahlung für Spieler 2: ' +\
                     str(matrix2[equi[0][0][0]][equi[0][0][1]])
@@ -669,8 +681,43 @@ def get_calculations_latex(matrix1, matrix2=np.array([]), zerosum=False, bay1=0,
                                 temp.append([key, val])
                                 context['solvemixed'] += str(key) + ':' + str(val) + r'\\'
                             sol_texmixed.append(temp)
+                    solution += nggw2
                 except:
                     pass
+                nggw2 = get_optimal_solution(matrix1, matrix2)
+                for mixed_ggw in nggw2:
+                    solution += '\n'
+                    solution += str(mixed_ggw)
+                    solution += '\n'
+                    solution += str(mixed_ggw[0])
+                    solution += '\n'
+                    # Spielwert Spieler 1
+                    solution += str(mixed_ggw[0][0][0])
+                    solution += '\n'
+                    # Wahrscheinlichkeiten Spieler 1
+                    solution += str(mixed_ggw[0][0][1][0])
+                    solution += '\n'
+                    # Support Spieler 1
+                    solution += str(mixed_ggw[0][0][2])
+                    solution += '\n'
+                    # Spielwert Spieler 2
+                    solution += str(mixed_ggw[0][1][0])
+                    solution += '\n'
+                    # Wahrscheinlichkeiten Spieler 2
+                    solution += str(mixed_ggw[0][1][1][0])
+                    solution += '\n'
+                    # Support Spieler 2
+                    solution += str(mixed_ggw[0][1][2])
+                    solution += '\n'
+                    # Gleichtungssystem Spieler 1
+                    solution += str(mixed_ggw[0][2][0])
+                    solution += '\n'
+                    # Gleichtungssystem Spieler 1
+                    solution += str(mixed_ggw[0][2][1])
+                    solution += '\n'
+                    solution += str(mixed_ggw[0][3][0])
+                    solution += '\n'
+                    solution += str(mixed_ggw[0][3][1])
             else:
                 try:
                     nggw = solve_using_nggw(matrix1, matrix2)
@@ -738,9 +785,43 @@ def get_calculations_latex(matrix1, matrix2=np.array([]), zerosum=False, bay1=0,
                                 temp.append([key, val])
                                 context['solvemixed'] += str(key) + ':' + str(val) + r'\\'
                             sol_texmixed.append(temp)
+                    solution += nggw2
                 except:
                     pass
-
+                nggw2 = get_optimal_solution(matrix1, matrix2)
+                for mixed_ggw in nggw2:
+                    solution += '\n'
+                    solution += str(mixed_ggw)
+                    solution += '\n'
+                    solution += str(mixed_ggw[0])
+                    solution += '\n'
+                    # Spielwert Spieler 1
+                    solution += str(mixed_ggw[0][0][0])
+                    solution += '\n'
+                    # Wahrscheinlichkeiten Spieler 1
+                    solution += str(mixed_ggw[0][0][1][0])
+                    solution += '\n'
+                    # Support Spieler 1
+                    solution += str(mixed_ggw[0][0][2])
+                    solution += '\n'
+                    # Spielwert Spieler 2
+                    solution += str(mixed_ggw[0][1][0])
+                    solution += '\n'
+                    # Wahrscheinlichkeiten Spieler 2
+                    solution += str(mixed_ggw[0][1][1][0])
+                    solution += '\n'
+                    # Support Spieler 2
+                    solution += str(mixed_ggw[0][1][2])
+                    solution += '\n'
+                    # Gleichtungssystem Spieler 1
+                    solution += str(mixed_ggw[0][2][0])
+                    solution += '\n'
+                    # Gleichtungssystem Spieler 2
+                    solution += str(mixed_ggw[0][2][1])
+                    solution += '\n'
+                    solution += str(mixed_ggw[0][3][0])
+                    solution += '\n'
+                    solution += str(mixed_ggw[0][3][1])
     sol_tex = [sol_texpure, sol_texmixed]
     return solution, sol_tex, context
 
@@ -1149,6 +1230,7 @@ def get_possible_solutions(payoff_matrix_1, payoff_matrix_2=np.array([]), sym=np
         sym = generate_symbols(payoff_matrix_1)
     if not funcs.size:
         funcs = generate_functions(payoff_matrix_1, payoff_matrix_2)
+    print(funcs)
     dominated_strategies1, dominated_strategies2 = get_dominated_strategies(payoff_matrix_1, payoff_matrix_2)
     #print(dominated_strategies1, dominated_strategies2)
     #print(sym[0][0])
@@ -1156,15 +1238,17 @@ def get_possible_solutions(payoff_matrix_1, payoff_matrix_2=np.array([]), sym=np
         for supp1 in (s for s in powerset(shape1) if len(s) > 0 and not any(x in s for x in dominated_strategies1)):
             temp = []
             temp2 = []
-            temp_eq = 0
-            temp_eq2 = 0
+            #temp_eq = 0
+            #temp_eq2 = 0
+            temp_eq = funcs[1][-1]
+            temp_eq2 = funcs[0][-1]
             #print(supp1, supp2)
-            for strat2 in sym[1][0]:
-                temp_eq2 += strat2
-            for strat1 in sym[0][0]:
-                temp_eq += strat1
-            temp_eq -= 1
-            temp_eq2 -= 1
+            #for strat2 in sym[1][0]:
+            #    temp_eq2 += strat2
+            #for strat1 in sym[0][0]:
+            #    temp_eq += strat1
+            #temp_eq -= 1
+            #temp_eq2 -= 1
             strats1 = np.array((temp_eq))
             strats2 = np.array((temp_eq2))
             #print(supp1, supp2)
@@ -1198,6 +1282,7 @@ def get_possible_solutions(payoff_matrix_1, payoff_matrix_2=np.array([]), sym=np
                     solution = False
             if solution:
                 #temp = np.append(temp, np.array((solu)))
+                #temp = [[strats1], solu, [deepcopy(supp1), deepcopy(supp2)]]
                 temp.append(solu)
                 temp.append([deepcopy(supp1), deepcopy(supp2)])
                 #temp = np.append(temp, np.array((deepcopy(supp1), deepcopy(supp2))))
@@ -1247,6 +1332,7 @@ def get_optimal_solution(payoff_matrix_1, payoff_matrix_2=np.array([])):
         #        temp_funcs2.append(funcs[0][0][i])
         temp_funcs = np.array(funcs[1][-1])
         temp_funcs2 = np.array(funcs[0][-1])
+        #print(sol[0], sol[1])
         #temp_funcs.append(funcs[1][0][-1])
         #temp_funcs2.append(funcs[0][0][-1])
         #print('sol01, sol11')
@@ -1261,6 +1347,7 @@ def get_optimal_solution(payoff_matrix_1, payoff_matrix_2=np.array([])):
                 try:
                     #print(sol[0][1][0])
                     #print(symb - sol[0][1][0][symb])
+                    #print(sol[0])
                     temp_funcs = np.append(temp_funcs, symb - sol[0][1][0][symb])
                     #temp_funcs.append(symb - sol[0][1][0][symb])
                     #if sol[0][1][0][symb] != 0:
@@ -1493,6 +1580,7 @@ def generate_functions(payoff_matrix_1, payoff_matrix_2=np.array([]), symbs=np.a
     # Wahrscheinlichkeiten für Spieler 1 und Auszahlung für Spieler 2
     for i in range(payoff_matrix_2.shape[0]):
         temp = 0
+        print(payoff_matrix_2)
         for j in range(payoff_matrix_2.shape[1]):
             temp += payoff_matrix_2[i][j]*symbs[0][0][j]
         temp -= 1*symbs[0][1]
@@ -1629,11 +1717,14 @@ def format_solution(solution_array):
 
 # Callable Methode um Zwischenschritte des Simplex abzufangen
 class SolvingSteps:
-    """
+    """Macht die Zwischentableaus des Simplex-Algorithmus auswertbar
 
 
     """
     def __init__(self):
+        """Konstruktor, der jedem Objekt der Klasse die Instanzvariablen initiiert
+
+        """
         self.__array_xk = []
         self.__array_kwargs = []
         # print('Initialisiert mit:')
@@ -1643,6 +1734,14 @@ class SolvingSteps:
         # print(self.__array_kwargs)
 
     def save_values(self, xk, **kwargs):
+        """Methode um die an die übergebenen Parameter in den Instanzvariablen zu speichern
+
+        :param xk: Zwischentableau des Simplex-Algorithmus
+        :type xk: list
+        :param kwargs: Dictionary mit zusätzlichen Informationen zum Simplex-Zwischenschritt
+        :type kwargs: dict
+        :returns:
+        """
         # print('Speichern:')
         # print(xk)
         # print(self.__array_xk)
@@ -1670,8 +1769,18 @@ class SolvingSteps:
 
     # Funktion um Dictionaries auszugeben
     def get_array_kwargs(self):
+        """
+
+        :returns: Die als Listen-Instanzvariable gespeicherten Dictionairies
+        :rtype: list
+        """
         return self.__array_kwargs
 
     # Funktion um Parameter des Simplex abzufragen
     def get_array_xk(self):
+        """
+
+        :returns: Die als Listen-Instanzvariable gespeicherten Zwischentableaus
+        :rtype: list
+        """
         return self.__array_xk
