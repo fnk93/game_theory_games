@@ -1,22 +1,14 @@
-"""game_learning URL Configuration
+from django.conf.urls import url
 
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/1.10/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  url(r'^$', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  url(r'^$', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.conf.urls import url, include
-    2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
-"""
-from django.conf.urls import url, include
-from django.contrib import admin
+from . import views
 
 urlpatterns = [
-    url(r'^gaming/', include('gaming.urls')),
-    url(r'^admin/', admin.site.urls),
+    url(r'^$', views.index, name='index'),
+    #url(r'^index/$', views.index, name='index'),
+    url(r'^game/$', views.game, name='game'),
+    url(r'^solution/$', views.solution, name='solution'),
+    url(r'^pdf_game/$', views.pdf_game, name='pdf_game'),
+    url(r'^pdf_solution/$', views.pdf_solution, name='pdf_solution'),
+    url(r'^latex_game/$', views.latex_game, name='latex_game'),
+    url(r'^latex_solution/$', views.latex_solution, name='latex_solution'),
 ]

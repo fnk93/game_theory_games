@@ -5,6 +5,7 @@
     <orderEntry type="jdk" jdkName="Python 3.6.0 (F:\ProgramData\Anaconda3\python.exe)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="game_learning" />
+    <orderEntry type="module" module-name="game_learning" />
   </component>
   <component name="TestRunnerService">
     <option name="projectConfiguration" value="Nosetests" />

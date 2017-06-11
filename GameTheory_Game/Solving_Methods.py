@@ -3,7 +3,6 @@ from scipy import optimize
 from sympy.solvers import solve
 from sympy import nsimplify, symbols, Symbol
 from copy import deepcopy
-from random import randrange
 from itertools import chain, combinations, product
 
 
@@ -440,23 +439,23 @@ def get_calculations_latex(matrix1, matrix2=np.array([]), zerosum=False, bay1=0,
     sol_texpure.append(guarantee[0])
     solution += 'Um die Bayes-Strategie zu ermitteln muss die maximale Auszahlung bei gegebener ' + \
     'Gegnerstrategie betrachtet werden.' + '\n'
-    solution += 'Für Spieler 1 müssen deshalb bei gegebener Strategie ' + str(bay2+1) + \
+    solution += 'Für Spieler 1 müssen deshalb bei gegebener Strategie ' + str(bay1+1) + \
                 ' von Spieler 2 die Auszahlungen ' + str(watch_1) + ' betrachtet werden.' + '\n'
     print(bayes_1[0])
     solution += 'Hieraus ergeben sich die Bayes-Strategie(n): ' + str(bayes_1[0]+1) + '\n'
-    context['bay1'] = str(bay2+1)
+    context['bay1'] = str(bay1+1)
     context['pay1'] = str(watch_1)
     context['baystrat1'] = str(bayes_1[0]+1)
-    sol_texpure.append(bay2+1)
+    sol_texpure.append(bay1+1)
     sol_texpure.append(watch_1)
     sol_texpure.append(bayes_1[0]+1)
     solution += 'Für Spieler 2 müssen deshalb bei gegebener Strategie ' + str(
-        bay1 + 1) + ' von Spieler 1 die Auszahlungen ' + str(watch_2) + ' betrachtet werden.' + '\n'
+        bay2 + 1) + ' von Spieler 1 die Auszahlungen ' + str(watch_2) + ' betrachtet werden.' + '\n'
     solution += 'Hieraus ergeben sich die Bayes-Strategie(n): ' + str(bayes_2[0]+1) + '\n'
-    context['bay2'] = str(bay1 + 1)
+    context['bay2'] = str(bay2 + 1)
     context['pay2'] = str(watch_2)
     context['baystrat2'] = str(bayes_2[0] + 1)
-    sol_texpure.append(bay1 + 1)
+    sol_texpure.append(bay2 + 1)
     sol_texpure.append(watch_2)
     sol_texpure.append(bayes_2[0] + 1)
     solution += 'Das Erfüllen der Optimalitätsbedingung der Strategiekombinationen über beide Spieler ' + \
