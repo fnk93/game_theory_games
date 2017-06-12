@@ -41,7 +41,7 @@ def get_payoff_diagramm(payoff_matrix_1, payoff_matrix_2=np.array([]), mode=0):
         for columns in range(payoff_matrix_1.shape[1]):
             if [payoff_matrix_1[lines][columns], payoff_matrix_2[lines][columns]] not in payoff_points:
                 payoff_points.append([payoff_matrix_1[lines][columns], payoff_matrix_2[lines][columns]])
-                print(payoff_matrix_1[lines][columns], payoff_matrix_2[lines][columns])
+                #print(payoff_matrix_1[lines][columns], payoff_matrix_2[lines][columns])
 
     # Sort payoff_points
 
@@ -62,7 +62,7 @@ def get_payoff_diagramm(payoff_matrix_1, payoff_matrix_2=np.array([]), mode=0):
 
         del min_distance[:]
 
-    print(payoff_points)
+    #print(payoff_points)
     if mode == 1:
         # outline = ConvexHull(payoff_points, incremental=True)
         payoff_points = np.asarray(payoff_points)
@@ -78,8 +78,8 @@ def get_payoff_diagramm(payoff_matrix_1, payoff_matrix_2=np.array([]), mode=0):
         player_2_payoff = 0
         for lines in range(payoff_matrix_1.shape[0]):
             for columns in range(payoff_matrix_1.shape[1]):
-                print(lines, columns)
-                print(payoff_matrix_1[lines][columns])
+                #print(lines, columns)
+                #print(payoff_matrix_1[lines][columns])
                 if lines > 0 and columns > 0:
                     player_1_payoff += payoff_matrix_1[lines][columns] * (1 - p[0]) * (1 - q[0])
                     player_2_payoff += payoff_matrix_2[lines][columns] * (1 - p[0]) * (1 - q[0])
@@ -96,7 +96,7 @@ def get_payoff_diagramm(payoff_matrix_1, payoff_matrix_2=np.array([]), mode=0):
         return payoff_points, [player_1_payoff, player_2_payoff]
     payoff_points.append(payoff_points[0])
     payoff_points = np.asarray(payoff_points)
-    print('test', payoff_points)
+    #print('test', payoff_points)
     return [payoff_points]
     # return payoff_player_1, payoff_player_2, payoff_points
 
@@ -166,7 +166,7 @@ def ggw(payoff_matrix_1, payoff_matrix_2=np.array([])):
         dominated_temp = False
         for lines in range(np.asarray(payoff_matrix_1).shape[0]):
             for columns in range(np.asarray(payoff_matrix_2).shape[1]):
-                print(lines, columns, ggws)
+                #print(lines, columns, ggws)
                 if payoff_matrix_1[lines][columns] >= result[ggws][0] and \
                                 payoff_matrix_2[lines][columns] >= result[ggws][1]:
                     if payoff_matrix_1[lines][columns] != result[ggws][0] and \
@@ -468,7 +468,7 @@ def get_calculations_latex(matrix1, matrix2=np.array([]), zerosum=False, bay1=0,
     'Gegnerstrategie betrachtet werden.' + '\n'
     solution += 'Für Spieler 1 müssen deshalb bei gegebener Strategie ' + str(bay1+1) + \
                 ' von Spieler 2 die Auszahlungen ' + str(watch_1) + ' betrachtet werden.' + '\n'
-    print(bayes_1[0])
+    #print(bayes_1[0])
     solution += 'Hieraus ergeben sich die Bayes-Strategie(n): ' + str(bayes_1[0]+1) + '\n'
     context['bay1'] = str(bay1+1)
     context['pay1'] = str(watch_1)
@@ -1381,7 +1381,7 @@ def get_guaranteed_payoff(payoff_matrix_1, payoff_matrix_2=np.array([]), mode=0)
     """
     if not payoff_matrix_2.size:
         payoff_matrix_2 = payoff_matrix_1*-1
-        print('payoff2 generiert')
+        #print('payoff2 generiert')
     payoff = list()
     payoff2 = set()
     dominated = False
@@ -1632,7 +1632,7 @@ def get_possible_solutions(payoff_matrix_1, payoff_matrix_2=np.array([]), sym=np
         sym = generate_symbols(payoff_matrix_1)
     if not funcs.size:
         funcs = generate_functions(payoff_matrix_1, payoff_matrix_2)
-    print(funcs)
+    #print(funcs)
     dominated_strategies1, dominated_strategies2 = get_dominated_strategies(payoff_matrix_1, payoff_matrix_2)
     #print(dominated_strategies1, dominated_strategies2)
     #print(sym[0][0])
@@ -1982,7 +1982,7 @@ def generate_functions(payoff_matrix_1, payoff_matrix_2=np.array([]), symbs=np.a
     # Wahrscheinlichkeiten für Spieler 1 und Auszahlung für Spieler 2
     for i in range(payoff_matrix_2.shape[0]):
         temp = 0
-        print(payoff_matrix_2)
+        #print(payoff_matrix_2)
         for j in range(payoff_matrix_2.shape[1]):
             temp += payoff_matrix_2[i][j]*symbs[0][0][j]
         temp -= 1*symbs[0][1]
