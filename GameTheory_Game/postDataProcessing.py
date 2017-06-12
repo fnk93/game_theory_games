@@ -26,7 +26,7 @@ def reconstruct_matrix(post_data):
             new_arr.append(deepcopy(temp))
             first_digit = False
             end_found = False
-            temp.clear()
+            del temp[:]
 
     data = deepcopy(new_arr)
     return data, new_arr

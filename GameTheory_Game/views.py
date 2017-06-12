@@ -446,7 +446,7 @@ def latex_game(request):
                 'mixed'] = r'Und folgendes soll für gemischte Strategien ermittelt werden:\\ \begin{itemize} \item Optimale Strategienkombination der beiden Spieler inklusive Auszahlung \end{itemize}'
         else:
             context['mixed'] = ''
-        response = HttpResponse(render(request, template2, context), content_type='application/force-download')
+        response = HttpResponse(render(request, template2, context), content_type='application/x.tex')
         response['Content-Disposition'] = 'attachment; filename="aufgabe.tex"'
     return response
 
@@ -530,7 +530,7 @@ def latex_solution(request):
     template = 'template.tex'
     response2 = render(request, template, context)
     if request.POST.get('tex'):
-        response = HttpResponse(response2, content_type='application/force-download')
+        response = HttpResponse(response2, content_type='application/x.tex')
         response['Content-Disposition'] = 'attachment; filename="solve.tex"'
     return response
 
