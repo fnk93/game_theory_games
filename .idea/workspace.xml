@@ -1,15 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="a4169e96-57d3-41d9-b61a-12c5bd2a0918" name="Default" comment="Lösungsfunktion abgeschlossen">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/game_theory_games.iml" afterPath="$PROJECT_DIR$/.idea/game_theory_games.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/modules.xml" afterPath="$PROJECT_DIR$/.idea/modules.xml" />
+    <list default="true" id="a4169e96-57d3-41d9-b61a-12c5bd2a0918" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/GameTheory_Game/ConstantSumGame.py" afterPath="$PROJECT_DIR$/GameTheory_Game/ConstantSumGame.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/GameTheory_Game/Game.py" afterPath="$PROJECT_DIR$/GameTheory_Game/Game.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/GameTheory_Game/Solving_Methods.py" afterPath="$PROJECT_DIR$/GameTheory_Game/Solving_Methods.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/GameTheory_Game/tests.py" afterPath="$PROJECT_DIR$/GameTheory_Game/tests.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -23,7 +17,7 @@
     <SUITE FILE_PATH="coverage/game_theory_games_2$test.coverage" NAME="test Coverage Results" MODIFIED="1495839020685" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/game_theory_games_2$Nosetests_in_test2_py.coverage" NAME="Nosetests in test2.py Coverage Results" MODIFIED="1495833606311" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/game_theory_games_2$Solving_Methods.coverage" NAME="Solving_Methods Coverage Results" MODIFIED="1496870985194" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/GameTheory_Game" />
-    <SUITE FILE_PATH="coverage/game_theory_games$tests.coverage" NAME="tests Coverage Results" MODIFIED="1497257673208" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/GameTheory_Game" />
+    <SUITE FILE_PATH="coverage/game_theory_games$tests.coverage" NAME="tests Coverage Results" MODIFIED="1497258424401" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/GameTheory_Game" />
     <SUITE FILE_PATH="coverage/game_theory_games$Game.coverage" NAME="Game Coverage Results" MODIFIED="1495791821179" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/GameTheory_Game" />
     <SUITE FILE_PATH="coverage/game_theory_games_2$manage.coverage" NAME="manage Coverage Results" MODIFIED="1495804805580" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../game_theory_app" />
     <SUITE FILE_PATH="coverage/game_theory_games_2$tests.coverage" NAME="tests Coverage Results" MODIFIED="1497213461990" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/GameTheory_Game" />
@@ -41,8 +35,8 @@
       <file leaf-file-name="Solving_Methods.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/GameTheory_Game/Solving_Methods.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="116">
-              <caret line="882" column="65" lean-forward="false" selection-start-line="882" selection-start-column="65" selection-end-line="882" selection-end-column="65" />
+            <state relative-caret-position="208">
+              <caret line="895" column="63" lean-forward="false" selection-start-line="895" selection-start-column="63" selection-end-line="895" selection-end-column="63" />
               <folding />
             </state>
           </provider>
@@ -85,6 +79,7 @@
       <find>get_cal</find>
       <find>indet</find>
       <find>'indet'</find>
+      <find>'lgs_nonsupport_lgs</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -752,7 +747,14 @@
       <option name="project" value="LOCAL" />
       <updated>1497098177705</updated>
     </task>
-    <option name="localTasksCounter" value="20" />
+    <task id="LOCAL-00020" summary="Response-Dictionary aufgefrischt und kein Löschen der Objekt-Variablen der Spiele mehr möglich">
+      <created>1497257772820</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1497257772821</updated>
+    </task>
+    <option name="localTasksCounter" value="21" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -842,7 +844,8 @@
     <MESSAGE value="Code-Bereinigungen und Anpassung der Listen-Generierung der Nash-Gleichgewichte in gemischten Strategien zum besseren Verständnis" />
     <MESSAGE value="Fehler gefixt, Hinzufügen der Lösung zu get_calculations_latex begonnen" />
     <MESSAGE value="Lösungsfunktion abgeschlossen" />
-    <option name="LAST_COMMIT_MESSAGE" value="Lösungsfunktion abgeschlossen" />
+    <MESSAGE value="Response-Dictionary aufgefrischt und kein Löschen der Objekt-Variablen der Spiele mehr möglich" />
+    <option name="LAST_COMMIT_MESSAGE" value="Response-Dictionary aufgefrischt und kein Löschen der Objekt-Variablen der Spiele mehr möglich" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1006,8 +1009,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/GameTheory_Game/Solving_Methods.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="116">
-          <caret line="882" column="65" lean-forward="false" selection-start-line="882" selection-start-column="65" selection-end-line="882" selection-end-column="65" />
+        <state relative-caret-position="208">
+          <caret line="895" column="63" lean-forward="false" selection-start-line="895" selection-start-column="63" selection-end-line="895" selection-end-column="63" />
           <folding />
         </state>
       </provider>

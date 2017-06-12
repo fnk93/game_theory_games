@@ -584,7 +584,7 @@ def get_calculations_latex(matrix1, matrix2=np.array([]), zerosum=False, bay1=0,
                 context['solvemixed'] += r'Die Lösungsschritte des Simplexalgorithmus für Spieler 2 sehen nun wie ' \
                                          r'folgt aus:\\ ' + r' \begin{gather*}'
                 #context['solvemixed'] += r'\begin{gather*}'
-                response['simplex_steps'] = simplex[1][1:][0]
+                #response['simplex_steps'] = simplex[1][1:][0]
                 for step in simplex[1][1:][0]:
                     temp_arr = np.asarray(format_solution(step['tableau']))
                     solution += str(temp_arr) + '\n'
@@ -840,8 +840,9 @@ def get_calculations_latex(matrix1, matrix2=np.array([]), zerosum=False, bay1=0,
                                         'und Lösungen betrachtet: \n'
                             context['solvemixed'] += r'Für die Auszahlung von Spieler 1 werden somit folgende ' \
                                                      r'Gleichungssysteme und Lösungen betrachtet: \\'
-                            response['lgs_nonsupport_lgs_player1'].append(mixed_ggw[0][3][1])
+
                             game_val_mixed_1 = []
+                            strats = []
                             for notsupportstrat in mixed_ggw[0][3][1]:
                                 for eq in notsupportstrat[0]:
                                     solution += str(eq) + ' = 0\n'
@@ -857,6 +858,8 @@ def get_calculations_latex(matrix1, matrix2=np.array([]), zerosum=False, bay1=0,
                                                          r'Support-Strategien für Spieler 1 keine ' \
                                                          r'Auszahlungsverbesserung hervorruft.\\'
                                 game_val_mixed_1.append(notsupportstrat[1])
+                                strats.append(notsupportstrat[0])
+                            response['lgs_nonsupport_lgs_player1'].append(strats)
                             response['lgs_nonsupport_result_player1'].append(game_val_mixed_1)
                         else:
                             responses.append(False)
@@ -872,9 +875,9 @@ def get_calculations_latex(matrix1, matrix2=np.array([]), zerosum=False, bay1=0,
                                         'und Lösungen betrachtet: \n'
                             context['solvemixed'] += r'Für die Auszahlung von Spieler 2 werden somit folgende ' \
                                                      r'Gleichungssysteme und Lösungen betrachtet: \\'
-                            response['lgs_nonsupport_lgs_player2'].append(mixed_ggw[0][3][0])
-                            game_val_mixed_2 = []
 
+                            game_val_mixed_2 = []
+                            strats = []
                             for notsupportstrat in mixed_ggw[0][3][0]:
                                 for eq in notsupportstrat[0]:
                                     solution += str(eq) + ' = 0\n'
@@ -890,6 +893,8 @@ def get_calculations_latex(matrix1, matrix2=np.array([]), zerosum=False, bay1=0,
                                                          r'Support-Strategien für Spieler 2 keine ' \
                                                          r'Auszahlungsverbesserung hervorruft.\\'
                                 game_val_mixed_2.append(notsupportstrat[1])
+                                strats.append(notsupportstrat[0])
+                            response['lgs_nonsupport_lgs_player2'].append(strats)
                             response['lgs_nonsupport_result_player2'].append(game_val_mixed_2)
                         else:
                             responses.append(False)
