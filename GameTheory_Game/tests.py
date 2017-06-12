@@ -424,6 +424,10 @@ for i in range(len(new_test)):
 
 a = deepcopy(new_arr)
 print(a)
+
+test = ZerosumGame()
+sol = get_calculations_latex(test.matrix, test.matrix2, zerosum=True, mode=1, rand_bays=True)
+print(sol)
 # a = [[abc.matrix[lines][columns] for lines in range(abc.matrix.shape[0])] for columns in range(abc.matrix.shape[1])]
 # print(a)
 # print(type(abc.matrix))

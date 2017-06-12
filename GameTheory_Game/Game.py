@@ -18,10 +18,7 @@ class Game:
     def setmatrix(self, matrix):
         self.__matrix = matrix
 
-    def delmatrix(self):
-        del self.__matrix
-
-    matrix = property(getmatrix, setmatrix, delmatrix, "Matrix Spieler 1")
+    matrix = property(getmatrix, setmatrix, None, "Matrix Spieler 1")
 
     def getmatrix2(self):
         return self.__matrix2
@@ -29,10 +26,7 @@ class Game:
     def setmatrix2(self, matrix):
         self.__matrix2 = matrix
 
-    def delmatrix2(self):
-        del self.__matrix2
-
-    matrix2 = property(getmatrix2, setmatrix2, delmatrix2, "Matrix Spieler 2")
+    matrix2 = property(getmatrix2, setmatrix2, None, "Matrix Spieler 2")
 
     def getlines(self):
         return self.__lin
@@ -41,10 +35,7 @@ class Game:
         self.__lin = lin
         self.fill_matrix()
 
-    def dellines(self):
-        del self.__lin
-
-    lines = property(getlines, setlines, dellines, "Anzahl Zeilen")
+    lines = property(getlines, setlines, None, "Anzahl Zeilen")
 
     def getcolumns(self):
         return self.__col
@@ -53,32 +44,25 @@ class Game:
         self.__col = col
         self.fill_matrix()
 
-    def delcolumns(self):
-        del self.__col
-
-    cols = property(getcolumns, setcolumns, delcolumns, "Anzahl Spalten")
+    cols = property(getcolumns, setcolumns, None, "Anzahl Spalten")
 
     def getmaxint(self):
         return self.__maximum_int
 
     def setmaxint(self, max_int):
         self.__maximum_int = max_int
+        self.fill_matrix()
 
-    def delmaxint(self):
-        del self.__maximum_int
-
-    maxint = property(getmaxint, setmaxint, delmaxint, "Maximal-Wert")
+    maxint = property(getmaxint, setmaxint, None, "Maximal-Wert")
 
     def getminint(self):
         return self.__minimum_int
 
     def setminint(self, min_int):
         self.__minimum_int = min_int
+        self.fill_matrix()
 
-    def delminint(self):
-        del self.__minimum_int
-
-    minint = property(getminint, setminint, delminint, "Minimal-Wert")
+    minint = property(getminint, setminint, None, "Minimal-Wert")
 
     def fill_matrix(self):
         # Nicht kooperative 2-Personenspiele
