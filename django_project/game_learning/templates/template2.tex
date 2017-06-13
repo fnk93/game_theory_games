@@ -1,0 +1,36 @@
+{% autoescape on %}
+\documentclass{article}
+\usepackage[ngerman]{babel}
+\usepackage{fontenc,inputenc,graphicx,makeidx,fancyhdr,array,colortbl,xcolor,longtable,xspace}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\nonstopmode
+\begin{document}
+{{ content }}
+Bei der gegebenen Spielmatrix eines Zwei-Personennullsummenspiels:\\
+\begin{gather*}
+\begin{pmatrix*}
+{% for row in gamematrix %}{% for col in row %}& {{col}} &{% endfor %}\\{% endfor %}
+\end{pmatrix*}
+\end{gather*}
+Sollen folgende Kennzahlen f\"ur reine Strategien ermittelt werden:\\
+\begin{itemize}
+\item Maximin-Strategien beider Spieler
+\item Indeterminiertheitsintervall
+\item Die unteren Spielwerte f\"ur beide Spieler
+\item Garantiepunkt
+\item Bayes-Strategie von Spieler 1 gegen\"uber Strategie {{ bay1 }} von Spieler 2
+\item Bayes-Strategie von Spieler 2 gegen\"uber Strategie {{ bay2 }} von Spieler 1
+\item Gleichgewichtspunkt und zugeh\"orige Auszahlungen f\"ur beide Spieler
+\end{itemize}
+{% if mixed > 0 %}
+Und folgende Kennzahlen f\"ur gemischte Strategien ermittelt werden:\\
+\begin{itemize}
+\item Gleichgewichtspunkt des Spiels
+\item Strategienkombination im Gleichgewicht
+\item Auszahlungen f\"ur die Spieler
+\end{itemize}
+{% endif %}
+\end{document}
+{% endautoescape %}

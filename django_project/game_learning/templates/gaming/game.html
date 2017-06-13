@@ -1,0 +1,88 @@
+{% extends 'gaming/base.html' %}
+
+{% block title %}{{ name }}{% endblock %}
+
+{% block buttons %}
+    {% comment %}
+    <form action="{% url "pdf_solution" %}" method="post">
+        {% csrf_token %}
+        <input id="mat1" type="hidden" name="mat1" value="{{ output }}">
+        <input id="mat2" type="hidden" name="mat2" value="{{ output2 }}">
+        <input id="mod" type="hidden" name="mod" value="{{ modus }}">
+        <input id="ba1" type="hidden" name="ba1" value="{{ bay1 }}">
+        <input id="ba2" type="hidden" name="ba2" value="{{ bay2 }}">
+        <input type="submit" value="PDF-Lösung herunterladen" name="pdf">
+    </form>
+    {% endcomment %}
+    <div class="buttonHolder">
+    <form action="{% url "latex_solution" %}" method="post" class="floated">
+        {% csrf_token %}
+        <input id="mat1" type="hidden" name="mat1" value="{{ output }}">
+        <input id="mat2" type="hidden" name="mat2" value="{{ output2 }}">
+        <input id="mod" type="hidden" name="mod" value="{{ modus }}">
+        <input id="ba1" type="hidden" name="ba1" value="{{ bay1 }}">
+        <input id="ba2" type="hidden" name="ba2" value="{{ bay2 }}">
+        <input type="submit" value="Tex-Lösung herunterladen" name="tex">
+    </form>
+    {% comment %}
+    <form action="{% url "pdf_game" %}" method="post">
+        {% csrf_token %}
+        <input id="mat1" type="hidden" name="mat1" value="{{ output }}">
+        <input id="mat2" type="hidden" name="mat2" value="{{ output2 }}">
+        <input id="mod" type="hidden" name="mod" value="{{ modus }}">
+        <input id="ba1" type="hidden" name="ba1" value="{{ bay1 }}">
+        <input id="ba2" type="hidden" name="ba2" value="{{ bay2 }}">
+        <input id="game" type="hidden" name="game" value="{{ game }}">
+        <input type="submit" value="PDF-Aufgabe herunterladen" name="pdf2">
+    </form>
+    {% endcomment %}
+    <form action="{% url "latex_game" %}" method="post" class="floated">
+        {% csrf_token %}
+        <input id="mat1" type="hidden" name="mat1" value="{{ output }}">
+        <input id="mat2" type="hidden" name="mat2" value="{{ output2 }}">
+        <input id="mod" type="hidden" name="mod" value="{{ modus }}">
+        <input id="ba1" type="hidden" name="ba1" value="{{ bay1 }}">
+        <input id="ba2" type="hidden" name="ba2" value="{{ bay2 }}">
+        <input type="submit" value="Tex-Aufgabe herunterladen" name="tex2">
+    </form>
+    <form action="{% url "solution" %}" method="post" class="floated">
+        {% csrf_token %}
+        <input id="mat1" type="hidden" name="mat1" value="{{ output }}">
+        <input id="mat2" type="hidden" name="mat2" value="{{ output2 }}">
+        <input id="mod" type="hidden" name="mod" value="{{ modus }}">
+        <input id="ba1" type="hidden" name="ba1" value="{{ bay1 }}">
+        <input id="ba2" type="hidden" name="ba2" value="{{ bay2 }}">
+        <input type="submit" value="Aufgabe lösen" name="solve">
+    </form>
+    </div>
+    <br class="clearFloat">
+{% endblock %}
+
+{% block body_block %}
+    <p>Lösen Zwei-Personennullsummenspiel mit folgender Auszahlungsmatrix für Spieler 1:</p>
+    <table class="matrix">
+      {% for row in game.matrix %}
+          <tr>
+          {%  for col in row %}
+              <td>{{ col }}</td>
+          {% endfor %}
+          </tr>
+      {% endfor %}
+    </table>
+    <p>Bezüglich:</p>
+    <ul>
+        {% for step in work %}
+            <li>{{ step }}</li>
+        {% endfor %}
+    </ul>
+    <p>in reinen Strategien</p>
+    {% if modus == 1 %}
+        <p>und bezüglich:</p>
+        <ul>
+            {% for step in work_mixed %}
+                <li>{{ step }}</li>
+            {% endfor %}
+        </ul>
+        <p>in gemischten Strategien</p>
+    {% endif %}
+{% endblock %}

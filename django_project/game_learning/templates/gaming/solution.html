@@ -1,0 +1,498 @@
+{% extends 'gaming/base.html' %}
+
+{% block title %}{{ name }}{% endblock %}
+
+{% block buttons %}
+    {% comment %}
+    <form action="{% url "pdf_solution" %}" method="post">
+        {% csrf_token %}
+        <input id="mat1" type="hidden" name="mat1" value="{{ output }}">
+        <input id="mat2" type="hidden" name="mat2" value="{{ output2 }}">
+        <input id="mod" type="hidden" name="mod" value="{{ modus }}">
+        <input id="ba1" type="hidden" name="ba1" value="{{ bay1 }}">
+        <input id="ba2" type="hidden" name="ba2" value="{{ bay2 }}">
+        <input type="submit" value="PDF-Lösung herunterladen" name="pdf">
+    </form>
+    {% endcomment %}
+    <div class="buttonHolder">
+    <form action="{% url "latex_solution" %}" method="post" class="floated">
+        {% csrf_token %}
+        <input id="mat1" type="hidden" name="mat1" value="{{ output }}">
+        <input id="mat2" type="hidden" name="mat2" value="{{ output2 }}">
+        <input id="mod" type="hidden" name="mod" value="{{ modus }}">
+        <input id="ba1" type="hidden" name="ba1" value="{{ bay1 }}">
+        <input id="ba2" type="hidden" name="ba2" value="{{ bay2 }}">
+        <input type="submit" value="Tex-Lösung herunterladen" name="tex">
+    </form>
+    {% comment %}
+    <form action="{% url "pdf_game" %}" method="post">
+        {% csrf_token %}
+        <input id="mat1" type="hidden" name="mat1" value="{{ output }}">
+        <input id="mat2" type="hidden" name="mat2" value="{{ output2 }}">
+        <input id="mod" type="hidden" name="mod" value="{{ modus }}">
+        <input id="ba1" type="hidden" name="ba1" value="{{ bay1 }}">
+        <input id="ba2" type="hidden" name="ba2" value="{{ bay2 }}">
+        <input id="game" type="hidden" name="game" value="{{ game }}">
+        <input type="submit" value="PDF-Aufgabe herunterladen" name="pdf2">
+    </form>
+    {% endcomment %}
+    <form action="{% url "latex_game" %}" method="post" class="floated">
+        {% csrf_token %}
+        <input id="mat1" type="hidden" name="mat1" value="{{ output }}">
+        <input id="mat2" type="hidden" name="mat2" value="{{ output2 }}">
+        <input id="mod" type="hidden" name="mod" value="{{ modus }}">
+        <input id="ba1" type="hidden" name="ba1" value="{{ bay1 }}">
+        <input id="ba2" type="hidden" name="ba2" value="{{ bay2 }}">
+        <input type="submit" value="Tex-Aufgabe herunterladen" name="tex2">
+    </form>
+    <form action="{% url "solution" %}" method="post" class="floated">
+        {% csrf_token %}
+        <input id="mat1" type="hidden" name="mat1" value="{{ output }}">
+        <input id="mat2" type="hidden" name="mat2" value="{{ output2 }}">
+        <input id="mod" type="hidden" name="mod" value="{{ modus }}">
+        <input id="ba1" type="hidden" name="ba1" value="{{ bay1 }}">
+        <input id="ba2" type="hidden" name="ba2" value="{{ bay2 }}">
+        <input type="submit" value="Aufgabe lösen" name="solve">
+    </form>
+    </div>
+    <br class="clearFloat">
+{% endblock %}
+{% block solution %}
+    <p>
+        Für das Zwei-Personennullsummenspiel ergeben sich bei gegebener Auszahlungsmatrix von Spieler 1
+    </p>
+    <table class="matrix">
+      {% for row in dict.matrix1 %}
+          <tr>
+          {%  for col in row %}
+              <td>
+                  {{ col }}
+              </td>
+          {% endfor %}
+          </tr>
+      {% endfor %}
+    </table>
+    <p>
+        folgende Berechnungen:
+    </p>
+    <p>
+        Maximin-Strategie(n) von Spieler 1: {{ dict.maximin1 }}
+    </p>
+    <p>
+        Maximin-Strategie(n) von Spieler 2: {{ dict.maximin2 }}
+    </p>
+    <p>
+        Indeterminiertheitsintervall: {{ dict.indet_intervall }}
+    </p>
+    {% if dict.is_determined %}
+        <p>
+            Weshalb das Spiel determiniert ist.
+        </p>
+    {% else %}
+        <p>
+            Weshalb das Spiel indeterminiert ist.
+        </p>
+    {% endif %}
+    <p>
+        Unterer Spielwert Spieler 1: {{ dict.lower_value1 }}
+    </p>
+    <p>
+        Unterer Spielwert Spieler 2: {{ dict.lower_value2 }}
+    </p>
+    <p>
+        Garantiepunkt in reinen Strategien: {{ dict.guarantee_point }}
+    </p>
+    <p>
+        Bei gespielter Strategie {{ dict.baystrats1strat2 }} von Spieler 2, müssen für Spieler 1 <br>
+        folgende Auszahlungen betrachtet werden:
+    </p>
+    <p>
+        {{ dict.baystrats1watch1 }}
+    </p>
+    <p>
+        Hieraus ergeben sich die Bayes-Strategien von Spieler 1 gegenüber Strategie {{ dict.baystrats1strat2 }}: {{ dict.baystrats1 }}
+    </p>
+    <p>
+        Bei gespielter Strategie {{ dict.baystrats2strat1 }} von Spieler 1, müssen für Spieler 2 folgende Auszahlungen betrachtet werden:
+    </p>
+    <p>
+        {{ dict.baystrats2watch2 }}
+    </p>
+    <p>
+        Hieraus ergeben sich die Bayes-Strategien von Spieler 2 gegenüber Strategie {{ dict.baystrats2strat1 }}: {{ dict.baystrats2 }}
+    </p>
+    <p>
+        Die Erfüllung der Optimalitätsbedingung sieht über beide Spieler wie folgt aus:
+    </p>
+    <table class="matrix">
+      {% for row in dict.nggw_pure_evaluation %}
+          <tr>
+          {%  for col in row %}
+              <td>
+                  {{ col }}
+              </td>
+          {% endfor %}
+          </tr>
+      {% endfor %}
+    </table>
+    <p>
+        Die Erfüllung der Optimalitätsbedingung sieht für Spieler 1 wie folgt aus:
+    </p>
+    <table class="matrix">
+      {% for row in dict.nggw_pure_evaluation1 %}
+          <tr>
+          {%  for col in row %}
+              <td>
+                  {{ col }}
+              </td>
+          {% endfor %}
+          </tr>
+      {% endfor %}
+    </table>
+    <p>
+        Die Erfüllung der Optimalitätsbedingung sieht für Spieler 2 wie folgt aus:
+    </p>
+    <table class="matrix">
+      {% for row in dict.nggw_pure_evaluation2 %}
+          <tr>
+          {%  for col in row %}
+              <td>
+                  {{ col }}
+              </td>
+          {% endfor %}
+          </tr>
+      {% endfor %}
+    </table>
+    {% if dict.pure_nggw %}
+        <p>
+            Darum existier(en) Gleichgewicht(e) mit den Strategie-Kombinationen:
+        </p>
+        <p>
+            {{ dict.nggw_pure }}
+        </p>
+    {% else %}
+        <p>
+            Da keine Strategien-Kombination, sowohl für Spieler 1, als auch für Spieler 2 optimal ist, existieren <br>
+            keine Nash-Gleichgewichte in reinen Strategien.
+        </p>
+    {% endif %}
+
+    {% if dict.evaluate_mixed %}
+        <p>
+            Nun werden die Gleichgewichte in gemischten Strategien gesucht:
+        </p>
+        {% if dict.zerosum %}
+            <p>
+                Da es sich um ein Zwei-Personennullsummenspiel handelt, kann das Spiel sowohl mit der Simplex-Methode, <br>
+                als auch durch die Lösung von linearen Gleichungssystemen gelöst werden.
+            </p>
+            {% if dict.c_added %}
+                <p>Um den Simplex-Algorithmus bei einem Zwei-Personennullsummenspiel anwenden zu können, darf die <br>
+                    Auszahlungsmatrix von Spieler 1 nur positiv sein. Deshalb wird die Konstante {{ dict.added_value }} zur <br>
+                    Matrix addiert, wodurch sich die Auszahlungsmatrix für Spieler 1 ergibt:
+                </p>
+                <table class="matrix">
+                  {% for row in dict.transformed_matrix %}
+                      <tr>
+                      {%  for col in row %}
+                          <td>
+                              {{ col }}
+                          </td>
+                      {% endfor %}
+                      </tr>
+                  {% endfor %}
+                </table>
+            {% else %}
+                <p>
+                    Da die Voraussetzung einer nur positiven Auszahlungsmatrix von Spieler 1 bereits erfüllt <br>
+                    ist, kann diese für die Lösung durch den Simplex-Algorithmus herangezogen werden:
+                </p>
+                <table class="matrix">
+                  {% for row in dict.matrix1 %}
+                      <tr>
+                      {%  for col in row %}
+                          <td>
+                              {{ col }}
+                          </td>
+                      {% endfor %}
+                      </tr>
+                  {% endfor %}
+                </table>
+            {% endif %}
+            <p>
+                Um die Simplex-Methode nutzen zu können, wird folgendes Start-Tableau des dualen Problems aufgestellt:
+            </p>
+            <table class="matrix">
+                {% for row in dict.first_step.0 %}
+                    <tr>
+                    {%  for col in row %}
+                        <td>
+                            {{ col }}
+                        </td>
+                    {% endfor %}
+                    </tr>
+                {% endfor %}
+            </table>
+            <p>
+                Hieraus ergeben sich folgende Simplex-Schritte mit den zugehörigen, ermittelten Pivots:
+            </p>
+            {% for step in dict.simplex_steps %}
+                <table class="matrix">
+                    {% for row in step.0 %}
+                        <tr>
+                        {%  for col in row %}
+                            <td>
+                                {{ col }}
+                            </td>
+                        {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </table>
+                {% if step.1 %}
+                    <p align="center">
+                        Pivot: {{ step.1 }}
+                    </p>
+                {% else %}
+                    <p align="center">
+                        Kein weiteres Pivot-Element gefunden.
+                    </p>
+                {% endif %}
+            {% endfor %}
+            {% if dict.c_added %}
+                <p>
+                    Da der Spielwert nicht maximiert, sondern <sup>1</sup>/<sub>G</sub> minimiert wurde und <br>
+                    die Konstante c = {{ dict.added_value }} zur ursprünglichen Auszahlungsmatrix addiert wurde, <br>
+                    muss vom Ergebnis des Simplex-Verfahrens c wieder abgezogen werden und die inverse Transformation <br>
+                    durchgeführt werden. Dadurch ergibt sich der Spielwert für Spieler 1:
+                </p>
+                <p align="center">
+                    {{ dict.game_value_simplex_player1 }}
+                </p>
+                <p>
+                    Um die Wahrscheinlichkeitsverteilung über die reinen Strategien von Spieler 2 zu erhalten, müssen die <br>
+                    Werte aus der rechten Spalte mit dem inversen Zielwert aus der rechten Spalte und der untersten Zeile <br>
+                    multipliziert werden. Dadurch ergibt sich die optimale Wahrscheinlichkeitsverteilung über die reinen <br>
+                    Strategien von Spieler 2 durch:
+                </p>
+                <p align="center">
+                    {{ dict.optimal_strategies_simplex_player2 }}
+                </p>
+                <p>
+                    Da ein Zwei-Personennullsummenspiel betrachtet wurde, ergibt sich der Spielwert für Spieler 2 zu:
+                </p>
+                <p align="center">
+                    {{ dict.game_value_simplex_player2 }}
+                </p>
+                <p>
+                    Die Dualität des Problems, erlaubt es, die optimale Strategienkombination von Spieler 1 direkt <br>
+                    aus der Zielfunktionszeile (letzte Zeile) abzulesen und ebenfalls mit dem inversen Ergebnis des <br>
+                    Simplex-Verfahrens zu multiplizieren. Hieraus ergibt sich die Strategienkombination:
+                </p>
+                <p align="center">
+                    {{ dict.optimal_strategies_simplex_player1 }}
+                </p>
+            {% else %}
+                <p>
+                    Da der Spielwert nicht maximiert, sondern <sup>1</sup>/<sub>G</sub> minimiert wurde muss <br>
+                    eine inverse Transformation durchgeführt werden. Dadurch ergibt sich der Spielwert für Spieler 1:
+                </p>
+                <p align="center">
+                    {{ dict.game_value_simplex_player1 }}
+                </p>
+                <p>
+                    Um die Wahrscheinlichkeitsverteilung über die reinen Strategien von Spieler 2 zu erhalten, müssen die <br>
+                    Werte aus der rechten Spalte mit dem inversen Zielwert aus der rechten Spalte und der untersten Zeile <br>
+                    multipliziert werden. Dadurch ergibt sich die optimale Wahrscheinlichkeitsverteilung über die reinen <br>
+                    Strategien von Spieler 2 durch:
+                </p>
+                <p align="center">
+                    {{ dict.optimal_strategies_simplex_player2 }}
+                </p>
+                <p>
+                    Da ein Zwei-Personennullsummenspiel betrachtet wurde, ergibt sich der Spielwert für Spieler 2 zu:
+                </p>
+                <p align="center">
+                    {{ dict.game_value_simplex_player2 }}
+                </p>
+                <p>
+                    Die Dualität des Problems, erlaubt es, die optimale Strategienkombination von Spieler 1 direkt <br>
+                    aus der Zielfunktionszeile (letzte Zeile) abzulesen und ebenfalls mit dem inversen Ergebnis des <br>
+                    Simplex-Verfahrens zu multiplizieren. Hieraus ergibt sich die Strategienkombination:
+                </p>
+                <p align="center">
+                    {{ dict.optimal_strategies_simplex_player1 }}
+                </p>
+            {% endif %}
+            <p>
+                Außerdem kann das Spiel auf optimale Strategien geprüft werden, indem ein lineares Gleichungssystem <br>
+                aufgestellt wird.
+            </p>
+        {% else %}
+            <p>
+                Da kein Nullsummenspiel vorliegt, können die optimalen Lösungen des Spiels nur über die Betrachtung<br>
+                von Strategie-Kombinationen unter Berücksichtigungen der Bedingungen für ein Nash-Gleichgewicht<br>
+                ermittelt werden. Hierfür müssen zunächst die linearen Gleichungssysteme des Spiels aufgestellt werden.
+            </p>
+        {% endif %}
+        <p>
+            Um den Spielwert von Spieler 1 und die optimale Strategien-Kombination von Spieler 2 zu ermitteln, <br>
+            wird folgendes Gleichungssystem gelöst:
+        </p>
+        <p>
+            <table align="center">
+            {% for row in dict.lgs_player1 %}
+                <tr><td>
+                {{ row }}
+                </td></tr>
+            {% endfor %}
+        </table>
+        </p>
+        <p>
+            Um den Spielwert von Spieler 2 und die optimale Strategien-Kombination von Spieler 1 zu ermitteln, <br>
+            wird folgendes Gleichungssystem gelöst:
+        </p>
+        <p>
+            <table align="center">
+            {% for row in dict.lgs_player2 %}
+                <tr><td>
+                {{ row }}
+                </td></tr>
+            {% endfor %}
+        </table>
+        </p>
+        <p>
+            Um nun alle optimalen Lösungen des Spiels zu finden, müssen alle Support-Mengen betrachtet werden. <br>
+            Nachfolgend werden alle Support-Mengen, die zu einem Nash-Gleichgewicht führen können aufgeführt und analysiert. <br>
+            Strikt dominierte Strategien können dabei keiner Support-Menge angehören, die zu einem Nash-Gleichgewicht<br>
+            führen soll, da sich der betroffene Spieler durch eine andere Strategie immer besser stellen kann.
+        </p>
+        {% for ggw in dict.mixed_ggw %}
+            <p>
+                Betrachten wir die Support-Menge von Spieler 1:
+            </p>
+            <p align="center">
+                {{ ggw.0.0 }}
+            </p>
+            <p>
+                und die Support-Menge von Spieler 2:
+            </p>
+            <p align="center">
+                {{ ggw.0.1 }}
+            </p>
+            <p>
+                So ergibt sich zur Bestimmung des Spielwerts von Spieler 1 und der optimalen Strategien-<br>
+                Kombination von Spieler 2 folgendes, zu lösendes, Gleichungssystem:
+            </p>
+            <p>
+            <table align="center">
+            {% for eq in ggw.2 %}
+                <tr><td>
+                {{ eq }}
+                </td></tr>
+            {% endfor %}
+            </table>
+            </p>
+            <p>
+                mit der Lösung:
+            </p>
+            <p>
+            <table align="center">
+            {% for eq in ggw.4 %}
+                <tr><td>
+                {{ eq }}
+                </td></tr>
+            {% endfor %}
+            </table>
+            </p>
+            <p>
+                Hieraus ergibt sich auch der Spielwert von Spieler 1: w = {{ ggw.5 }}
+            </p>
+            <p>
+                Und für den Spielwert von Spieler 2 und die optimale Strategien-Kombination von Spieler 1<br>
+                folgendes Gleichungssystem:
+            </p>
+            <p>
+            <table align="center">
+            {% for eq in ggw.1 %}
+                <tr><td>
+                {{ eq }}
+                </td></tr>
+            {% endfor %}
+            </table>
+            </p>
+            <p>
+                mit der Lösung:
+            </p>
+            <p>
+            <table align="center">
+            {% for eq in ggw.3 %}
+                <tr><td>
+                {{ eq }}
+                </td></tr>
+            {% endfor %}
+            </table>
+            </p>
+            <p>
+                Hieraus ergibt sich auch der Spielwert von Spieler 2: w = {{ ggw.6 }}
+            </p>
+            {% if ggw.7 %}
+                <p>
+                    Nun müssen alle reinen Strategien von Spieler 1, die nicht in der gespielten Support-Menge<br>
+                    liegen, betrachtet werden. Hierbei gilt es zu prüfen, ob bei der errechneten Strategie-Kombination<br>
+                    von Spieler 2, Spieler 1 die Möglichkeit hätte, sich eine höhere Auszahlung zu sichern.<br>
+                    Hierfür müssen die Auszahlungen aller nicht im Support liegenden reinen Strategien betrachtet<br>
+                    und hinsichtlich Auszahlung überprüft werden:
+                </p>
+                {% for notsupp in ggw.8 %}
+                    <p>
+                    <table align="center">
+                    {% for eq in notsupp.0 %}
+                        <tr><td>
+                        {{ eq }}
+                        </td></tr>
+                    {% endfor %}
+                    </table>
+                    </p>
+                    <p>
+                        Mit zugehöriger Auszahlung für Spieler 1: w = {{ notsupp.1 }}
+                        Welche geringer ist, als die, durch Spielen der Support-Menge, erzielte Auszahlung: w = {{ ggw.5 }}
+                    </p>
+                {% endfor %}
+            {% else %}
+                <p>
+                    Da für Spieler 1 alle reinen Strategien in der betrachteten Support-Menge liegen, sind keine<br>
+                    weiteren Berechnungen nötig.
+                </p>
+            {% endif %}
+            {% if ggw.9 %}
+                <p>
+                    Nun müssen alle reinen Strategien von Spieler 2, die nicht in der gespielten Support-Menge<br>
+                    liegen, betrachtet werden. Hierbei gilt es zu prüfen, ob bei der errechneten Strategie-Kombination<br>
+                    von Spieler 1, Spieler 2 die Möglichkeit hätte, sich eine höhere Auszahlung zu sichern.<br>
+                    Hierfür müssen die Auszahlungen aller nicht im Support liegenden reinen Strategien betrachtet<br>
+                    und hinsichtlich Auszahlung überprüft werden:
+                </p>
+                {% for notsupp in ggw.10 %}
+                    <p>
+                    <table align="center">
+                    {% for eq in notsupp.0 %}
+                        <tr><td>
+                        {{ eq }}
+                        </td></tr>
+                    {% endfor %}
+                    </table>
+                    </p>
+                    <p>
+                        Mit zugehöriger Auszahlung für Spieler 2: w = {{ notsupp.1 }}<br>
+                        Welche geringer ist, als die, durch Spielen der Support-Menge, erzielte Auszahlung: w = {{ ggw.6 }}
+                    </p>
+                {% endfor %}
+            {% else %}
+                <p>
+                    Da für Spieler 2 alle reinen Strategien in der betrachteten Support-Menge liegen, sind keine<br>
+                    weiteren Berechnungen nötig.
+                </p>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+
+{% load staticfiles %}
+
+<script src="{% static "jquery-3.2.1.js" %}"></script>
+
+
+
+<html>
+    <head>
+        <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+
+        <title>Spieltheorie - {% block title %}
+        Übersicht
+        {% endblock %}</title>
+    </head>
+
+    <body>
+    <h1 align="center">{{ name }}</h1>
+    <div style="display:flex;justify-content:center;align-items:center;" class="buttonHolder">
+        {% block selection %}
+            <div>
+            <form action="{% url "game" %}" method="get">
+                <label for="spielart" style="display:block;">Spielart:</label>
+                    <select name="spielart" size="10">
+                        <option selected value="0">2-Personennullsummenspiel in reinen Strategien</option>
+                        <option value="1">2-Personennullsummenspiel in gemischten Strategien</option>
+                        <option value="2">Beispielspiel 1</option>
+                        <option value="3">Beispielspiel 2</option>
+                        <option value="4">Beispielspiel 3</option>
+                        <option value="5">Beispielspiel 4</option>
+                        <option value="6">Beispielspiel 5</option>
+                        <option value="7">Beispielspiel 6</option>
+                        <option value="8">Beispielspiel 7</option>
+                        <option value="9">Beispielspiel 8</option>
+                    </select>
+                <input type="submit" value="Spiel generieren" name="generate" style="float:right;">
+            </form>
+            </div>
+        {% endblock %}
+    </div>
+    <div align="center">
+        {% block buttons %}
+
+        {% endblock %}
+    </div>
+    <div style="width:100%">
+    <div id="inner">
+
+        {% block body_block %}{% endblock %}
+    </div>
+    </div>
+    <div style="width:100%">
+    <div id="inner">
+        {% block solution %}{% endblock %}
+    </div>
+    </div>
+    </body>
+</html>

@@ -528,5 +528,41 @@ import time
 # print(solve([-4.0*q0 - 3.0*q1 - 4.0*q2 - 7.0*q3 - w, q0 + q1 + q2 + q3 - 1, q0 - 0.578947368421053, q1, q2, q3 - 0.421052631578947], dict=True, check=False, force=True))
 
 A = ZerosumGame()
+
+A.matrix = np.asarray([[-4, 5],
+                       [-1, 1],
+                       [8, -3],
+                       [10, -3]])
+A.matrix2 = A.matrix * -1
 sol = get_calculations_latex(A.matrix, zerosum=True, mode=1, rand_bays=True)
-print(sol[3]['first_step'])
+#print(sol[3]['first_step'])
+#simplex = use_simplex(A.matrix, A.matrix2)
+#print(np.array_equal(simplex[2][0], A.matrix))
+#print(simplex[2][0])
+#print(A.matrix)
+#print(sol[3])
+#print(solve_maximin_strategies(A.matrix, A.matrix2))
+#print(get_lower_values(A.matrix, A.matrix2))
+#print(sol[3]['mixed_ggw'][0][0])
+
+#for ggw in sol[3]['simplex_steps']:
+#    print(ggw)
+
+#print(sol[3]['mixed_ggw'][0][0][0])
+tempo_full = []
+simplex = use_simplex(A.matrix, A.matrix2)
+for step in simplex[1][1:][0]:
+    tempo = []
+    print(np.asarray(format_solution(step['tableau'])))
+    temp_arr = np.asarray(format_solution(step['tableau']))
+    tempo.append(temp_arr)
+    if str(step['pivot']) != '(nan, nan)':
+        tempo.append((step['pivot'][1], step['pivot'][0]))
+    else:
+        tempo.append([])
+    tempo_full.append(deepcopy(tempo))
+
+print(tempo_full)
+
+for ste in tempo_full:
+    print(ste)

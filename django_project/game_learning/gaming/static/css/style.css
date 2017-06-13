@@ -1,0 +1,57 @@
+body {
+    padding-left: 15px;
+}
+.clearFloat {
+    clear: both;
+}
+
+.floated {
+    float:left;
+    display:inline-block;
+    margin-right:5px;
+    margin-bottom: 10px;
+}
+
+.matrix {
+    position: relative;
+    display:table;
+    margin: 0 auto;
+}
+body {
+    padding: 20px;
+}
+.matrix:before, .matrix:after {
+    content: "";
+    position: absolute;
+    top: 0;
+    border: 1px solid #000;
+    width: 6px;
+    height: 100%;
+}
+.matrix:before {
+    left: -6px;
+    border-right: 0px;
+}
+.matrix:after {
+    right: -6px;
+    border-left: 0px;
+}
+.matrix td {
+    padding: 5px;
+    text-align: center;
+}
+
+
+
+.buttonHolder{
+    text-align: center;
+    vertical-align: middle;
+    display:inline-block;
+    margin-right:5px;
+    margin-bottom: 10px;
+}
+
+#inner {
+    display:table;
+    margin: 0 auto;
+}

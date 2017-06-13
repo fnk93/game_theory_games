@@ -538,12 +538,12 @@ def get_calculations_latex(matrix1, matrix2=np.array([]), zerosum=True, bay1=0, 
                                'Optimalitätsbedingung erfüllt existiert kein Gleichgewichtspunkt in reinen Strategien\\'
     context['solvemixed'] = ""
 
-    if mode > 0 and not determined:
+    if mode > 0:
         response['evaluate_mixed'] = True
     else:
         response['evaluate_mixed'] = False
 
-    if mode > 0 and not determined:
+    if mode > 0:
         context['solvemixed'] = ''
         if zerosum:
             simplex = use_simplex(matrix1, matrix2)
@@ -601,11 +601,11 @@ def get_calculations_latex(matrix1, matrix2=np.array([]), zerosum=True, bay1=0, 
                 if str(step['pivot']) != '(nan, nan)':
                     solution += 'Pivot: ' + str(step['pivot']) + '\n'
                     sol_texmixed.append(step['pivot'])
-                    tempo.append((step['pivot'][1], step['pivot'][0]))
+                    tempo.append([step['pivot'][1], step['pivot'][0]])
                     context['solvemixed'] += 'Pivot: ' + str(step['pivot']) + r'\\'
                 else:
                     sol_texmixed.append([])
-                    tempo.append((None,None))
+                    tempo.append([])
                 tempo_full.append(deepcopy(tempo))
             response['simplex_steps'] = deepcopy(tempo_full[1:])
             response['first_step'] = deepcopy(tempo_full[0])
