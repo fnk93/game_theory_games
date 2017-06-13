@@ -1465,8 +1465,8 @@ def use_simplex(payoff_matrix_1, payoff_matrix_2=np.array([])):
         payoff_matrix_2 = payoff_matrix_1*-1
     simplex_games = make_matrix_ready(payoff_matrix_1, payoff_matrix_2)
     # print('Matrizen: ', simplex_games)
-    simplex_1_solution = use_simplex_player1(simplex_games[1])
-    simplex_2_solution = use_simplex_player2(simplex_games[0])
+    simplex_1_solution = use_simplex_player(simplex_games[1], 0)
+    simplex_2_solution = use_simplex_player(simplex_games[0], 1)
 
     return [simplex_1_solution, simplex_2_solution, simplex_games]
 
@@ -1512,6 +1512,36 @@ def use_simplex_player2(simplex_game_1):
     # print('Player 2: ', c, A, b)
 
     return simplex_sol, simplex_steps, simplex_steps_2
+
+
+def use_simplex_player(simplex_game, player):
+    """
+
+    :param simplex_game: Auszahlungsmatrix des Spielers
+    :type simplex_game: ndarray
+    :param player: Spieler, dessen Wahrscheinlichkeiten ermittelt werden sollen (0 = Spieler 1 / 1 = Spieler 2)
+    :type player: int
+    :returns: Eine Liste mit der Lösung des linearen Problems, den Zwischenergebnissen und den zugeörigen \
+    Pivots und den in Brüchen formatierten Zwischentableaus
+    :rtype: list
+    """
+    if player == 0:
+        c = [1] * simplex_game.shape[0]
+        b = [-1] * simplex_game.shape[1]
+        simplex_game = simplex_game.T
+    else:
+        c = [-1] * simplex_game.shape[1]
+        b = [1] * simplex_game.shape[0]
+    a = []
+    for lines in range(simplex_game.shape[0]):
+        a.append([simplex_game[lines][columns] for columns in range(simplex_game.shape[1])])
+
+    solve_report = SolvingSteps()
+    simplex_sol = optimize.linprog(c, a, b, callback=solve_report.save_values)
+    simplex_steps = solve_report.get_array_kwargs()
+    simplex_steps2 = format_solution(solve_report.get_array_xk())
+
+    return simplex_sol, simplex_steps, simplex_steps2
 
 
 # Simplex-Verfahren für Spieler 2 anwenden

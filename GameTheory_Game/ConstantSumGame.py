@@ -17,6 +17,8 @@ class ConstantSumGame(Game):
 
     def setc(self, c):
         self.__c = c
-        self.fill_matrix()
 
-    c = property(getc, setc, None, "Konstante c für Konstantsummenspiel")
+    def delc(self):
+        del self.__c
+
+    c = property(getc, setc, delc, "Konstante c für Konstantsummenspiel")
