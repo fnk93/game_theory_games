@@ -337,7 +337,7 @@ def get_calculations_pdf(game, mode=0):
 # TODO: evtl. in Game-Klasse übernehmen
 # TODO: Simplex-Tableaus graphisch aufbereiten
 # TODO: Parametrisierung welche Aufgaben gestellt wurden
-def get_calculations_latex(matrix1, matrix2=np.array([]), zerosum=False, bay1=0, bay2=0, mode=0, rand_bays=False):
+def get_calculations_latex(matrix1, matrix2=np.array([]), zerosum=True, bay1=0, bay2=0, mode=0, rand_bays=False):
     """Erzeugt eine verwendbare Ausgabe der berechneten Kennzahlen
 
     :param matrix1: Die Auszahlungsmatrix von Spieler 1
@@ -393,13 +393,13 @@ def get_calculations_latex(matrix1, matrix2=np.array([]), zerosum=False, bay1=0,
     bs_1 = bayes_strategy(matrix1.T, bay1)
     bayes_1 = bs_1[0] # Bayes-Strategien von Spieler 1
     watch_1 = bs_1[1] # Zu betrachtende Auszahlungen von Spieler 1
-    response['baystrats1'] = bayes_1
+    response['baystrats1'] = bayes_1[0]
     response['baystrats1watch1'] = watch_1
     bs_2 = bayes_strategy(matrix2, bay2)
     bayes_2 = bs_2[0] # Bayes-Strategien von Spieler 2
     watch_2 = bs_2[1] # Zu betrachtende Auszahlungen von Spieler 2
-    response['baystrats2'] = bayes_2
-    response['baystrats2watch1'] = watch_2
+    response['baystrats2'] = bayes_2[0]
+    response['baystrats2watch2'] = watch_2
     equi = ggw(matrix1, matrix2) # Gleichgewichtspunkte in reinen Strategien
     low_values = get_lower_values(matrix1, matrix2) # Untere Spielwerte
     response['lower_value1'] = low_values[0]
@@ -413,7 +413,7 @@ def get_calculations_latex(matrix1, matrix2=np.array([]), zerosum=False, bay1=0,
     response['nggw_pure_evaluation2'] = optimals2
 
     determined = is_determined(matrix1) # Aussage, ob Spiel determiniert
-    response['ist_determined'] = determined
+    response['is_determined'] = determined
     #print(equi)
     #print('equi0')
     #print(equi[0])
@@ -543,654 +543,661 @@ def get_calculations_latex(matrix1, matrix2=np.array([]), zerosum=False, bay1=0,
         response['evaluate_mixed'] = False
 
     if mode > 0:
-        if not determined:
-            context['solvemixed'] = ''
-            if zerosum:
-                simplex = use_simplex(matrix1, matrix2)
-                if simplex[2][0].all() != matrix1.all():
-                    response['is_reduced'] = True
-                    response['reduced_matrix'] = simplex[2][0]
-                    solution += 'Aufgrund der Beschränkungen des Simplex-Algorithmus muss zunächst die ' \
-                                'Auszahlungsmatrix des betrachteten Zwei-Personen-Nullsummenspiels absolut ' \
-                                'positiv werden.' + '\n'
-                    solution += 'Die zu lösende Matrix sieht nun folgendermaßen aus: ' + '\n'
-                    solution += str(simplex[2][0]) + '\n'
-                    sol_texmixed.append(simplex[2][0])
-                    context['solvemixed'] += r'Aufgrund der Beschränkungen des Simplex-Algorithmus muss ' \
-                                             r'zunächst die Auszahlungsmatrix des betrachteten ' \
-                                             r'Zwei-Personen-Nullsummenspiels absolut positiv werden.\\Die zu ' \
-                                             r'lösende Matrix sieht nun folgendermaßen aus:\\'
-                    context['solvemixed'] += r'\begin{gather*}\begin{pmatrix*}'
-                    temp_str = ''
-                    for lines in range(simplex[2][0].shape[0]):
-                        for cols in range(simplex[2][0].shape[1]):
-                            temp_str += str(simplex[2][0][lines][cols]) + '&'
-                        temp_str += r'\\'
-                    context['solvemixed'] += temp_str + '\end{pmatrix*}\end{gather*}'
+        context['solvemixed'] = ''
+        if zerosum:
+            simplex = use_simplex(matrix1, matrix2)
+            if simplex[2][0].all() != matrix1.all():
+                response['c_added'] = True
+                response['transformed_matrix'] = simplex[2][0]
+                solution += 'Aufgrund der Beschränkungen des Simplex-Algorithmus muss zunächst die ' \
+                            'Auszahlungsmatrix des betrachteten Zwei-Personen-Nullsummenspiels absolut ' \
+                            'positiv werden.' + '\n'
+                solution += 'Die zu lösende Matrix sieht nun folgendermaßen aus: ' + '\n'
+                solution += str(simplex[2][0]) + '\n'
+                sol_texmixed.append(simplex[2][0])
+                context['solvemixed'] += r'Aufgrund der Beschränkungen des Simplex-Algorithmus muss ' \
+                                         r'zunächst die Auszahlungsmatrix des betrachteten ' \
+                                         r'Zwei-Personen-Nullsummenspiels absolut positiv werden.\\Die zu ' \
+                                         r'lösende Matrix sieht nun folgendermaßen aus:\\'
+                context['solvemixed'] += r'\begin{gather*}\begin{pmatrix*}'
+                temp_str = ''
+                for lines in range(simplex[2][0].shape[0]):
+                    for cols in range(simplex[2][0].shape[1]):
+                        temp_str += str(simplex[2][0][lines][cols]) + '&'
+                    temp_str += r'\\'
+                context['solvemixed'] += temp_str + '\end{pmatrix*}\end{gather*}'
+            else:
+                response['c_added'] = False
+                solution += 'Das folgende Spiel soll nun mithilfe des Simplex-Algorithmus gelöst werden:' + '\n'
+                solution += str(matrix1)
+                sol_texmixed.append(matrix1)
+                context['solvemixed'] += r'Das folgende Spiel soll nun mithilfe des Simplex-Algorithmus ' \
+                                         r'gelöst werden:\\'
+                temp_str = ''
+                for lines in range(matrix1.shape[0]):
+                    for cols in range(matrix1.shape[1]):
+                        temp_str += str(matrix1[lines][cols]) + '&'
+                    temp_str += r'\\'
+                context['solvemixed'] += temp_str + r'\\'
+            solution += 'Die Lösungsschritte des Simplexalgorithmus für Spieler 2 sehen nun wie folgt aus: ' + '\n'
+            context['solvemixed'] += r'Die Lösungsschritte des Simplexalgorithmus für Spieler 2 sehen nun wie ' \
+                                     r'folgt aus:\\ ' + r' \begin{gather*}'
+            #context['solvemixed'] += r'\begin{gather*}'
+            #response['simplex_steps'] = simplex[1][1:][0]
+            tempo_full = []
+            for step in simplex[1][1:][0]:
+                tempo = []
+                temp_arr = np.asarray(format_solution(step['tableau']))
+                tempo.append(temp_arr)
+                solution += str(temp_arr) + '\n'
+                sol_texmixed.append(temp_arr)
+                temp_str = ''
+                for lines in range(temp_arr.shape[0]):
+                    for cols in range(temp_arr.shape[1]):
+                        temp_str += str(temp_arr[lines][cols]) + '&'
+                    temp_str += r'\\'
+                context['solvemixed'] += r'\begin{pmatrix*}\\' + temp_str + r'\end{pmatrix*}\\'
+                if str(step['pivot']) != '(nan, nan)':
+                    solution += 'Pivot: ' + str(step['pivot']) + '\n'
+                    sol_texmixed.append(step['pivot'])
+                    tempo.append(step['pivot'])
+                    context['solvemixed'] += 'Pivot: ' + str(step['pivot']) + r'\\'
                 else:
-                    response['ist_reduced'] = False
-                    solution += 'Das folgende Spiel soll nun mithilfe des Simplex-Algorithmus gelöst werden:' + '\n'
-                    solution += str(matrix1)
-                    sol_texmixed.append(matrix1)
-                    context['solvemixed'] += r'Das folgende Spiel soll nun mithilfe des Simplex-Algorithmus ' \
-                                             r'gelöst werden:\\'
-                    temp_str = ''
-                    for lines in range(matrix1.shape[0]):
-                        for cols in range(matrix1.shape[1]):
-                            temp_str += str(matrix1[lines][cols]) + '&'
-                        temp_str += r'\\'
-                    context['solvemixed'] += temp_str + r'\\'
-                solution += 'Die Lösungsschritte des Simplexalgorithmus für Spieler 2 sehen nun wie folgt aus: ' + '\n'
-                context['solvemixed'] += r'Die Lösungsschritte des Simplexalgorithmus für Spieler 2 sehen nun wie ' \
-                                         r'folgt aus:\\ ' + r' \begin{gather*}'
-                #context['solvemixed'] += r'\begin{gather*}'
-                #response['simplex_steps'] = simplex[1][1:][0]
-                for step in simplex[1][1:][0]:
-                    temp_arr = np.asarray(format_solution(step['tableau']))
-                    solution += str(temp_arr) + '\n'
-                    sol_texmixed.append(temp_arr)
-                    temp_str = ''
-                    for lines in range(temp_arr.shape[0]):
-                        for cols in range(temp_arr.shape[1]):
-                            temp_str += str(temp_arr[lines][cols]) + '&'
-                        temp_str += r'\\'
-                    context['solvemixed'] += r'\begin{pmatrix*}\\' + temp_str + r'\end{pmatrix*}\\'
-                    if str(step['pivot']) != '(nan, nan)':
-                        solution += 'Pivot: ' + str(step['pivot']) + '\n'
-                        sol_texmixed.append(step['pivot'])
-                        context['solvemixed'] += 'Pivot: ' + str(step['pivot']) + r'\\'
+                    sol_texmixed.append([])
+                    tempo.append([])
+                tempo_full.append(tempo)
+            response['simplex_steps'] = tempo_full[1:]
+            response['first_step'] = tempo_full[0]
+            context['solvemixed'] += r'\end{gather*}\\'
+            added_value = np.amax(simplex[2][0]-matrix1)
+            response['added_value'] = added_value
+            solution += 'Da nicht der Spielwert maximiert wurde, sondern 1/G minimiert wurde und eine ' \
+                        'Konstante ' + str(added_value) + ' zur Matrix addiert wurde, muss man die ' \
+                                                          'Konstante wieder vom Ergebnis subtrahieren und den ' \
+                                                          'Kehrbruch verwenden.' + '\n'
+            sol_texmixed.append(added_value)
+            context['solvemixed'] += r'Da nicht der Spielwert maximiert wurde, sondern 1/G minimiert wurde und ' \
+                                     r'eine Konstante ' + str(added_value) + r' zur Matrix addiert wurde, muss ' \
+                                                                             r'man die Konstante wieder vom ' \
+                                                                             r'Ergebnis subtrahieren und den ' \
+                                                                             r'Kehrbruch verwenden.\\'
+            game_value_1 = nsimplify((1/simplex[1][0]['fun']) + added_value, tolerance=0.0001, rational=True)
+            strategies = []
+            for strategy in simplex[1][0]['x']:
+                strategies.append(nsimplify(abs(((1/simplex[1][0]['fun'])*strategy)),
+                                            tolerance=0.0001, rational=True))
+            solution += 'Hieraus ergibt sich der tatsächliche Spielwert für Spieler 2: ' + str(game_value_1) + '\n'
+            response['game_value_simplex_player2'] = game_value_1
+            context['solvemixed'] += 'Hieraus ergibt sich der tatsächliche Spielwert für Spieler 2: ' + \
+                                     str(game_value_1) + r'\\'
+            sol_texmixed.append(game_value_1)
+            solution += 'Und die optimale Strategienkombination für Spieler 2: ' + str(strategies) + '\n'
+            context['solvemixed'] += 'Und die optimale Strategienkombination für Spieler 2: ' + \
+                                     str(strategies) + r'\\'
+            sol_texmixed.append(strategies)
+            response['optimal_strategies_simplex_player2'] = strategies
+            solution += 'Da ein Zwei-Personen-Nullsummenspiel betrachtet wurde ergibt sich der Spielwert ' \
+                        'für Spieler 1: ' + str(game_value_1*-1) + '\n'
+            context['solvemixed'] += 'Da ein Zwei-Personen-Nullsummenspiel betrachtet wurde ergibt sich der ' \
+                                     'Spielwert für Spieler 1: ' + str(game_value_1*-1) + r'\\'
+            response['game_value_simplex_player1'] = game_value_1*-1
+            strategies_1 = []
+            sol_texmixed.append(game_value_1*-1)
+            possible_choices = -1 - matrix1.shape[0]
+            for elements in simplex[1][1][-1]['tableau'][-1][possible_choices:-1]:
+                strategies_1.append(nsimplify(elements*(1/simplex[1][1][-1]['tableau'][-1][-1]),
+                                              tolerance=0.0001, rational=True))
+            solution += 'Die Dualität des Problems erlaubt es, die optimale Strategienkombination für Spieler 1' \
+                        ' direkt aus der Zielfunktionszeile abzulesen: ' + str(strategies_1) + '\n'
+            response['optimal_strategies_simplex_player1'] = strategies_1
+            sol_texmixed.append(strategies_1)
+            context['solvemixed'] += 'Die Dualität des Problems erlaubt es, die optimale Strategienkombination' \
+                                     ' für Spieler 1 direkt aus der Zielfunktionszeile abzulesen: ' + \
+                                     str(strategies_1) + r'\\'
+            solution += '\n\n\n'
+            reduced = reduce_matrix(matrix1, matrix2)
+            #boole = reduced[2]
+            #if boole:
+            #    solution += 'Zunächst müssen die überflüssigen Zeilen und Spalten der Ausgangsmatrix
+            # entfernt werden.' + '\n'
+            #    solution += 'Hierdurch ergibt sich folgende Matrix für Spieler 1:' + '\n'
+            #    solution += str(reduced[0]) + '\n'
+
+            # try:
+            #     nggw = solve_using_nggw(matrix1, matrix2)
+            #     nggw2 = get_optimal_solution(matrix1, matrix2)
+            #     solution_1 = nggw[0]
+            #     lgs1 = solution_1[2]
+            #     solution_2 = nggw[1]
+            #     lgs2 = solution_2[2]
+            #     correct_solution = True
+            #     for key in solution_1[1]:
+            #         if solution_1[0][key] < 0 and key != solution_1[1][-1]:
+            #             correct_solution = False
+            #             solution += 'Key-Fehler: ' + str(solution_1[0][key]) + ' ' + str(key) + '\n'
+            #     for key in solution_2[1]:
+            #         if solution_2[0][key] < 0 and key != solution_2[1][-1]:
+            #             correct_solution = False
+            #             solution += 'Key-Fehler: ' + str(solution_2[0][key]) + ' ' + str(key) + '\n'
+            #     if correct_solution:
+            #         solution += 'Selbiges Problem lässt sich auch durch die Aufstellung eines LGS nach den ' \
+            #                     'Bedingungen für ein Nash-Gleichgewicht lösen: ' + '\n'
+            #         context['solvemixed'] += r'Selbiges Problem lässt sich auch durch die Aufstellung eines ' \
+            #                                  r'LGS nach den Bedingungen für ein Nash-Gleichgewicht lösen:\\'
+            #         if len(solution_1[0]) > 0:
+            #             solution += 'Das lineare Gleichungssystem für Spieler 1 lautet: ' + '\n'
+            #             context['solvemixed'] += r'Das lineare Gleichungssystem für Spieler 1 lautet:\\'
+            #             temp = []
+            #             for equation in lgs1:
+            #                 solution += str(equation)
+            #                 solution += '\n'
+            #                 temp.append(equation)
+            #                 context['solvemixed'] += str(equation) + r'\\'
+            #             sol_texmixed.append(temp)
+            #             solution += 'Nach Auflösen des LGS ergeben sich folgene Werte für die optimale ' \
+            #                         'Strategienkombination: ' + '\n'
+            #             context['solvemixed'] += r'Nach Auflösen des LGS ergeben sich folgene Werte für ' \
+            #                                      r'die optimale Strategienkombination:\\'
+            #             temp = []
+            #             for key in solution_1[1]:
+            #                 solution += str(key) + ':' + str(nsimplify(solution_1[0][key], tolerance=0.0001,
+            #                                                            rational=True)) + '\n'
+            #                 val = nsimplify(solution_1[0][key], tolerance=0.0001, rational=True)
+            #                 temp.append([key, val])
+            #                 context['solvemixed'] += str(key) + ':' + str(val) + r'\\'
+            #             sol_texmixed.append(temp)
+            #         if len(solution_2[0]) > 0:
+            #             solution += 'Das lineare Gleichungssystem für Spieler 2 lautet: ' + '\n'
+            #             context['solvemixed'] += r'Das lineare Gleichungssystem für Spieler 2 lautet:\\'
+            #             temp = []
+            #             for equation in lgs2:
+            #                 solution += str(equation)
+            #                 temp.append(equation)
+            #                 solution += '\n'
+            #                 context['solvemixed'] += str(equation) + r'\\'
+            #             sol_texmixed.append(temp)
+            #             solution += 'Nach Auflösen des LGS ergeben sich folgene Werte für die optimale ' \
+            #                         'Strategienkombination: ' + '\n'
+            #             context[
+            #                 'solvemixed'] += r'Nach Auflösen des LGS ergeben sich folgene Werte für die ' \
+            #                                  r'optimale Strategienkombination:\\'
+            #             temp = []
+            #             for key in solution_2[1]:
+            #                 solution += str(key) + ':' + str(nsimplify(solution_2[0][key], tolerance=0.0001,
+            #                                                            rational=True)) + '\n'
+            #                 val = nsimplify(solution_2[0][key], tolerance=0.0001, rational=True)
+            #                 temp.append([key, val])
+            #                 context['solvemixed'] += str(key) + ':' + str(val) + r'\\'
+            #             sol_texmixed.append(temp)
+            #     solution += nggw2
+            # except:
+            #     pass
+            nggw2 = get_optimal_solution(matrix1, matrix2)
+            solution += 'Selbiges Problem lässt sich auch durch die Aufstellung eines LGS nach den ' \
+                        'Bedingungen für ein Nash-Gleichgewicht lösen: ' + '\n'
+            context['solvemixed'] += r'Selbiges Problem lässt sich auch durch die Aufstellung eines ' \
+                                     r'LGS nach den Bedingungen für ein Nash-Gleichgewicht lösen:\\'
+            symbs = generate_symbols(matrix1)
+            functs = generate_functions(matrix1, matrix2, symbs=symbs)
+            solution += 'Das lineare Gleichungssystem für die Wahrscheinlichkeiten der Strategien von ' \
+                        'Spieler 1 und der Auszahlung von Spieler 2 lautet: ' + '\n'
+            context['solvemixed'] += r'Das lineare Gleichungssystem für die Wahrscheinlichkeiten der ' \
+                                     r'Strategeien von Spieler 1 und der Auszahlung von Spieler 2 lautet:\\'
+            temp = []
+            for equation in functs[0]:
+                solution += str(equation) + ' = 0'
+                solution += '\n'
+                temp.append(equation)
+                context['solvemixed'] += str(equation) + ' = 0' + r'\\'
+            sol_texmixed.append(temp)
+            response['lgs_player1'] = functs[0] # Auszahlung Spieler 2 und Wahrscheinlichkeiten Spieler 1
+
+            solution += 'Das lineare Gleichungssystem für die Wahrscheinlichkeiten der Strategien von ' \
+                        'Spieler 2 und der Auszahlung von Spieler 1 lautet: ' + '\n'
+            context['solvemixed'] += r'Das lineare Gleichungssystem für die Wahrscheinlichkeiten der ' \
+                                     r'Strategeien von Spieler 2 und der Auszahlung von Spieler 1 lautet:\\'
+            temp = []
+            for equation in functs[1]:
+                solution += str(equation) + ' = 0'
+                solution += '\n'
+                temp.append(equation)
+                context['solvemixed'] += str(equation) + ' = 0' + r'\\'
+            sol_texmixed.append(temp)
+            response['lgs_player2'] = functs[1]  # Auszahlung Spieler 1 und Wahrscheinlichkeiten Spieler 2
+            solution += 'Es müssen nun alle möglichen Support-Kombinationen der beiden Spieler betrachtet werden,' \
+                        ' wobei folgende Support-Kombinationen zu einem Nash-Gleichgewicht führen:' + '\n'
+            context['solvemixed'] += r'Es müssen nun alle möglichen Support-Kombinationen der beiden Spieler ' \
+                                     r'betrachtet werden, wobei folgende Support-Kombinationen zu einem ' \
+                                     r'Nash-Gleichgewicht führen:\\'
+            supps = []
+            response['supports'] = []
+            # response['support_player2'] = []
+            response['lgs_support_player1'] = []
+            response['lgs_support_player2'] = []
+            response['lgs_support_results_player1'] = []
+            response['lgs_support_results_player2'] = []
+            response['lgs_support_game_value1'] = []
+            response['lgs_support_game_value2'] = []
+            response['results_out_of_support'] = []
+            response['lgs_nonsupport_lgs_player1'] = []
+            response['lgs_nonsupport_lgs_player2'] = []
+            response['lgs_nonsupport_result_player1'] = []
+            response['lgs_nonsupport_result_player2'] = []
+            for mixed_ggw in nggw2:
+                supps.append([mixed_ggw[0][0][2], mixed_ggw[0][1][2]])
+                response['supports'].append([mixed_ggw[0][0][2], mixed_ggw[0][1][2]])
+                # supps.add(mixed_ggw[0][1][2])
+                solution += str(mixed_ggw[0][0][2]) + ', ' + str(mixed_ggw[0][1][2]) + '\n'
+                solution += 'Und somit die zugehörigen Gleichungssystemen betrachtet werden:\n'
+                context['solvemixed'] += str(mixed_ggw[0][0][2]) + ', ' + str(mixed_ggw[0][1][2]) + r'\\'
+                context['solvemixed'] += r'Und somit die zugehörigen Gleichungssystemen betrachtet werden:\\'
+                for eq in mixed_ggw[0][2][0][0]:
+                    solution += str(eq) + ' = 0\n'
+                    context['solvemixed'] += str(eq) + ' = 0' +r'\\'
+                solution += '\n'
+                response['lgs_support_player1'].append(mixed_ggw[0][2][0][0])
+                context['solvemixed'] += r'\\'
+                for eq in mixed_ggw[0][2][1][0]:
+                    solution += str(eq) + ' = 0\n'
+                    context['solvemixed'] += str(eq) + r' = 0\\'
+                response['lgs_support_player2'].append(mixed_ggw[0][2][1][0])
+
+                solution += 'Nach Auflösen des LGS ergeben sich folgene Werte für die optimale ' \
+                        'Strategienkombination: ' + '\n'
+                context['solvemixed'] += r'Nach Auflösen des LGS ergeben sich folgene Werte für die ' \
+                                     r'optimale Strategienkombination:\\'
+                solution += 'Für Spieler 1:\n'
+                context['solvemixed'] += r'Für Spieler 1:\\'
+                temp_sol = {}
+                for key in symbs[0][0]:
+                    solution += str(key) + ' = ' + str(mixed_ggw[0][0][1][0][key]) + '\n'
+                    context['solvemixed'] += str(key) + ' = ' + str(mixed_ggw[0][0][1][0][key]) + r'\\'
+                    temp_sol[key] = mixed_ggw[0][0][1][0][key]
+                response['lgs_support_results_player1'].append(temp_sol)
+                solution += 'Für Spieler 2:\n'
+                context['solvemixed'] += r'Für Spieler 2:\\'
+                temp_sol = {}
+                for key in symbs[1][0]:
+                    solution += str(key) + ' = ' + str(mixed_ggw[0][1][1][0][key]) + '\n'
+                    context['solvemixed'] += str(key) + ' = ' + str(mixed_ggw[0][1][1][0][key]) + r'\\'
+                    temp_sol[key] = mixed_ggw[0][1][1][0][key]
+                response['lgs_support_results_player2'].append(temp_sol)
+
+                solution += 'Der Spielwert von Spieler 1 entspricht: ' + '\n'
+                context['solvemixed'] += r'Der Spielwert von Spieler 1 entspricht: \\'
+                solution += 'w = ' + str(mixed_ggw[0][0][0]) + '\n'
+                response['lgs_support_game_value1'] = mixed_ggw[0][0][0]
+                context['solvemixed'] += 'w = ' + str(mixed_ggw[0][0][0]) + r'\\'
+                solution += 'Der Spielwert von Spieler 2 entspricht: ' + '\n'
+                context['solvemixed'] += r'Der Spielwert von Spieler 2 entspricht: \\'
+                solution += 'w = ' + str(mixed_ggw[0][1][0]) + '\n'
+                response['lgs_support_game_value2'] = mixed_ggw[0][1][0]
+                context['solvemixed'] += 'w = ' + str(mixed_ggw[0][1][0]) + r'\\'
+                responses = []
+                if len(mixed_ggw[0][3][0]) or len(mixed_ggw[0][3][1]):
+                    #response['results_out_of_support'].append(True)
+                    solution += 'Nun müssen die erzielbaren Auszahlungen eines Spielers, durch die Wahl einer ' \
+                            'Strategie, die nicht im betrachteten Support liegt ermittelt werden.\n'
+                    context['solvemixed'] += r'Nun müssen die erzielbaren Auszahlungen eines Spielers, durch die ' \
+                                         r'Wahl einer Strategie, die nicht im betrachteten Support liegt ' \
+                                         r'ermittelt werden.\\'
+                    if len(mixed_ggw[0][3][1]):
+                        responses.append(True)
+                        solution += 'Für die Auszahlung von Spieler 1 werden somit folgende Gleichungssysteme ' \
+                                    'und Lösungen betrachtet: \n'
+                        context['solvemixed'] += r'Für die Auszahlung von Spieler 1 werden somit folgende ' \
+                                                 r'Gleichungssysteme und Lösungen betrachtet: \\'
+
+                        game_val_mixed_1 = []
+                        strats = []
+                        for notsupportstrat in mixed_ggw[0][3][1]:
+                            for eq in notsupportstrat[0]:
+                                solution += str(eq) + ' = 0\n'
+                                context['solvemixed'] += str(eq) + r' = 0\\'
+                            solution += 'Dieses Gleichungssystem führt zu einer Auszahlung für Spieler 1 von:\n'
+                            context['solvemixed'] += r'Dieses Gleichungssystem führt zu einer Auszahlung für ' \
+                                                     r'Spieler 1 von:\\'
+                            solution += 'w = ' + str(notsupportstrat[1]) + '\n'
+                            context['solvemixed'] += 'w = ' + str(notsupportstrat[1]) + r'\\'
+                            solution += 'Was dazu führt, dass eine Abweichung von den Support-Strategien für ' \
+                                        'Spieler 1 keine Auszahlungsverbesserung hervorruft.\n'
+                            context['solvemixed'] += r'Was dazu führt, dass eine Abweichung von den ' \
+                                                     r'Support-Strategien für Spieler 1 keine ' \
+                                                     r'Auszahlungsverbesserung hervorruft.\\'
+                            game_val_mixed_1.append(notsupportstrat[1])
+                            strats.append(notsupportstrat[0])
+                        response['lgs_nonsupport_lgs_player1'].append(strats)
+                        response['lgs_nonsupport_result_player1'].append(game_val_mixed_1)
                     else:
-                        sol_texmixed.append([])
-                context['solvemixed'] += r'\end{gather*}\\'
-                added_value = np.amax(simplex[2][0]-matrix1)
-                response['added_value'] = added_value
-                solution += 'Da nicht der Spielwert maximiert wurde, sondern 1/G minimiert wurde und eine ' \
-                            'Konstante ' + str(added_value) + ' zur Matrix addiert wurde, muss man die ' \
-                                                              'Konstante wieder vom Ergebnis subtrahieren und den ' \
-                                                              'Kehrbruch verwenden.' + '\n'
-                sol_texmixed.append(added_value)
-                context['solvemixed'] += r'Da nicht der Spielwert maximiert wurde, sondern 1/G minimiert wurde und ' \
-                                         r'eine Konstante ' + str(added_value) + r' zur Matrix addiert wurde, muss ' \
-                                                                                 r'man die Konstante wieder vom ' \
-                                                                                 r'Ergebnis subtrahieren und den ' \
-                                                                                 r'Kehrbruch verwenden.\\'
-                game_value_1 = nsimplify((1/simplex[1][0]['fun']) + added_value, tolerance=0.0001, rational=True)
-                strategies = []
-                for strategy in simplex[1][0]['x']:
-                    strategies.append(nsimplify(abs(((1/simplex[1][0]['fun'])*strategy)),
-                                                tolerance=0.0001, rational=True))
-                solution += 'Hieraus ergibt sich der tatsächliche Spielwert für Spieler 2: ' + str(game_value_1) + '\n'
-                response['game_value_simplex_player2'] = game_value_1
-                context['solvemixed'] += 'Hieraus ergibt sich der tatsächliche Spielwert für Spieler 2: ' + \
-                                         str(game_value_1) + r'\\'
-                sol_texmixed.append(game_value_1)
-                solution += 'Und die optimale Strategienkombination für Spieler 2: ' + str(strategies) + '\n'
-                context['solvemixed'] += 'Und die optimale Strategienkombination für Spieler 2: ' + \
-                                         str(strategies) + r'\\'
-                sol_texmixed.append(strategies)
-                response['optimal_strategies_simplex_player2'] = strategies
-                solution += 'Da ein Zwei-Personen-Nullsummenspiel betrachtet wurde ergibt sich der Spielwert ' \
-                            'für Spieler 1: ' + str(game_value_1*-1) + '\n'
-                context['solvemixed'] += 'Da ein Zwei-Personen-Nullsummenspiel betrachtet wurde ergibt sich der ' \
-                                         'Spielwert für Spieler 1: ' + str(game_value_1*-1) + r'\\'
-                response['game_value_simplex_player1'] = game_value_1*-1
-                strategies_1 = []
-                sol_texmixed.append(game_value_1*-1)
-                possible_choices = -1 - matrix1.shape[0]
-                for elements in simplex[1][1][-1]['tableau'][-1][possible_choices:-1]:
-                    strategies_1.append(nsimplify(elements*(1/simplex[1][1][-1]['tableau'][-1][-1]),
-                                                  tolerance=0.0001, rational=True))
-                solution += 'Die Dualität des Problems erlaubt es, die optimale Strategienkombination für Spieler 1' \
-                            ' direkt aus der Zielfunktionszeile abzulesen: ' + str(strategies_1) + '\n'
-                response['optimal_strategies_simplex_player1'] = strategies_1
-                sol_texmixed.append(strategies_1)
-                context['solvemixed'] += 'Die Dualität des Problems erlaubt es, die optimale Strategienkombination' \
-                                         ' für Spieler 1 direkt aus der Zielfunktionszeile abzulesen: ' + \
-                                         str(strategies_1) + r'\\'
-                solution += '\n\n\n'
-                reduced = reduce_matrix(matrix1, matrix2)
-                #boole = reduced[2]
-                #if boole:
-                #    solution += 'Zunächst müssen die überflüssigen Zeilen und Spalten der Ausgangsmatrix
-                # entfernt werden.' + '\n'
-                #    solution += 'Hierdurch ergibt sich folgende Matrix für Spieler 1:' + '\n'
-                #    solution += str(reduced[0]) + '\n'
+                        responses.append(False)
+                        solution += 'Für Spieler 1 liegen alle Strategien in der betrachteten Support-Menge, ' \
+                                    'wodurch keine weitere Betrachtung notwendig ist.\n'
+                        context['solvemixed'] += r'Für Spieler 1 liegen alle Strategien in der betrachteten ' \
+                                                 r'Support-Menge, wodurch keine weitere Betrachtung notwendig ist.\\'
+                        response['lgs_nonsupport_lgs_player1'].append([])
+                        response['lgs_nonsupport_result_player1'].append([])
+                    if len(mixed_ggw[0][3][0]):
+                        responses.append(True)
+                        solution += 'Für die Auszahlung von Spieler 2 werden somit folgende Gleichungssysteme ' \
+                                    'und Lösungen betrachtet: \n'
+                        context['solvemixed'] += r'Für die Auszahlung von Spieler 2 werden somit folgende ' \
+                                                 r'Gleichungssysteme und Lösungen betrachtet: \\'
 
-                # try:
-                #     nggw = solve_using_nggw(matrix1, matrix2)
-                #     nggw2 = get_optimal_solution(matrix1, matrix2)
-                #     solution_1 = nggw[0]
-                #     lgs1 = solution_1[2]
-                #     solution_2 = nggw[1]
-                #     lgs2 = solution_2[2]
-                #     correct_solution = True
-                #     for key in solution_1[1]:
-                #         if solution_1[0][key] < 0 and key != solution_1[1][-1]:
-                #             correct_solution = False
-                #             solution += 'Key-Fehler: ' + str(solution_1[0][key]) + ' ' + str(key) + '\n'
-                #     for key in solution_2[1]:
-                #         if solution_2[0][key] < 0 and key != solution_2[1][-1]:
-                #             correct_solution = False
-                #             solution += 'Key-Fehler: ' + str(solution_2[0][key]) + ' ' + str(key) + '\n'
-                #     if correct_solution:
-                #         solution += 'Selbiges Problem lässt sich auch durch die Aufstellung eines LGS nach den ' \
-                #                     'Bedingungen für ein Nash-Gleichgewicht lösen: ' + '\n'
-                #         context['solvemixed'] += r'Selbiges Problem lässt sich auch durch die Aufstellung eines ' \
-                #                                  r'LGS nach den Bedingungen für ein Nash-Gleichgewicht lösen:\\'
-                #         if len(solution_1[0]) > 0:
-                #             solution += 'Das lineare Gleichungssystem für Spieler 1 lautet: ' + '\n'
-                #             context['solvemixed'] += r'Das lineare Gleichungssystem für Spieler 1 lautet:\\'
-                #             temp = []
-                #             for equation in lgs1:
-                #                 solution += str(equation)
-                #                 solution += '\n'
-                #                 temp.append(equation)
-                #                 context['solvemixed'] += str(equation) + r'\\'
-                #             sol_texmixed.append(temp)
-                #             solution += 'Nach Auflösen des LGS ergeben sich folgene Werte für die optimale ' \
-                #                         'Strategienkombination: ' + '\n'
-                #             context['solvemixed'] += r'Nach Auflösen des LGS ergeben sich folgene Werte für ' \
-                #                                      r'die optimale Strategienkombination:\\'
-                #             temp = []
-                #             for key in solution_1[1]:
-                #                 solution += str(key) + ':' + str(nsimplify(solution_1[0][key], tolerance=0.0001,
-                #                                                            rational=True)) + '\n'
-                #                 val = nsimplify(solution_1[0][key], tolerance=0.0001, rational=True)
-                #                 temp.append([key, val])
-                #                 context['solvemixed'] += str(key) + ':' + str(val) + r'\\'
-                #             sol_texmixed.append(temp)
-                #         if len(solution_2[0]) > 0:
-                #             solution += 'Das lineare Gleichungssystem für Spieler 2 lautet: ' + '\n'
-                #             context['solvemixed'] += r'Das lineare Gleichungssystem für Spieler 2 lautet:\\'
-                #             temp = []
-                #             for equation in lgs2:
-                #                 solution += str(equation)
-                #                 temp.append(equation)
-                #                 solution += '\n'
-                #                 context['solvemixed'] += str(equation) + r'\\'
-                #             sol_texmixed.append(temp)
-                #             solution += 'Nach Auflösen des LGS ergeben sich folgene Werte für die optimale ' \
-                #                         'Strategienkombination: ' + '\n'
-                #             context[
-                #                 'solvemixed'] += r'Nach Auflösen des LGS ergeben sich folgene Werte für die ' \
-                #                                  r'optimale Strategienkombination:\\'
-                #             temp = []
-                #             for key in solution_2[1]:
-                #                 solution += str(key) + ':' + str(nsimplify(solution_2[0][key], tolerance=0.0001,
-                #                                                            rational=True)) + '\n'
-                #                 val = nsimplify(solution_2[0][key], tolerance=0.0001, rational=True)
-                #                 temp.append([key, val])
-                #                 context['solvemixed'] += str(key) + ':' + str(val) + r'\\'
-                #             sol_texmixed.append(temp)
-                #     solution += nggw2
-                # except:
-                #     pass
-                nggw2 = get_optimal_solution(matrix1, matrix2)
-                solution += 'Selbiges Problem lässt sich auch durch die Aufstellung eines LGS nach den ' \
-                            'Bedingungen für ein Nash-Gleichgewicht lösen: ' + '\n'
-                context['solvemixed'] += r'Selbiges Problem lässt sich auch durch die Aufstellung eines ' \
-                                         r'LGS nach den Bedingungen für ein Nash-Gleichgewicht lösen:\\'
-                symbs = generate_symbols(matrix1)
-                functs = generate_functions(matrix1, matrix2, symbs=symbs)
-                solution += 'Das lineare Gleichungssystem für die Wahrscheinlichkeiten der Strategien von ' \
-                            'Spieler 1 und der Auszahlung von Spieler 2 lautet: ' + '\n'
-                context['solvemixed'] += r'Das lineare Gleichungssystem für die Wahrscheinlichkeiten der ' \
-                                         r'Strategeien von Spieler 1 und der Auszahlung von Spieler 2 lautet:\\'
-                temp = []
-                for equation in functs[0]:
-                    solution += str(equation) + ' = 0'
-                    solution += '\n'
-                    temp.append(equation)
-                    context['solvemixed'] += str(equation) + ' = 0' + r'\\'
-                sol_texmixed.append(temp)
-                response['lgs_player1'] = functs[0] # Auszahlung Spieler 2 und Wahrscheinlichkeiten Spieler 1
+                        game_val_mixed_2 = []
+                        strats = []
+                        for notsupportstrat in mixed_ggw[0][3][0]:
+                            for eq in notsupportstrat[0]:
+                                solution += str(eq) + ' = 0\n'
+                                context['solvemixed'] += str(eq) + r' = 0\\'
+                            solution += 'Dieses Gleichungssystem führt zu einer Auszahlung für Spieler 2 von:\n'
+                            context['solvemixed'] += r'Dieses Gleichungssystem führt zu einer Auszahlung für ' \
+                                                     r'Spieler 2 von:\\'
+                            solution += 'w = ' + str(notsupportstrat[1]) + '\n'
+                            context['solvemixed'] += 'w = ' + str(notsupportstrat[1]) + r'\\'
+                            solution += 'Was dazu führt, dass eine Abweichung von den Support-Strategien für ' \
+                                        'Spieler 2 keine Auszahlungsverbesserung hervorruft.\n'
+                            context['solvemixed'] += r'Was dazu führt, dass eine Abweichung von den ' \
+                                                     r'Support-Strategien für Spieler 2 keine ' \
+                                                     r'Auszahlungsverbesserung hervorruft.\\'
+                            game_val_mixed_2.append(notsupportstrat[1])
+                            strats.append(notsupportstrat[0])
+                        response['lgs_nonsupport_lgs_player2'].append(strats)
+                        response['lgs_nonsupport_result_player2'].append(game_val_mixed_2)
+                    else:
+                        responses.append(False)
+                        solution += 'Für Spieler 2 liegen alle Strategien in der betrachteten Support-Menge, ' \
+                                    'wodurch keine weitere Betrachtung notwendig ist.\n'
+                        context['solvemixed'] += r'Für Spieler 2 liegen alle Strategien in der betrachteten ' \
+                                                 r'Support-Menge, wodurch keine weitere Betrachtung notwendig ist.\\'
+                        response['lgs_nonsupport_lgs_player2'].append([])
+                        response['lgs_nonsupport_result_player2'].append([])
+                else:
+                    solution += 'Da für beide Spieler keine Strategie nicht in der Support-Menge liegt, ' \
+                                'müssen keine weiteren Berechnungen durchgeführt werden.\n'
+                    context['solvemixed'] += r'Da für beide Spieler keine Strategie nicht in der Support-Menge ' \
+                                             r'liegt, müssen keine weiteren Berechnungen durchgeführt werden.\\'
+                    responses = [False, False]
+                response['results_out_of_support'].append(responses)
+            # for mixed_ggw in nggw2:
+            #     solution += '\n'
+            #     solution += str(mixed_ggw)
+            #     solution += '\n'
+            #     solution += str(mixed_ggw[0])
+            #     solution += '\n'
+            #     # Spielwert Spieler 1
+            #     solution += str(mixed_ggw[0][0][0])
+            #     solution += '\n'
+            #     # Wahrscheinlichkeiten Spieler 1
+            #     solution += str(mixed_ggw[0][0][1][0])
+            #     solution += '\n'
+            #     # Support Spieler 1
+            #     solution += str(mixed_ggw[0][0][2])
+            #     solution += '\n'
+            #     # Spielwert Spieler 2
+            #     solution += str(mixed_ggw[0][1][0])
+            #     solution += '\n'
+            #     # Wahrscheinlichkeiten Spieler 2
+            #     solution += str(mixed_ggw[0][1][1][0])
+            #     solution += '\n'
+            #     # Support Spieler 2
+            #     solution += str(mixed_ggw[0][1][2])
+            #     solution += '\n'
+            #     # Gleichtungssystem Spieler 1
+            #     solution += str(mixed_ggw[0][2][0])
+            #     solution += '\n'
+            #     # Gleichtungssystem Spieler 2
+            #     solution += str(mixed_ggw[0][2][1])
+            #     solution += '\n'
+            #     solution += str(mixed_ggw[0][3][0])
+            #     solution += '\n'
+            #     solution += str(mixed_ggw[0][3][1])
+        else:
+            # try:
+            #     nggw = solve_using_nggw(matrix1, matrix2)
+            #     nggw2 = get_optimal_solution(matrix1, matrix2)
+            #     solution_1 = nggw[0]
+            #     lgs1 = solution_1[2]
+            #     solution_2 = nggw[1]
+            #     lgs2 = solution_2[2]
+            #     correct_solution = True
+            #     for key in solution_1[1]:
+            #         if solution_1[0][key] < 0 and key != solution_1[1][-1]:
+            #             correct_solution = False
+            #             solution += 'Key-Fehler: ' + str(solution_1[0][key]) + ' ' + str(key)+ '\n'
+            #     for key in solution_2[1]:
+            #         if solution_2[0][key] < 0 and key != solution_2[1][-1]:
+            #             correct_solution = False
+            #             solution += 'Key-Fehler: ' + str(solution_2[0][key]) + ' ' + str(key) + '\n'
+            #     if correct_solution:
+            #         solution += 'Selbiges Problem lässt sich auch durch die Aufstellung eines LGS nach den ' \
+            #                     'Bedingungen für ein Nash-Gleichgewicht lösen: ' + '\n'
+            #         context['solvemixed'] += r'Selbiges Problem lässt sich auch durch die Aufstellung eines ' \
+            #                                  r'LGS nach den Bedingungen für ein Nash-Gleichgewicht lösen:\\'
+            #         if len(solution_1[0]) > 0:
+            #             solution += 'Das lineare Gleichungssystem für Spieler 1 lautet: ' + '\n'
+            #             context['solvemixed'] += r'Das lineare Gleichungssystem für Spieler 1 lautet:\\'
+            #             temp = []
+            #             for equation in lgs1:
+            #                 solution += str((equation))
+            #                 solution += '\n'
+            #                 temp.append(equation)
+            #                 context['solvemixed'] += str(equation) + r'\\'
+            #             sol_texmixed.append(temp)
+            #             solution += 'Nach Auflösen des LGS ergeben sich folgene Werte für die optimale ' \
+            #                         'Strategienkombination: ' + '\n'
+            #             context['solvemixed'] += r'Nach Auflösen des LGS ergeben sich folgene Werte für die ' \
+            #                                      r'optimale Strategienkombination:\\'
+            #             temp = []
+            #             for key in solution_1[1]:
+            #                 solution += str(key) + ':' + str(nsimplify(solution_1[0][key], tolerance=0.0001,
+            #                                                            rational=True)) + '\n'
+            #                 val = nsimplify(solution_1[0][key], tolerance=0.0001, rational=True)
+            #                 temp.append([key, val])
+            #                 context['solvemixed'] += str(key) + ':' + str(val) + r'\\'
+            #             sol_texmixed.append(temp)
+            #         if len(solution_2[0]) > 0:
+            #             solution += 'Das lineare Gleichungssystem für Spieler 2 lautet: ' + '\n'
+            #             context['solvemixed'] += r'Das lineare Gleichungssystem für Spieler 2 lautet:\\'
+            #             temp = []
+            #             for equation in lgs2:
+            #                 solution += str(equation)
+            #                 temp.append(equation)
+            #                 solution += '\n'
+            #                 context['solvemixed'] += str(equation) + r'\\'
+            #             sol_texmixed.append(temp)
+            #             solution += 'Nach Auflösen des LGS ergeben sich folgene Werte für die optimale ' \
+            #                         'Strategienkombination: ' + '\n'
+            #             context[
+            #                 'solvemixed'] += r'Nach Auflösen des LGS ergeben sich folgene Werte für die ' \
+            #                                  r'optimale Strategienkombination:\\'
+            #             temp = []
+            #             for key in solution_2[1]:
+            #                 solution += str(key) + ':' + str(nsimplify(solution_2[0][key], tolerance=0.0001,
+            #                                                            rational=True)) + '\n'
+            #                 val = nsimplify(solution_2[0][key], tolerance=0.0001, rational=True)
+            #                 temp.append([key, val])
+            #                 context['solvemixed'] += str(key) + ':' + str(val) + r'\\'
+            #             sol_texmixed.append(temp)
+            #     solution += nggw2
+            # except:
+            #     pass
+            nggw2 = get_optimal_solution(matrix1, matrix2)
+            solution += 'Selbiges Problem lässt sich auch durch die Aufstellung eines LGS nach den ' \
+                        'Bedingungen für ein Nash-Gleichgewicht lösen: ' + '\n'
+            context['solvemixed'] += r'Selbiges Problem lässt sich auch durch die Aufstellung eines ' \
+                                     r'LGS nach den Bedingungen für ein Nash-Gleichgewicht lösen:\\'
+            symbs = generate_symbols(matrix1)
+            functs = generate_functions(matrix1, matrix2, symbs=symbs)
+            solution += 'Das lineare Gleichungssystem für die Wahrscheinlichkeiten der Strategien von ' \
+                        'Spieler 1 und der Auszahlung von Spieler 2 lautet: ' + '\n'
+            context['solvemixed'] += r'Das lineare Gleichungssystem für die Wahrscheinlichkeiten der ' \
+                                     r'Strategeien von Spieler 1 und der Auszahlung von Spieler 2 lautet:\\'
+            temp = []
+            for equation in functs[0]:
+                solution += str(equation) + ' = 0'
+                solution += '\n'
+                temp.append(equation)
+                context['solvemixed'] += str(equation) + ' = 0' + r'\\'
+            sol_texmixed.append(temp)
+            response['lgs_player1'] = functs[0]  # Auszahlung Spieler 2 und Wahrscheinlichkeiten Spieler 1
 
-                solution += 'Das lineare Gleichungssystem für die Wahrscheinlichkeiten der Strategien von ' \
-                            'Spieler 2 und der Auszahlung von Spieler 1 lautet: ' + '\n'
-                context['solvemixed'] += r'Das lineare Gleichungssystem für die Wahrscheinlichkeiten der ' \
-                                         r'Strategeien von Spieler 2 und der Auszahlung von Spieler 1 lautet:\\'
-                temp = []
-                for equation in functs[1]:
-                    solution += str(equation) + ' = 0'
-                    solution += '\n'
-                    temp.append(equation)
-                    context['solvemixed'] += str(equation) + ' = 0' + r'\\'
-                sol_texmixed.append(temp)
-                response['lgs_player2'] = functs[1]  # Auszahlung Spieler 1 und Wahrscheinlichkeiten Spieler 2
-                solution += 'Es müssen nun alle möglichen Support-Kombinationen der beiden Spieler betrachtet werden,' \
-                            ' wobei folgende Support-Kombinationen zu einem Nash-Gleichgewicht führen:' + '\n'
-                context['solvemixed'] += r'Es müssen nun alle möglichen Support-Kombinationen der beiden Spieler ' \
-                                         r'betrachtet werden, wobei folgende Support-Kombinationen zu einem ' \
-                                         r'Nash-Gleichgewicht führen:\\'
-                supps = []
-                response['supports'] = []
-                # response['support_player2'] = []
-                response['lgs_support_player1'] = []
-                response['lgs_support_player2'] = []
-                response['lgs_support_results_player1'] = []
-                response['lgs_support_results_player2'] = []
-                response['lgs_support_game_value1'] = []
-                response['lgs_support_game_value2'] = []
-                response['results_out_of_support'] = []
-                response['lgs_nonsupport_lgs_player1'] = []
-                response['lgs_nonsupport_lgs_player2'] = []
-                response['lgs_nonsupport_result_player1'] = []
-                response['lgs_nonsupport_result_player2'] = []
-                for mixed_ggw in nggw2:
-                    supps.append([mixed_ggw[0][0][2], mixed_ggw[0][1][2]])
-                    response['supports'].append([mixed_ggw[0][0][2], mixed_ggw[0][1][2]])
-                    # supps.add(mixed_ggw[0][1][2])
-                    solution += str(mixed_ggw[0][0][2]) + ', ' + str(mixed_ggw[0][1][2]) + '\n'
-                    solution += 'Und somit die zugehörigen Gleichungssystemen betrachtet werden:\n'
-                    context['solvemixed'] += str(mixed_ggw[0][0][2]) + ', ' + str(mixed_ggw[0][1][2]) + r'\\'
-                    context['solvemixed'] += r'Und somit die zugehörigen Gleichungssystemen betrachtet werden:\\'
-                    for eq in mixed_ggw[0][2][0][0]:
-                        solution += str(eq) + ' = 0\n'
-                        context['solvemixed'] += str(eq) + ' = 0' +r'\\'
-                    solution += '\n'
-                    response['lgs_support_player1'].append(mixed_ggw[0][2][0][0])
-                    context['solvemixed'] += r'\\'
-                    for eq in mixed_ggw[0][2][1][0]:
-                        solution += str(eq) + ' = 0\n'
-                        context['solvemixed'] += str(eq) + r' = 0\\'
-                    response['lgs_support_player2'].append(mixed_ggw[0][2][1][0])
+            solution += 'Das lineare Gleichungssystem für die Wahrscheinlichkeiten der Strategien von ' \
+                        'Spieler 2 und der Auszahlung von Spieler 1 lautet: ' + '\n'
+            context['solvemixed'] += r'Das lineare Gleichungssystem für die Wahrscheinlichkeiten der ' \
+                                     r'Strategeien von Spieler 2 und der Auszahlung von Spieler 1 lautet:\\'
+            temp = []
+            for equation in functs[1]:
+                solution += str(equation) + ' = 0'
+                solution += '\n'
+                temp.append(equation)
+                context['solvemixed'] += str(equation) + ' = 0' + r'\\'
+            sol_texmixed.append(temp)
+            response['lgs_player2'] = functs[1]  # Auszahlung Spieler 1 und Wahrscheinlichkeiten Spieler 2
+            solution += 'Es müssen nun alle möglichen Support-Kombinationen der beiden Spieler betrachtet werden,' \
+                        ' wobei folgende Support-Kombinationen zu einem Nash-Gleichgewicht führen:' + '\n'
+            context['solvemixed'] += r'Es müssen nun alle möglichen Support-Kombinationen der beiden Spieler ' \
+                                     r'betrachtet werden, wobei folgende Support-Kombinationen zu einem ' \
+                                     r'Nash-Gleichgewicht führen:\\'
+            supps = []
+            response['supports'] = []
+            # response['support_player2'] = []
+            response['lgs_support_player1'] = []
+            response['lgs_support_player2'] = []
+            response['lgs_support_results_player1'] = []
+            response['lgs_support_results_player2'] = []
+            response['lgs_support_game_value1'] = []
+            response['lgs_support_game_value2'] = []
+            response['results_out_of_support'] = []
+            response['lgs_nonsupport_lgs_player1'] = []
+            response['lgs_nonsupport_lgs_player2'] = []
+            response['lgs_nonsupport_result_player1'] = []
+            response['lgs_nonsupport_result_player2'] = []
+            for mixed_ggw in nggw2:
+                supps.append([mixed_ggw[0][0][2], mixed_ggw[0][1][2]])
+                response['supports'].append([mixed_ggw[0][0][2], mixed_ggw[0][1][2]])
+                # supps.add(mixed_ggw[0][1][2])
+                solution += str(mixed_ggw[0][0][2]) + ', ' + str(mixed_ggw[0][1][2]) + '\n'
+                solution += 'Und somit die zugehörigen Gleichungssystemen betrachtet werden:\n'
+                context['solvemixed'] += str(mixed_ggw[0][0][2]) + ', ' + str(mixed_ggw[0][1][2]) + r'\\'
+                context['solvemixed'] += r'Und somit die zugehörigen Gleichungssystemen betrachtet werden:\\'
+                for eq in mixed_ggw[0][2][0][0]:
+                    solution += str(eq) + ' = 0\n'
+                    context['solvemixed'] += str(eq) + ' = 0' + r'\\'
+                solution += '\n'
+                response['lgs_support_player1'].append(mixed_ggw[0][2][0][0])
+                context['solvemixed'] += r'\\'
+                for eq in mixed_ggw[0][2][1][0]:
+                    solution += str(eq) + ' = 0\n'
+                    context['solvemixed'] += str(eq) + r' = 0\\'
+                response['lgs_support_player2'].append(mixed_ggw[0][2][1][0])
 
-                    solution += 'Nach Auflösen des LGS ergeben sich folgene Werte für die optimale ' \
+                solution += 'Nach Auflösen des LGS ergeben sich folgene Werte für die optimale ' \
                             'Strategienkombination: ' + '\n'
-                    context['solvemixed'] += r'Nach Auflösen des LGS ergeben sich folgene Werte für die ' \
+                context['solvemixed'] += r'Nach Auflösen des LGS ergeben sich folgene Werte für die ' \
                                          r'optimale Strategienkombination:\\'
-                    solution += 'Für Spieler 1:\n'
-                    context['solvemixed'] += r'Für Spieler 1:\\'
-                    temp_sol = {}
-                    for key in symbs[0][0]:
-                        solution += str(key) + ' = ' + str(mixed_ggw[0][0][1][0][key]) + '\n'
-                        context['solvemixed'] += str(key) + ' = ' + str(mixed_ggw[0][0][1][0][key]) + r'\\'
-                        temp_sol[key] = mixed_ggw[0][0][1][0][key]
-                    response['lgs_support_results_player1'].append(temp_sol)
-                    solution += 'Für Spieler 2:\n'
-                    context['solvemixed'] += r'Für Spieler 2:\\'
-                    temp_sol = {}
-                    for key in symbs[1][0]:
-                        solution += str(key) + ' = ' + str(mixed_ggw[0][1][1][0][key]) + '\n'
-                        context['solvemixed'] += str(key) + ' = ' + str(mixed_ggw[0][1][1][0][key]) + r'\\'
-                        temp_sol[key] = mixed_ggw[0][1][1][0][key]
-                    response['lgs_support_results_player2'].append(temp_sol)
-
-                    solution += 'Der Spielwert von Spieler 1 entspricht: ' + '\n'
-                    context['solvemixed'] += r'Der Spielwert von Spieler 1 entspricht: \\'
-                    solution += 'w = ' + str(mixed_ggw[0][0][0]) + '\n'
-                    response['lgs_support_game_value1'] = mixed_ggw[0][0][0]
-                    context['solvemixed'] += 'w = ' + str(mixed_ggw[0][0][0]) + r'\\'
-                    solution += 'Der Spielwert von Spieler 2 entspricht: ' + '\n'
-                    context['solvemixed'] += r'Der Spielwert von Spieler 2 entspricht: \\'
-                    solution += 'w = ' + str(mixed_ggw[0][1][0]) + '\n'
-                    response['lgs_support_game_value2'] = mixed_ggw[0][1][0]
-                    context['solvemixed'] += 'w = ' + str(mixed_ggw[0][1][0]) + r'\\'
-                    responses = []
-                    if len(mixed_ggw[0][3][0]) or len(mixed_ggw[0][3][1]):
-                        #response['results_out_of_support'].append(True)
-                        solution += 'Nun müssen die erzielbaren Auszahlungen eines Spielers, durch die Wahl einer ' \
+                solution += 'Für Spieler 1:\n'
+                context['solvemixed'] += r'Für Spieler 1:\\'
+                temp_sol = []
+                for key in symbs[0][0]:
+                    solution += str(key) + ' = ' + str(mixed_ggw[0][0][1][0][key]) + '\n'
+                    context['solvemixed'] += str(key) + ' = ' + str(mixed_ggw[0][0][1][0][key]) + r'\\'
+                    temp_sol['key'] = mixed_ggw[0][0][1][0][key]
+                response['lgs_support_results_player1'].append(temp_sol)
+                solution += 'Für Spieler 2:\n'
+                context['solvemixed'] += r'Für Spieler 2:\\'
+                temp_sol = {}
+                for key in symbs[1][0]:
+                    solution += str(key) + ' = ' + str(mixed_ggw[0][1][1][0][key]) + '\n'
+                    context['solvemixed'] += str(key) + ' = ' + str(mixed_ggw[0][1][1][0][key]) + r'\\'
+                    temp_sol['key'] = mixed_ggw[0][1][1][0][key]
+                response['lgs_support_results_player2'].append(temp_sol)
+                del temp_sol[:]
+                solution += 'Der Spielwert von Spieler 1 entspricht: ' + '\n'
+                context['solvemixed'] += r'Der Spielwert von Spieler 1 entspricht: \\'
+                solution += 'w = ' + str(mixed_ggw[0][0][0]) + '\n'
+                response['lgs_support_game_value1'] = mixed_ggw[0][0][0]
+                context['solvemixed'] += 'w = ' + str(mixed_ggw[0][0][0]) + r'\\'
+                solution += 'Der Spielwert von Spieler 2 entspricht: ' + '\n'
+                context['solvemixed'] += r'Der Spielwert von Spieler 2 entspricht: \\'
+                solution += 'w = ' + str(mixed_ggw[0][1][0]) + '\n'
+                response['lgs_support_game_value2'] = mixed_ggw[0][1][0]
+                context['solvemixed'] += 'w = ' + str(mixed_ggw[0][1][0]) + r'\\'
+                responses = []
+                if len(mixed_ggw[0][3][0]) or len(mixed_ggw[0][3][1]):
+                    # response['results_out_of_support'].append(True)
+                    solution += 'Nun müssen die erzielbaren Auszahlungen eines Spielers, durch die Wahl einer ' \
                                 'Strategie, die nicht im betrachteten Support liegt ermittelt werden.\n'
-                        context['solvemixed'] += r'Nun müssen die erzielbaren Auszahlungen eines Spielers, durch die ' \
+                    context['solvemixed'] += r'Nun müssen die erzielbaren Auszahlungen eines Spielers, durch die ' \
                                              r'Wahl einer Strategie, die nicht im betrachteten Support liegt ' \
                                              r'ermittelt werden.\\'
-                        if len(mixed_ggw[0][3][1]):
-                            responses.append(True)
-                            solution += 'Für die Auszahlung von Spieler 1 werden somit folgende Gleichungssysteme ' \
-                                        'und Lösungen betrachtet: \n'
-                            context['solvemixed'] += r'Für die Auszahlung von Spieler 1 werden somit folgende ' \
-                                                     r'Gleichungssysteme und Lösungen betrachtet: \\'
+                    if len(mixed_ggw[0][3][1]):
+                        responses.append(True)
+                        solution += 'Für die Auszahlung von Spieler 1 werden somit folgende Gleichungssysteme ' \
+                                    'und Lösungen betrachtet: \n'
+                        context['solvemixed'] += r'Für die Auszahlung von Spieler 1 werden somit folgende ' \
+                                                 r'Gleichungssysteme und Lösungen betrachtet: \\'
+                        response['lgs_nonsupport_lgs_player1'].append(mixed_ggw[0][3][1])
+                        response['lgs_nonsupport_result_player1'].append(mixed_ggw[0][3][1][1])
+                        for notsupportstrat in mixed_ggw[0][3][1]:
+                            for eq in notsupportstrat[0]:
+                                solution += str(eq) + ' = 0\n'
+                                context['solvemixed'] += str(eq) + r' = 0\\'
+                            solution += 'Dieses Gleichungssystem führt zu einer Auszahlung für Spieler 1 von:\n'
+                            context['solvemixed'] += r'Dieses Gleichungssystem führt zu einer Auszahlung für ' \
+                                                     r'Spieler 1 von:\\'
+                            solution += 'w = ' + str(notsupportstrat[1]) + '\n'
+                            context['solvemixed'] += 'w = ' + str(notsupportstrat[1]) + r'\\'
+                            solution += 'Was dazu führt, dass eine Abweichung von den Support-Strategien für ' \
+                                        'Spieler 1 keine Auszahlungsverbesserung hervorruft.\n'
+                            context['solvemixed'] += r'Was dazu führt, dass eine Abweichung von den ' \
+                                                     r'Support-Strategien für Spieler 1 keine ' \
+                                                     r'Auszahlungsverbesserung hervorruft.\\'
 
-                            game_val_mixed_1 = []
-                            strats = []
-                            for notsupportstrat in mixed_ggw[0][3][1]:
-                                for eq in notsupportstrat[0]:
-                                    solution += str(eq) + ' = 0\n'
-                                    context['solvemixed'] += str(eq) + r' = 0\\'
-                                solution += 'Dieses Gleichungssystem führt zu einer Auszahlung für Spieler 1 von:\n'
-                                context['solvemixed'] += r'Dieses Gleichungssystem führt zu einer Auszahlung für ' \
-                                                         r'Spieler 1 von:\\'
-                                solution += 'w = ' + str(notsupportstrat[1]) + '\n'
-                                context['solvemixed'] += 'w = ' + str(notsupportstrat[1]) + r'\\'
-                                solution += 'Was dazu führt, dass eine Abweichung von den Support-Strategien für ' \
-                                            'Spieler 1 keine Auszahlungsverbesserung hervorruft.\n'
-                                context['solvemixed'] += r'Was dazu führt, dass eine Abweichung von den ' \
-                                                         r'Support-Strategien für Spieler 1 keine ' \
-                                                         r'Auszahlungsverbesserung hervorruft.\\'
-                                game_val_mixed_1.append(notsupportstrat[1])
-                                strats.append(notsupportstrat[0])
-                            response['lgs_nonsupport_lgs_player1'].append(strats)
-                            response['lgs_nonsupport_result_player1'].append(game_val_mixed_1)
-                        else:
-                            responses.append(False)
-                            solution += 'Für Spieler 1 liegen alle Strategien in der betrachteten Support-Menge, ' \
-                                        'wodurch keine weitere Betrachtung notwendig ist.\n'
-                            context['solvemixed'] += r'Für Spieler 1 liegen alle Strategien in der betrachteten ' \
-                                                     r'Support-Menge, wodurch keine weitere Betrachtung notwendig ist.\\'
-                            response['lgs_nonsupport_lgs_player1'].append([])
-                            response['lgs_nonsupport_result_player1'].append([])
-                        if len(mixed_ggw[0][3][0]):
-                            responses.append(True)
-                            solution += 'Für die Auszahlung von Spieler 2 werden somit folgende Gleichungssysteme ' \
-                                        'und Lösungen betrachtet: \n'
-                            context['solvemixed'] += r'Für die Auszahlung von Spieler 2 werden somit folgende ' \
-                                                     r'Gleichungssysteme und Lösungen betrachtet: \\'
-
-                            game_val_mixed_2 = []
-                            strats = []
-                            for notsupportstrat in mixed_ggw[0][3][0]:
-                                for eq in notsupportstrat[0]:
-                                    solution += str(eq) + ' = 0\n'
-                                    context['solvemixed'] += str(eq) + r' = 0\\'
-                                solution += 'Dieses Gleichungssystem führt zu einer Auszahlung für Spieler 2 von:\n'
-                                context['solvemixed'] += r'Dieses Gleichungssystem führt zu einer Auszahlung für ' \
-                                                         r'Spieler 2 von:\\'
-                                solution += 'w = ' + str(notsupportstrat[1]) + '\n'
-                                context['solvemixed'] += 'w = ' + str(notsupportstrat[1]) + r'\\'
-                                solution += 'Was dazu führt, dass eine Abweichung von den Support-Strategien für ' \
-                                            'Spieler 2 keine Auszahlungsverbesserung hervorruft.\n'
-                                context['solvemixed'] += r'Was dazu führt, dass eine Abweichung von den ' \
-                                                         r'Support-Strategien für Spieler 2 keine ' \
-                                                         r'Auszahlungsverbesserung hervorruft.\\'
-                                game_val_mixed_2.append(notsupportstrat[1])
-                                strats.append(notsupportstrat[0])
-                            response['lgs_nonsupport_lgs_player2'].append(strats)
-                            response['lgs_nonsupport_result_player2'].append(game_val_mixed_2)
-                        else:
-                            responses.append(False)
-                            solution += 'Für Spieler 2 liegen alle Strategien in der betrachteten Support-Menge, ' \
-                                        'wodurch keine weitere Betrachtung notwendig ist.\n'
-                            context['solvemixed'] += r'Für Spieler 2 liegen alle Strategien in der betrachteten ' \
-                                                     r'Support-Menge, wodurch keine weitere Betrachtung notwendig ist.\\'
-                            response['lgs_nonsupport_lgs_player2'].append([])
-                            response['lgs_nonsupport_result_player2'].append([])
                     else:
-                        solution += 'Da für beide Spieler keine Strategie nicht in der Support-Menge liegt, ' \
-                                    'müssen keine weiteren Berechnungen durchgeführt werden.\n'
-                        context['solvemixed'] += r'Da für beide Spieler keine Strategie nicht in der Support-Menge ' \
-                                                 r'liegt, müssen keine weiteren Berechnungen durchgeführt werden.\\'
-                        responses = [False, False]
-                    response['results_out_of_support'].append(responses)
-                # for mixed_ggw in nggw2:
-                #     solution += '\n'
-                #     solution += str(mixed_ggw)
-                #     solution += '\n'
-                #     solution += str(mixed_ggw[0])
-                #     solution += '\n'
-                #     # Spielwert Spieler 1
-                #     solution += str(mixed_ggw[0][0][0])
-                #     solution += '\n'
-                #     # Wahrscheinlichkeiten Spieler 1
-                #     solution += str(mixed_ggw[0][0][1][0])
-                #     solution += '\n'
-                #     # Support Spieler 1
-                #     solution += str(mixed_ggw[0][0][2])
-                #     solution += '\n'
-                #     # Spielwert Spieler 2
-                #     solution += str(mixed_ggw[0][1][0])
-                #     solution += '\n'
-                #     # Wahrscheinlichkeiten Spieler 2
-                #     solution += str(mixed_ggw[0][1][1][0])
-                #     solution += '\n'
-                #     # Support Spieler 2
-                #     solution += str(mixed_ggw[0][1][2])
-                #     solution += '\n'
-                #     # Gleichtungssystem Spieler 1
-                #     solution += str(mixed_ggw[0][2][0])
-                #     solution += '\n'
-                #     # Gleichtungssystem Spieler 2
-                #     solution += str(mixed_ggw[0][2][1])
-                #     solution += '\n'
-                #     solution += str(mixed_ggw[0][3][0])
-                #     solution += '\n'
-                #     solution += str(mixed_ggw[0][3][1])
-            else:
-                # try:
-                #     nggw = solve_using_nggw(matrix1, matrix2)
-                #     nggw2 = get_optimal_solution(matrix1, matrix2)
-                #     solution_1 = nggw[0]
-                #     lgs1 = solution_1[2]
-                #     solution_2 = nggw[1]
-                #     lgs2 = solution_2[2]
-                #     correct_solution = True
-                #     for key in solution_1[1]:
-                #         if solution_1[0][key] < 0 and key != solution_1[1][-1]:
-                #             correct_solution = False
-                #             solution += 'Key-Fehler: ' + str(solution_1[0][key]) + ' ' + str(key)+ '\n'
-                #     for key in solution_2[1]:
-                #         if solution_2[0][key] < 0 and key != solution_2[1][-1]:
-                #             correct_solution = False
-                #             solution += 'Key-Fehler: ' + str(solution_2[0][key]) + ' ' + str(key) + '\n'
-                #     if correct_solution:
-                #         solution += 'Selbiges Problem lässt sich auch durch die Aufstellung eines LGS nach den ' \
-                #                     'Bedingungen für ein Nash-Gleichgewicht lösen: ' + '\n'
-                #         context['solvemixed'] += r'Selbiges Problem lässt sich auch durch die Aufstellung eines ' \
-                #                                  r'LGS nach den Bedingungen für ein Nash-Gleichgewicht lösen:\\'
-                #         if len(solution_1[0]) > 0:
-                #             solution += 'Das lineare Gleichungssystem für Spieler 1 lautet: ' + '\n'
-                #             context['solvemixed'] += r'Das lineare Gleichungssystem für Spieler 1 lautet:\\'
-                #             temp = []
-                #             for equation in lgs1:
-                #                 solution += str((equation))
-                #                 solution += '\n'
-                #                 temp.append(equation)
-                #                 context['solvemixed'] += str(equation) + r'\\'
-                #             sol_texmixed.append(temp)
-                #             solution += 'Nach Auflösen des LGS ergeben sich folgene Werte für die optimale ' \
-                #                         'Strategienkombination: ' + '\n'
-                #             context['solvemixed'] += r'Nach Auflösen des LGS ergeben sich folgene Werte für die ' \
-                #                                      r'optimale Strategienkombination:\\'
-                #             temp = []
-                #             for key in solution_1[1]:
-                #                 solution += str(key) + ':' + str(nsimplify(solution_1[0][key], tolerance=0.0001,
-                #                                                            rational=True)) + '\n'
-                #                 val = nsimplify(solution_1[0][key], tolerance=0.0001, rational=True)
-                #                 temp.append([key, val])
-                #                 context['solvemixed'] += str(key) + ':' + str(val) + r'\\'
-                #             sol_texmixed.append(temp)
-                #         if len(solution_2[0]) > 0:
-                #             solution += 'Das lineare Gleichungssystem für Spieler 2 lautet: ' + '\n'
-                #             context['solvemixed'] += r'Das lineare Gleichungssystem für Spieler 2 lautet:\\'
-                #             temp = []
-                #             for equation in lgs2:
-                #                 solution += str(equation)
-                #                 temp.append(equation)
-                #                 solution += '\n'
-                #                 context['solvemixed'] += str(equation) + r'\\'
-                #             sol_texmixed.append(temp)
-                #             solution += 'Nach Auflösen des LGS ergeben sich folgene Werte für die optimale ' \
-                #                         'Strategienkombination: ' + '\n'
-                #             context[
-                #                 'solvemixed'] += r'Nach Auflösen des LGS ergeben sich folgene Werte für die ' \
-                #                                  r'optimale Strategienkombination:\\'
-                #             temp = []
-                #             for key in solution_2[1]:
-                #                 solution += str(key) + ':' + str(nsimplify(solution_2[0][key], tolerance=0.0001,
-                #                                                            rational=True)) + '\n'
-                #                 val = nsimplify(solution_2[0][key], tolerance=0.0001, rational=True)
-                #                 temp.append([key, val])
-                #                 context['solvemixed'] += str(key) + ':' + str(val) + r'\\'
-                #             sol_texmixed.append(temp)
-                #     solution += nggw2
-                # except:
-                #     pass
-                nggw2 = get_optimal_solution(matrix1, matrix2)
-                solution += 'Selbiges Problem lässt sich auch durch die Aufstellung eines LGS nach den ' \
-                            'Bedingungen für ein Nash-Gleichgewicht lösen: ' + '\n'
-                context['solvemixed'] += r'Selbiges Problem lässt sich auch durch die Aufstellung eines ' \
-                                         r'LGS nach den Bedingungen für ein Nash-Gleichgewicht lösen:\\'
-                symbs = generate_symbols(matrix1)
-                functs = generate_functions(matrix1, matrix2, symbs=symbs)
-                solution += 'Das lineare Gleichungssystem für die Wahrscheinlichkeiten der Strategien von ' \
-                            'Spieler 1 und der Auszahlung von Spieler 2 lautet: ' + '\n'
-                context['solvemixed'] += r'Das lineare Gleichungssystem für die Wahrscheinlichkeiten der ' \
-                                         r'Strategeien von Spieler 1 und der Auszahlung von Spieler 2 lautet:\\'
-                temp = []
-                for equation in functs[0]:
-                    solution += str(equation) + ' = 0'
-                    solution += '\n'
-                    temp.append(equation)
-                    context['solvemixed'] += str(equation) + ' = 0' + r'\\'
-                sol_texmixed.append(temp)
-                response['lgs_player1'] = functs[0]  # Auszahlung Spieler 2 und Wahrscheinlichkeiten Spieler 1
-
-                solution += 'Das lineare Gleichungssystem für die Wahrscheinlichkeiten der Strategien von ' \
-                            'Spieler 2 und der Auszahlung von Spieler 1 lautet: ' + '\n'
-                context['solvemixed'] += r'Das lineare Gleichungssystem für die Wahrscheinlichkeiten der ' \
-                                         r'Strategeien von Spieler 2 und der Auszahlung von Spieler 1 lautet:\\'
-                temp = []
-                for equation in functs[1]:
-                    solution += str(equation) + ' = 0'
-                    solution += '\n'
-                    temp.append(equation)
-                    context['solvemixed'] += str(equation) + ' = 0' + r'\\'
-                sol_texmixed.append(temp)
-                response['lgs_player2'] = functs[1]  # Auszahlung Spieler 1 und Wahrscheinlichkeiten Spieler 2
-                solution += 'Es müssen nun alle möglichen Support-Kombinationen der beiden Spieler betrachtet werden,' \
-                            ' wobei folgende Support-Kombinationen zu einem Nash-Gleichgewicht führen:' + '\n'
-                context['solvemixed'] += r'Es müssen nun alle möglichen Support-Kombinationen der beiden Spieler ' \
-                                         r'betrachtet werden, wobei folgende Support-Kombinationen zu einem ' \
-                                         r'Nash-Gleichgewicht führen:\\'
-                supps = []
-                response['supports'] = []
-                # response['support_player2'] = []
-                response['lgs_support_player1'] = []
-                response['lgs_support_player2'] = []
-                response['lgs_support_results_player1'] = []
-                response['lgs_support_results_player2'] = []
-                response['lgs_support_game_value1'] = []
-                response['lgs_support_game_value2'] = []
-                response['results_out_of_support'] = []
-                response['lgs_nonsupport_lgs_player1'] = []
-                response['lgs_nonsupport_lgs_player2'] = []
-                response['lgs_nonsupport_result_player1'] = []
-                response['lgs_nonsupport_result_player2'] = []
-                for mixed_ggw in nggw2:
-                    supps.append([mixed_ggw[0][0][2], mixed_ggw[0][1][2]])
-                    response['supports'].append([mixed_ggw[0][0][2], mixed_ggw[0][1][2]])
-                    # supps.add(mixed_ggw[0][1][2])
-                    solution += str(mixed_ggw[0][0][2]) + ', ' + str(mixed_ggw[0][1][2]) + '\n'
-                    solution += 'Und somit die zugehörigen Gleichungssystemen betrachtet werden:\n'
-                    context['solvemixed'] += str(mixed_ggw[0][0][2]) + ', ' + str(mixed_ggw[0][1][2]) + r'\\'
-                    context['solvemixed'] += r'Und somit die zugehörigen Gleichungssystemen betrachtet werden:\\'
-                    for eq in mixed_ggw[0][2][0][0]:
-                        solution += str(eq) + ' = 0\n'
-                        context['solvemixed'] += str(eq) + ' = 0' + r'\\'
-                    solution += '\n'
-                    response['lgs_support_player1'].append(mixed_ggw[0][2][0][0])
-                    context['solvemixed'] += r'\\'
-                    for eq in mixed_ggw[0][2][1][0]:
-                        solution += str(eq) + ' = 0\n'
-                        context['solvemixed'] += str(eq) + r' = 0\\'
-                    response['lgs_support_player2'].append(mixed_ggw[0][2][1][0])
-
-                    solution += 'Nach Auflösen des LGS ergeben sich folgene Werte für die optimale ' \
-                                'Strategienkombination: ' + '\n'
-                    context['solvemixed'] += r'Nach Auflösen des LGS ergeben sich folgene Werte für die ' \
-                                             r'optimale Strategienkombination:\\'
-                    solution += 'Für Spieler 1:\n'
-                    context['solvemixed'] += r'Für Spieler 1:\\'
-                    temp_sol = []
-                    for key in symbs[0][0]:
-                        solution += str(key) + ' = ' + str(mixed_ggw[0][0][1][0][key]) + '\n'
-                        context['solvemixed'] += str(key) + ' = ' + str(mixed_ggw[0][0][1][0][key]) + r'\\'
-                        temp_sol['key'] = mixed_ggw[0][0][1][0][key]
-                    response['lgs_support_results_player1'].append(temp_sol)
-                    solution += 'Für Spieler 2:\n'
-                    context['solvemixed'] += r'Für Spieler 2:\\'
-                    temp_sol = {}
-                    for key in symbs[1][0]:
-                        solution += str(key) + ' = ' + str(mixed_ggw[0][1][1][0][key]) + '\n'
-                        context['solvemixed'] += str(key) + ' = ' + str(mixed_ggw[0][1][1][0][key]) + r'\\'
-                        temp_sol['key'] = mixed_ggw[0][1][1][0][key]
-                    response['lgs_support_results_player2'].append(temp_sol)
-                    del temp_sol[:]
-                    solution += 'Der Spielwert von Spieler 1 entspricht: ' + '\n'
-                    context['solvemixed'] += r'Der Spielwert von Spieler 1 entspricht: \\'
-                    solution += 'w = ' + str(mixed_ggw[0][0][0]) + '\n'
-                    response['lgs_support_game_value1'] = mixed_ggw[0][0][0]
-                    context['solvemixed'] += 'w = ' + str(mixed_ggw[0][0][0]) + r'\\'
-                    solution += 'Der Spielwert von Spieler 2 entspricht: ' + '\n'
-                    context['solvemixed'] += r'Der Spielwert von Spieler 2 entspricht: \\'
-                    solution += 'w = ' + str(mixed_ggw[0][1][0]) + '\n'
-                    response['lgs_support_game_value2'] = mixed_ggw[0][1][0]
-                    context['solvemixed'] += 'w = ' + str(mixed_ggw[0][1][0]) + r'\\'
-                    responses = []
-                    if len(mixed_ggw[0][3][0]) or len(mixed_ggw[0][3][1]):
-                        # response['results_out_of_support'].append(True)
-                        solution += 'Nun müssen die erzielbaren Auszahlungen eines Spielers, durch die Wahl einer ' \
-                                    'Strategie, die nicht im betrachteten Support liegt ermittelt werden.\n'
-                        context['solvemixed'] += r'Nun müssen die erzielbaren Auszahlungen eines Spielers, durch die ' \
-                                                 r'Wahl einer Strategie, die nicht im betrachteten Support liegt ' \
-                                                 r'ermittelt werden.\\'
-                        if len(mixed_ggw[0][3][1]):
-                            responses.append(True)
-                            solution += 'Für die Auszahlung von Spieler 1 werden somit folgende Gleichungssysteme ' \
-                                        'und Lösungen betrachtet: \n'
-                            context['solvemixed'] += r'Für die Auszahlung von Spieler 1 werden somit folgende ' \
-                                                     r'Gleichungssysteme und Lösungen betrachtet: \\'
-                            response['lgs_nonsupport_lgs_player1'].append(mixed_ggw[0][3][1])
-                            response['lgs_nonsupport_result_player1'].append(mixed_ggw[0][3][1][1])
-                            for notsupportstrat in mixed_ggw[0][3][1]:
-                                for eq in notsupportstrat[0]:
-                                    solution += str(eq) + ' = 0\n'
-                                    context['solvemixed'] += str(eq) + r' = 0\\'
-                                solution += 'Dieses Gleichungssystem führt zu einer Auszahlung für Spieler 1 von:\n'
-                                context['solvemixed'] += r'Dieses Gleichungssystem führt zu einer Auszahlung für ' \
-                                                         r'Spieler 1 von:\\'
-                                solution += 'w = ' + str(notsupportstrat[1]) + '\n'
-                                context['solvemixed'] += 'w = ' + str(notsupportstrat[1]) + r'\\'
-                                solution += 'Was dazu führt, dass eine Abweichung von den Support-Strategien für ' \
-                                            'Spieler 1 keine Auszahlungsverbesserung hervorruft.\n'
-                                context['solvemixed'] += r'Was dazu führt, dass eine Abweichung von den ' \
-                                                         r'Support-Strategien für Spieler 1 keine ' \
-                                                         r'Auszahlungsverbesserung hervorruft.\\'
-
-                        else:
-                            responses.append(False)
-                            solution += 'Für Spieler 1 liegen alle Strategien in der betrachteten Support-Menge, ' \
-                                        'wodurch keine weitere Betrachtung notwendig ist.\n'
-                            context['solvemixed'] += r'Für Spieler 1 liegen alle Strategien in der betrachteten ' \
-                                                     r'Support-Menge, wodurch keine weitere Betrachtung notwendig ist.\\'
-                            response['lgs_nonsupport_lgs_player1'].append([])
-                            response['lgs_nonsupport_result_player1'].append([])
-                        if len(mixed_ggw[0][3][0]):
-                            responses.append(True)
-                            solution += 'Für die Auszahlung von Spieler 2 werden somit folgende Gleichungssysteme ' \
-                                        'und Lösungen betrachtet: \n'
-                            context['solvemixed'] += r'Für die Auszahlung von Spieler 2 werden somit folgende ' \
-                                                     r'Gleichungssysteme und Lösungen betrachtet: \\'
-                            response['lgs_nonsupport_lgs_player2'].append(mixed_ggw[0][3][0])
-                            response['lgs_nonsupport_result_player2'].append(mixed_ggw[0][3][0][1])
-                            for notsupportstrat in mixed_ggw[0][3][0]:
-                                for eq in notsupportstrat[0]:
-                                    solution += str(eq) + ' = 0\n'
-                                    context['solvemixed'] += str(eq) + r' = 0\\'
-                                solution += 'Dieses Gleichungssystem führt zu einer Auszahlung für Spieler 2 von:\n'
-                                context['solvemixed'] += r'Dieses Gleichungssystem führt zu einer Auszahlung für ' \
-                                                         r'Spieler 2 von:\\'
-                                solution += 'w = ' + str(notsupportstrat[1]) + '\n'
-                                context['solvemixed'] += 'w = ' + str(notsupportstrat[1]) + r'\\'
-                                solution += 'Was dazu führt, dass eine Abweichung von den Support-Strategien für ' \
-                                            'Spieler 2 keine Auszahlungsverbesserung hervorruft.\n'
-                                context['solvemixed'] += r'Was dazu führt, dass eine Abweichung von den ' \
-                                                         r'Support-Strategien für Spieler 2 keine ' \
-                                                         r'Auszahlungsverbesserung hervorruft.\\'
-                        else:
-                            responses.append(False)
-                            solution += 'Für Spieler 2 liegen alle Strategien in der betrachteten Support-Menge, ' \
-                                        'wodurch keine weitere Betrachtung notwendig ist.\n'
-                            context['solvemixed'] += r'Für Spieler 2 liegen alle Strategien in der betrachteten ' \
-                                                     r'Support-Menge, wodurch keine weitere Betrachtung notwendig ist.\\'
-                            response['lgs_nonsupport_lgs_player2'].append([])
-                            response['lgs_nonsupport_result_player2'].append([])
+                        responses.append(False)
+                        solution += 'Für Spieler 1 liegen alle Strategien in der betrachteten Support-Menge, ' \
+                                    'wodurch keine weitere Betrachtung notwendig ist.\n'
+                        context['solvemixed'] += r'Für Spieler 1 liegen alle Strategien in der betrachteten ' \
+                                                 r'Support-Menge, wodurch keine weitere Betrachtung notwendig ist.\\'
+                        response['lgs_nonsupport_lgs_player1'].append([])
+                        response['lgs_nonsupport_result_player1'].append([])
+                    if len(mixed_ggw[0][3][0]):
+                        responses.append(True)
+                        solution += 'Für die Auszahlung von Spieler 2 werden somit folgende Gleichungssysteme ' \
+                                    'und Lösungen betrachtet: \n'
+                        context['solvemixed'] += r'Für die Auszahlung von Spieler 2 werden somit folgende ' \
+                                                 r'Gleichungssysteme und Lösungen betrachtet: \\'
+                        response['lgs_nonsupport_lgs_player2'].append(mixed_ggw[0][3][0])
+                        response['lgs_nonsupport_result_player2'].append(mixed_ggw[0][3][0][1])
+                        for notsupportstrat in mixed_ggw[0][3][0]:
+                            for eq in notsupportstrat[0]:
+                                solution += str(eq) + ' = 0\n'
+                                context['solvemixed'] += str(eq) + r' = 0\\'
+                            solution += 'Dieses Gleichungssystem führt zu einer Auszahlung für Spieler 2 von:\n'
+                            context['solvemixed'] += r'Dieses Gleichungssystem führt zu einer Auszahlung für ' \
+                                                     r'Spieler 2 von:\\'
+                            solution += 'w = ' + str(notsupportstrat[1]) + '\n'
+                            context['solvemixed'] += 'w = ' + str(notsupportstrat[1]) + r'\\'
+                            solution += 'Was dazu führt, dass eine Abweichung von den Support-Strategien für ' \
+                                        'Spieler 2 keine Auszahlungsverbesserung hervorruft.\n'
+                            context['solvemixed'] += r'Was dazu führt, dass eine Abweichung von den ' \
+                                                     r'Support-Strategien für Spieler 2 keine ' \
+                                                     r'Auszahlungsverbesserung hervorruft.\\'
                     else:
-                        solution += 'Da für beide Spieler keine Strategie nicht in der Support-Menge liegt, ' \
-                                    'müssen keine weiteren Berechnungen durchgeführt werden.\n'
-                        context['solvemixed'] += r'Da für beide Spieler keine Strategie nicht in der Support-Menge ' \
-                                                 r'liegt, müssen keine weiteren Berechnungen durchgeführt werden.\\'
-                        responses = [False, False]
-                    response['results_out_of_support'].append(responses)
+                        responses.append(False)
+                        solution += 'Für Spieler 2 liegen alle Strategien in der betrachteten Support-Menge, ' \
+                                    'wodurch keine weitere Betrachtung notwendig ist.\n'
+                        context['solvemixed'] += r'Für Spieler 2 liegen alle Strategien in der betrachteten ' \
+                                                 r'Support-Menge, wodurch keine weitere Betrachtung notwendig ist.\\'
+                        response['lgs_nonsupport_lgs_player2'].append([])
+                        response['lgs_nonsupport_result_player2'].append([])
+                else:
+                    solution += 'Da für beide Spieler keine Strategie nicht in der Support-Menge liegt, ' \
+                                'müssen keine weiteren Berechnungen durchgeführt werden.\n'
+                    context['solvemixed'] += r'Da für beide Spieler keine Strategie nicht in der Support-Menge ' \
+                                             r'liegt, müssen keine weiteren Berechnungen durchgeführt werden.\\'
+                    responses = [False, False]
+                response['results_out_of_support'].append(responses)
                 # for mixed_ggw in nggw2:
                 #     solution += '\n'
                 #     solution += str(mixed_ggw)

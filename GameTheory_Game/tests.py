@@ -356,78 +356,78 @@ import time
 # print(values)
 # print(max(values))
 
-abc = Game()
-
-abc.matrix = np.asarray([[-4., -3., -4., -7.],
-    [-3., -1., -3.,  6.],
-    [5.,  9.,  5., -5.],
-    [-9.,  6.,-2.,  6.]])
-abc.matrix2 = abc.matrix * -1
-#print(get_calculations_latex(abc.matrix, abc.matrix2)[0])
-
-
-#new_game = ZerosumGame()
-#print(get_calculations_latex(new_game.matrix, new_game.matrix2, zerosum=True, mode=1, rand_bays=True)[0])
-print(r'[[ 3 0 2]\r\n [ 4 5 1]\r\n [ 2 2 -1]]')
-print(r'[[-3 0 -2]\r\n [-4 -5 -1]\r\n [-2 -2 1]]')
-
-a = '[[ 3 0 2]\r\n [ 4 5 1]\r\n [ 2 2 -1]]'
-b = '[[-3 0 -2]\r\n [-4 -5 -1]\r\n [-2 -2 1]]'
-
-#print(np.fromstring(a, dtype=int))
-#print(np.fromstring(b, dtype=int))
-
-c = a.replace('\r\n', ',')
-d = b.replace('\r\n', ',')
-#print(np.fromstring(c))
-
-print(c)
-print(d)
-
-#for element in e:
-#    print(element)
-#print(e[0])
-#print(np.fromstring(c, dtype=np.uint8))
-#print(np.fromstring(d, dtype=np.uint8))
-f = a[1:-1]
-print(f)
-test2 = f.split('\r\n')
-print(test2)
-for line in test2:
-    print(line)
-    #print(np.fromiter(line[1:-1], np.float))
-    #print(np.fromstring(line, dtype=np.float))
-test = "".join(a)
-print(test)
-test = test.replace('.', '')
-test = test.replace('[', '')
-test = test.split(' ')
-new_test = []
-for stra in test:
-    new_test.append(stra.replace("\r\n", ''))
-new_arr = []
-temp = []
-firstDigit = False
-endFound = False
-for i in range(len(new_test)):
-    if "]" in new_test[i]:
-        new_test[i] = new_test[i].replace("]", "")
-        endFound = True
-    if new_test[i].isdigit() or (new_test[i].startswith('-') and new_test[i][1:].isdigit()):
-        firstDigit = True
-        temp.append(int(new_test[i]))
-    if (new_test[i] == "[" and temp and firstDigit) or endFound:
-        new_arr.append(deepcopy(temp))
-        firstDigit = False
-        endFound = False
-        temp.clear()
-
-a = deepcopy(new_arr)
-print(a)
-
-test = ZerosumGame()
-sol = get_calculations_latex(test.matrix, test.matrix2, zerosum=True, mode=1, rand_bays=True)
-print(sol)
+# abc = Game()
+#
+# abc.matrix = np.asarray([[-4., -3., -4., -7.],
+#     [-3., -1., -3.,  6.],
+#     [5.,  9.,  5., -5.],
+#     [-9.,  6.,-2.,  6.]])
+# abc.matrix2 = abc.matrix * -1
+# #print(get_calculations_latex(abc.matrix, abc.matrix2)[0])
+#
+#
+# #new_game = ZerosumGame()
+# #print(get_calculations_latex(new_game.matrix, new_game.matrix2, zerosum=True, mode=1, rand_bays=True)[0])
+# print(r'[[ 3 0 2]\r\n [ 4 5 1]\r\n [ 2 2 -1]]')
+# print(r'[[-3 0 -2]\r\n [-4 -5 -1]\r\n [-2 -2 1]]')
+#
+# a = '[[ 3 0 2]\r\n [ 4 5 1]\r\n [ 2 2 -1]]'
+# b = '[[-3 0 -2]\r\n [-4 -5 -1]\r\n [-2 -2 1]]'
+#
+# #print(np.fromstring(a, dtype=int))
+# #print(np.fromstring(b, dtype=int))
+#
+# c = a.replace('\r\n', ',')
+# d = b.replace('\r\n', ',')
+# #print(np.fromstring(c))
+#
+# print(c)
+# print(d)
+#
+# #for element in e:
+# #    print(element)
+# #print(e[0])
+# #print(np.fromstring(c, dtype=np.uint8))
+# #print(np.fromstring(d, dtype=np.uint8))
+# f = a[1:-1]
+# print(f)
+# test2 = f.split('\r\n')
+# print(test2)
+# for line in test2:
+#     print(line)
+#     #print(np.fromiter(line[1:-1], np.float))
+#     #print(np.fromstring(line, dtype=np.float))
+# test = "".join(a)
+# print(test)
+# test = test.replace('.', '')
+# test = test.replace('[', '')
+# test = test.split(' ')
+# new_test = []
+# for stra in test:
+#     new_test.append(stra.replace("\r\n", ''))
+# new_arr = []
+# temp = []
+# firstDigit = False
+# endFound = False
+# for i in range(len(new_test)):
+#     if "]" in new_test[i]:
+#         new_test[i] = new_test[i].replace("]", "")
+#         endFound = True
+#     if new_test[i].isdigit() or (new_test[i].startswith('-') and new_test[i][1:].isdigit()):
+#         firstDigit = True
+#         temp.append(int(new_test[i]))
+#     if (new_test[i] == "[" and temp and firstDigit) or endFound:
+#         new_arr.append(deepcopy(temp))
+#         firstDigit = False
+#         endFound = False
+#         temp.clear()
+#
+# a = deepcopy(new_arr)
+# print(a)
+#
+# test = ZerosumGame()
+# sol = get_calculations_latex(test.matrix, test.matrix2, zerosum=True, mode=1, rand_bays=True)
+# print(sol)
 # a = [[abc.matrix[lines][columns] for lines in range(abc.matrix.shape[0])] for columns in range(abc.matrix.shape[1])]
 # print(a)
 # print(type(abc.matrix))
@@ -526,3 +526,7 @@ print(sol)
 #
 # print(solve([3.0*p0 + 1.0*p1 - 9.0*p2 - 6.0*p3 - w, p0 + p1 + p2 + p3 - 1, p0, p1 - 0.526315789473684, p2 - 0.473684210526316, p3], dict=True, check=False, force=True))
 # print(solve([-4.0*q0 - 3.0*q1 - 4.0*q2 - 7.0*q3 - w, q0 + q1 + q2 + q3 - 1, q0 - 0.578947368421053, q1, q2, q3 - 0.421052631578947], dict=True, check=False, force=True))
+
+A = ZerosumGame()
+sol = get_calculations_latex(A.matrix, zerosum=True, mode=1, rand_bays=True)
+print(sol[3]['first_step'])
