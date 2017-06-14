@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/../game_learning/.idea/game_learning.iml" filepath="$PROJECT_DIR$/../game_learning/.idea/game_learning.iml" />
       <module fileurl="file://C:\Users\Florian\PycharmProjects\game_learning\.idea\game_learning.iml" filepath="C:\Users\Florian\PycharmProjects\game_learning\.idea\game_learning.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/game_theory_games.iml" filepath="$PROJECT_DIR$/.idea/game_theory_games.iml" />
     </modules>
