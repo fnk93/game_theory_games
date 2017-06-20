@@ -524,7 +524,7 @@ def get_calculations_latex(matrix1, matrix2=np.array([]), zerosum=True, bay1=0, 
                 tempo.append(step['basis'])
 
                 c = ''
-                for i in range(len(tempo[2][1])):
+                for i in range(len(tempo[2][1]) - 2):
                     c += 'c'
                 tempo.append(deepcopy(c))
                 tempo_full.append(deepcopy(tempo))

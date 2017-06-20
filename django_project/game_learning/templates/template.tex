@@ -76,8 +76,8 @@ Um die Simplex-Methode nutzen zu k\"onnen, wird folgendes Start-Tableau des dual
 \begin{bmatrix}
 \begin{array}{c|{{ dict.first_step.4 }}|c}
 {% for row in dict.first_step.2.1 %} {{ row }} {% if not forloop.last %}&{% endif %}{% endfor %}\\ \hline
-{% for row in dict.first_step.0 %}{% if not forloop.last %}{% for col in row %} {{col}} {% if not forloop.last %}&{% endif %}{% endfor %}\\{% endif %}{% endfor %} \hline
-{% for row in dict.first_step.0 reversed %}{% if forloop.first %}{% for col in row %} {{col}}{% if not forloop.last %}&{% endif %}{% endfor %} \\{% endif %}{% endfor %}
+{% for row in dict.first_step.0 %}{% if not forloop.last %}0 &{% for col in row %} {{col}} {% if not forloop.last %}&{% endif %}{% endfor %}\\{% endif %}{% endfor %} \hline
+1 &{% for row in dict.first_step.0 reversed %}{% if forloop.first %}{% for col in row %} {{col}}{% if not forloop.last %}&{% endif %}{% endfor %} \\{% endif %}{% endfor %}
 \end{array}
 \end{bmatrix}
 \end{equation}
@@ -90,8 +90,8 @@ Hieraus ergeben sich folgende Simplex-Schritte mit den zugeh\"origen, ermittelte
 \begin{bmatrix}
 \begin{array}{c|{{ step.4 }}|c}
 {% for row in step.2.1 %} {{ row }} {% if not forloop.last %}&{% endif %}{% endfor %}\\ \hline
-{% for row in step.0 %}{% if not forloop.last %}{% for col in row %} {{col}} {% if not forloop.last %}&{% endif %}{% endfor %}\\{% endif %}{% endfor %} \hline
-{% for row in step.0 reversed %}{% if forloop.first %}{% for col in row %} {{col}}{% if not forloop.last %}&{% endif %}{% endfor %} \\{% endif %}{% endfor %}
+{% for row in step.0 %}{% if not forloop.last %}0 &{% for col in row %} {{col}} {% if not forloop.last %}&{% endif %}{% endfor %}\\{% endif %}{% endfor %} \hline
+1 &{% for row in step.0 reversed %}{% if forloop.first %}{% for col in row %} {{col}}{% if not forloop.last %}&{% endif %}{% endfor %} \\{% endif %}{% endfor %}
 \end{array}
 \end{bmatrix}
 \end{equation}

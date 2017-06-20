@@ -2,11 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a4169e96-57d3-41d9-b61a-12c5bd2a0918" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/game_theory_games.iml" afterPath="$PROJECT_DIR$/.idea/game_theory_games.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/GameTheory_Game/Solving_Methods.py" afterPath="$PROJECT_DIR$/GameTheory_Game/Solving_Methods.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/GameTheory_Game/tests.py" afterPath="$PROJECT_DIR$/GameTheory_Game/tests.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/django_project/game_learning/gaming/Solving_Methods.py" afterPath="$PROJECT_DIR$/django_project/game_learning/gaming/Solving_Methods.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/django_project/game_learning/templates/template.tex" afterPath="$PROJECT_DIR$/django_project/game_learning/templates/template.tex" />
     </list>
@@ -25,7 +21,7 @@
     <SUITE FILE_PATH="coverage/game_theory_games$tests.coverage" NAME="tests Coverage Results" MODIFIED="1496859162612" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/GameTheory_Game" />
     <SUITE FILE_PATH="coverage/game_theory_games$Game.coverage" NAME="Game Coverage Results" MODIFIED="1495791821179" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/GameTheory_Game" />
     <SUITE FILE_PATH="coverage/game_theory_games_2$manage.coverage" NAME="manage Coverage Results" MODIFIED="1495804805580" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../game_theory_app" />
-    <SUITE FILE_PATH="coverage/game_theory_games_2$tests.coverage" NAME="tests Coverage Results" MODIFIED="1497998376814" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/GameTheory_Game" />
+    <SUITE FILE_PATH="coverage/game_theory_games_2$tests.coverage" NAME="tests Coverage Results" MODIFIED="1498000789769" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/GameTheory_Game" />
     <SUITE FILE_PATH="coverage/game_theory_games_2$test2.coverage" NAME="test2 Coverage Results" MODIFIED="1495837496879" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="CreatePatchCommitExecutor">
@@ -47,10 +43,34 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="template.tex" pinned="false" current-in-tab="true">
+      <file leaf-file-name="template.tex" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/django_project/game_learning/templates/template.tex">
           <provider selected="true" editor-type-id="LaTeXFileEditor">
             <state />
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Solving_Methods.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/django_project/game_learning/gaming/Solving_Methods.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="394">
+              <caret line="529" column="50" lean-forward="true" selection-start-line="529" selection-start-column="50" selection-end-line="529" selection-end-column="50" />
+              <folding>
+                <element signature="e#0#18#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="tests.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/GameTheory_Game/tests.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="323">
+              <caret line="19" column="0" lean-forward="true" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
+              <folding>
+                <element signature="e#0#51#0" expanded="true" />
+              </folding>
+            </state>
           </provider>
         </entry>
       </file>
@@ -155,10 +175,10 @@
         <option value="$PROJECT_DIR$/../game_learning/gaming/Solving_Methods.py" />
         <option value="$PROJECT_DIR$/../game_learning/gaming/views.py" />
         <option value="$PROJECT_DIR$/GameTheory_Game/tests.py" />
-        <option value="$PROJECT_DIR$/django_project/game_learning/gaming/Solving_Methods.py" />
         <option value="$PROJECT_DIR$/GameTheory_Game/Solving_Methods.py" />
         <option value="$PROJECT_DIR$/../game_learning/templates/template.tex" />
         <option value="$PROJECT_DIR$/django_project/game_learning/templates/template.tex" />
+        <option value="$PROJECT_DIR$/django_project/game_learning/gaming/Solving_Methods.py" />
       </list>
     </option>
   </component>
@@ -251,6 +271,50 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="game_learning" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="game_theory_games_2" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="game_theory_games_2" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="django_project" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="game_learning" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="templates" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="game_theory_games_2" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="game_theory_games_2" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="django_project" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="game_learning" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gaming" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -841,7 +905,14 @@
       <option name="project" value="LOCAL" />
       <updated>1497394734116</updated>
     </task>
-    <option name="localTasksCounter" value="25" />
+    <task id="LOCAL-00025" summary="Template erweitert">
+      <created>1498000582232</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1498000582232</updated>
+    </task>
+    <option name="localTasksCounter" value="26" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -933,7 +1004,8 @@
     <MESSAGE value="Auf mehrere Views aufgeteilt" />
     <MESSAGE value="Zusammenführung der Simplex-Vorbereitung" />
     <MESSAGE value="Django-Projet inkludiert" />
-    <option name="LAST_COMMIT_MESSAGE" value="Django-Projet inkludiert" />
+    <MESSAGE value="Template erweitert" />
+    <option name="LAST_COMMIT_MESSAGE" value="Template erweitert" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1189,26 +1261,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/GameTheory_Game/tests.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="323">
-          <caret line="19" column="0" lean-forward="true" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#51#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/django_project/game_learning/gaming/Solving_Methods.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="343">
-          <caret line="526" column="45" lean-forward="false" selection-start-line="526" selection-start-column="45" selection-end-line="526" selection-end-column="45" />
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/django_project/game_learning/templates/template2.tex">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -1225,9 +1277,29 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/GameTheory_Game/tests.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="323">
+          <caret line="19" column="0" lean-forward="true" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#51#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/django_project/game_learning/templates/template.tex">
       <provider selected="true" editor-type-id="LaTeXFileEditor">
         <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/django_project/game_learning/gaming/Solving_Methods.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="394">
+          <caret line="529" column="50" lean-forward="true" selection-start-line="529" selection-start-column="50" selection-end-line="529" selection-end-column="50" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
       </provider>
     </entry>
   </component>
