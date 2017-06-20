@@ -479,14 +479,54 @@ def get_calculations_latex(matrix1, matrix2=np.array([]), zerosum=True, bay1=0, 
                         temp_str += str(temp_arr[lines][cols]) + '&'
                     temp_str += r'\\'
                 context['solvemixed'] += r'\begin{pmatrix*}\\' + temp_str + r'\end{pmatrix*}\\'
+                base = []
+                supp = []
                 if str(step['pivot']) != '(nan, nan)':
                     solution += 'Pivot: ' + str(step['pivot']) + '\n'
                     sol_texmixed.append(step['pivot'])
-                    tempo.append([step['pivot'][1], step['pivot'][0]])
+                    tempo.append([step['pivot'][0], step['pivot'][1]])
                     context['solvemixed'] += 'Pivot: ' + str(step['pivot']) + r'\\'
+                    if tempo_full[-1][1]:
+                        pivot_row = tempo_full[-1][1][0] + 1
+                        pivot_col = tempo_full[-1][1][1] + 1
+                        base = deepcopy(tempo_full[-1][2][0])
+                        supp = deepcopy(tempo_full[-1][2][1])
+                        base[pivot_row], supp[pivot_col] = supp[pivot_col], base[pivot_row]
+                    else:
+                        base.append('')
+                        supp.append('z')
+                        for i in range(np.amin(step['basis'])):
+                            supp.append('y' + str(i + 1))
+                        for i in range(np.amax(step['basis']) + 1 - np.amin(step['basis'])):
+                            supp.append('s' + str(i + 1))
+                            base.append('s' + str(i + 1))
+                        supp.append('RHS')
+                        base.append('z')
+                    tempo.append(deepcopy([base, supp]))
+
                 else:
                     sol_texmixed.append([])
                     tempo.append([])
+                    if tempo_full:
+                        tempo.append(deepcopy(tempo_full[-1][2]))
+                    else:
+                        base.append('')
+                        supp.append('z')
+                        for i in range(np.amin(step['basis'])):
+                            supp.append('y' + str(i + 1))
+                        for i in range(np.amax(step['basis']) + 1 - np.amin(step['basis'])):
+                            supp.append('s' + str(i + 1))
+                            base.append('s' + str(i + 1))
+                        supp.append('RHS')
+                        base.append('z')
+
+                        tempo.append(deepcopy([base, supp]))
+                tempo.append(step['basis'])
+
+                c = ''
+                for i in range(len(tempo[2][1])):
+                    c += 'c'
+                tempo.append(deepcopy(c))
                 tempo_full.append(deepcopy(tempo))
             response['simplex_steps'] = deepcopy(tempo_full[1:])
             response['first_step'] = deepcopy(tempo_full[0])
@@ -1174,7 +1214,7 @@ def use_simplex_player(simplex_game, player):
         a.append([simplex_game[lines][columns] for columns in range(simplex_game.shape[1])])
 
     solve_report = SolvingSteps()
-    simplex_sol = optimize.linprog(c, a, b, callback=solve_report.save_values)
+    simplex_sol = optimize.linprog(c, a, b, callback=solve_report.save_values, method='simplex')
     simplex_steps = solve_report.get_array_kwargs()
     simplex_steps2 = format_solution(solve_report.get_array_xk())
 

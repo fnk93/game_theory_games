@@ -14,4 +14,10 @@ print(sol['first_step'])
 for step in sol['simplex_steps']:
     print(step[0])
     print(step[1])
+    print(step[2])
+    print(step[3])
+    print(step[4])
 
+#res = use_simplex(A.matrix, A.matrix2)
+
+#print(res)

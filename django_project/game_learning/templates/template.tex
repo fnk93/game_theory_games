@@ -69,18 +69,32 @@ Die Erf\"ullung der Optimalit\"atsbedingung sieht f\"ur Spieler 2 wie folgt aus:
 \end{gather*}
 {% endif %}
 Um die Simplex-Methode nutzen zu k\"onnen, wird folgendes Start-Tableau des dualen Problems aufgestellt:
-\begin{gather*}
-\begin{pmatrix*}
-{% for row in dict.first_step.0 %}{% for col in row %} & {{col}} &{% endfor %}\\{% endfor %}
-\end{pmatrix*}
-\end{gather*}
+\begin{equation}
+\begin{array}{c}
+{% for row in dict.first_step.2.0 %}{{ row }}{% if not forloop.last %}\\{% endif %}{% endfor %}
+\end{array}
+\begin{bmatrix}
+\begin{array}{c|{{ dict.first_step.4 }}|c}
+{% for row in dict.first_step.2.1 %} {{ row }} {% if not forloop.last %}&{% endif %}{% endfor %}\\ \hline
+{% for row in dict.first_step.0 %}{% if not forloop.last %}{% for col in row %} {{col}} {% if not forloop.last %}&{% endif %}{% endfor %}\\{% endif %}{% endfor %} \hline
+{% for row in dict.first_step.0 reversed %}{% if forloop.first %}{% for col in row %} {{col}}{% if not forloop.last %}&{% endif %}{% endfor %} \\{% endif %}{% endfor %}
+\end{array}
+\end{bmatrix}
+\end{equation}
 Hieraus ergeben sich folgende Simplex-Schritte mit den zugeh\"origen, ermittelten Pivots:
 {% for step in dict.simplex_steps %}
-\begin{gather*}
-\begin{pmatrix*}
-{% for row in step.0 %}{% for col in row %} & {{col}} &{% endfor %}\\{% endfor %}
-\end{pmatrix*}
-\end{gather*}
+\begin{equation}
+\begin{array}{c}
+{% for row in step.2.0 %}{{ row }}{% if not forloop.last %}\\{% endif %}{% endfor %}
+\end{array}
+\begin{bmatrix}
+\begin{array}{c|{{ step.4 }}|c}
+{% for row in step.2.1 %} {{ row }} {% if not forloop.last %}&{% endif %}{% endfor %}\\ \hline
+{% for row in step.0 %}{% if not forloop.last %}{% for col in row %} {{col}} {% if not forloop.last %}&{% endif %}{% endfor %}\\{% endif %}{% endfor %} \hline
+{% for row in step.0 reversed %}{% if forloop.first %}{% for col in row %} {{col}}{% if not forloop.last %}&{% endif %}{% endfor %} \\{% endif %}{% endfor %}
+\end{array}
+\end{bmatrix}
+\end{equation}
 \begin{center}{% if step.1 %}Pivot: {{ step.1 }}{% else %}Kein weiteres Pivot-Element gefunden.{% endif %}\end{center}\\
 {% endfor %}
 {% if dict.c_added %}Da der Spielwert nicht maximiert, sondern \(\frac{1}{G}\) minimiert wurde und die Konstante \(c = {{ dict.added_value }}\) zur urspr\"unglichen Auszahlungsmatrix addiert wurde, muss vom Ergebnis des Simplex-Verfahrens \(c\) wieder abgezogen werden und die inverse Transformation durchgef\"uhrt werden. Dadurch ergibt sich der Spielwert f\"ur Spieler 1:\\
